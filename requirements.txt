@@ -1,0 +1,20 @@
+# Works in Python 3.10.2 June 2022
+#------------------------------------
+
+pyside6
+loguru
+pyyaml
+sqlite-utils
+
+# ---------------
+# local pyvis stuff
+# ---------------
+Jinja2>=2.10
+networkx>=1.11
+jsonpickle>=1.4.1
+# pyqtwebengine (for now we're launching in browser)
+# ----------------
+
+# dev
+black
+ruff

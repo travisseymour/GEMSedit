@@ -1,0 +1,38 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>media/network_color.png</file>
+    <file>media/1409888901_Settings.png</file>
+    <file>media/1409888938_Log Out.png</file>
+    <file>media/1409888970_Folder.png</file>
+    <file>media/1409889298_Add.png</file>
+    <file>media/1409889527_Picture.png</file>
+    <file>media/1409889607_Play.png</file>
+    <file>media/1409889623_Help.png</file>
+    <file>media/1409889639_Cancel.png</file>
+    <file>media/1409889659_Save.png</file>
+    <file>media/1409889836_Properties.png</file>
+    <file>media/1409970876_circle-arrow-right-48.png</file>
+    <file>media/1409970886_circle-arrow-left-48.png</file>
+    <file>media/1409970906_circle-arrow-left-24.png</file>
+    <file>media/1409970915_circle-arrow-right-24.png</file>
+    <file>media/1409971621_Play.png</file>
+    <file>media/Actions-select-rectangular-icon.png</file>
+    <file>media/add-icon.png</file>
+    <file>media/Agate-icon.png</file>
+    <file>media/Antialiasfactory-Jewelry-Agate.icns</file>
+    <file>media/Antialiasfactory-Jewelry-Agate.ico</file>
+    <file>media/defaultPIC.jpg</file>
+    <file>media/delete-icon.png</file>
+    <file>media/eye-256.png</file>
+    <file>media/folder-images-icon.png</file>
+    <file>media/folder-open-icon.png</file>
+    <file>media/iconfinder.webloc</file>
+    <file>media/open-file-icon.png</file>
+    <file>media/OuterDoorOpen.JPG</file>
+    <file>media/Play.png</file>
+    <file>media/Save-as-icon.png</file>
+    <file>media/Save-icon.png</file>
+    <file>media/select-icon.png</file>
+    <file>media/selection_arrow-256.png</file>
+  </qresource>
+</RCC>

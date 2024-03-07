@@ -1,0 +1,52 @@
+2024-03-04 : fixed remaining ref to application.context
+2024-03-03 : tried to fix network graph launch, left temp code there until later.
+2024-03-03 : gemsedit now calls gemsrun via pipx
+2024-03-02 : fixed path ref in get_version.py
+2024-03-02 : switch seems to be working with pipx now
+2024-03-02 : about to begin conversion to pipx
+2024-03-01 : using custom dialog boxes so font is adjustable
+2024-03-01 : trying to fix hidden action issue on main win
+2024-02-29 : no longer relying on fbs
+2024-02-24 : fixed inefficiency in ui handling
+2024-02-23 : PySide6 Working
+2024-02-23 : converted to pyqt6 but considering moving to pyside6
+2022-02-19 : added pyvis to resources
+2022-02-19 : added pyvis to resources
+2022-02-18 : fix for mac network graph launch.
+2022-02-18 : added ability to show network graph to ui. cleaned up close env code...wasnt really closing before.
+2022-02-17 : minor: added network graph code but calling it is not yet added to the GUI
+2022-02-14 : added menu and toolbar action to save db without closing. icon visibility signals whether db can be saved.
+2022-02-14 : now dumping ui tables prior to save. save now gives better err messages. added method to connection to just save db (without closing it)
+2022-02-14 : id and row order calc work right. also removed null in view overlays.
+2022-02-12 : fixed order - was using ID when should be using ROWID to sort rows.
+2022-02-12 : added checkbox to objects window
+2022-02-12 : added checkbox to objects window
+2022-02-11 : added checkbox to objects window - now have to hook it into model
+2022-02-11 : got an early start on AddDraggabe...just added it to default env for now.
+2022-02-11 : added volume, cleanup prior to AddTakeable branch
+2022-02-11 : added volume param to global settings
+2022-02-11 : cleanup of todos and such
+2022-02-11 : removed my name from various places
+2022-02-11 : fixed serious issue with action edits not being saved!
+2022-02-11 : increased base size for settings window.
+2022-02-11 : fbs config cleanup
+2022-02-11 : fixed version calc
+2022-02-11 : minor: finished all changes prior to RA test. version now auto-updates based on changelog.txt in resources.
+2022-02-11 : works
+2022-02-10 : edited some helptext ahead of getting it to work properly on the global settings dlg
+2022-02-10 : clearing global overlay now works
+2022-02-10 : cleaned up some stuff in settings
+2022-02-10 : converted prints to log calls and turned a few quit commands to returns
+2022-02-10 : text on big pic fix. app now tracks when any data is changed so db save only prompted when reasonable
+2022-02-10 : looks like maybe on linux maximized looks same as fullscreen so there is no title bar to makes notes on. thus using text drawn over image.
+2022-02-10 : can now select and remember gemsrun location
+2022-02-09 : fixed action delete problem
+2022-02-09 : added some files to git
+2022-02-09 : fixed resource-load and transition fields in settings
+2022-02-09 : more naming cleanup
+2022-02-09 : fixed cancel in param window
+2022-02-08 : editor seems to humming with new sqlite on the inside yaml on the outside scheme.
+2022-02-08 : ready to make this the current version of gemsedit with yaml load/save but sqlite internally
+2022-02-02 : Fonts ok, but need a better more centralized approach so UI is user scalable.
+2022-02-02 : fonts adjusted and various pyside imports converted to pyqt5.
+2022-02-02 : HUGE CHANGE..nothing to do with this branch...sorry.
