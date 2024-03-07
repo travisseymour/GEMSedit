@@ -1,0 +1,273 @@
+action_lst:
+  '0':
+    Id: 0
+    Labels: '[]'
+    Name: ''
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '1':
+    Id: 1
+    Labels: '["View"]'
+    Name: PortalTo
+    Restrictions: viewobjectglobalpocket
+    Template: '["viewnum"]'
+  '10':
+    Id: 10
+    Labels: '["URL"]'
+    Name: ShowURL
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
+  '11':
+    Id: 11
+    Labels: '["Object"]'
+    Name: HideObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '12':
+    Id: 12
+    Labels: '["Object"]'
+    Name: ShowObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '13':
+    Id: 13
+    Labels: '["Object"]'
+    Name: AllowTake
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '14':
+    Id: 14
+    Labels: '["Object"]'
+    Name: DisallowTake
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '15':
+    Id: 15
+    Labels: '["Cursor"]'
+    Name: ChangeCursor
+    Restrictions: ''
+    Template: '["cursor"]'
+  '16':
+    Id: 16
+    Labels: '["Variable","Value"]'
+    Name: SetVariable
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value"]'
+  '17':
+    Id: 17
+    Labels: '["Variable"]'
+    Name: DelVariable
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname"]'
+  '18':
+    Id: 18
+    Labels: '[]'
+    Name: ClearKeyBuffer
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '19':
+    Id: 19
+    Labels: '[]'
+    Name: Quit
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '2':
+    Id: 2
+    Labels: '["SoundFile","Start","Volume","Loop"]'
+    Name: PlaySound
+    Restrictions: viewobjectglobalpocket
+    Template: '["sndfile","number","01float","bool"]'
+  '20':
+    Id: 20
+    Labels: '[]'
+    Name: HideMouse
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '21':
+    Id: 21
+    Labels: '[]'
+    Name: ShowMouse
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '22':
+    Id: 22
+    Labels: '[]'
+    Name: HidePockets
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '23':
+    Id: 23
+    Labels: '[]'
+    Name: ShowPockets
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '3':
+    Id: 3
+    Labels: '["VidFile","Start","Left","Top","WithinObject"]'
+    Name: PlayVideo
+    Restrictions: viewobjectglobalpocket
+    Template: '["vidfile","number","number","number","objnum"]'
+  '4':
+    Id: 4
+    Labels: '["ImageFile","Left","Top","Duration","Clickthrough"]'
+    Name: ShowImage
+    Restrictions: viewobject
+    Template: '["picfile","number","number","float","bool"]'
+  '5':
+    Id: 5
+    Labels: '["Application","Parameters"]'
+    Name: RunProgram
+    Restrictions: viewobjectglobalpocket
+    Template: '["exefile","value"]'
+  '6':
+    Id: 6
+    Labels: '["Message"]'
+    Name: SayText
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
+  '7':
+    Id: 7
+    Labels: '["Message","Left","Top","Duration","FontColor","BackColor","FontSize"]'
+    Name: TextBox
+    Restrictions: viewobjectglobalpocket
+    Template: '["value","number","number","float","fgcolor","bgcolor","fontsize"]'
+  '8':
+    Id: 8
+    Labels: '["Message"]'
+    Name: TextDialog
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
+  '9':
+    Id: 9
+    Labels: '["Prompt","Variable"]'
+    Name: InputDialog
+    Restrictions: viewobjectglobalpocket
+    Template: '["value","varname"]'
+condition_lst:
+  '0':
+    Id: 0
+    Labels: '[]'
+    Name: ''
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '1':
+    Id: 1
+    Labels: '["Variable","Value"]'
+    Name: VarValueIs
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value"]'
+  '2':
+    Id: 2
+    Labels: '["Variable","Value"]'
+    Name: VarValueIsNot
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value"]'
+  '3':
+    Id: 3
+    Labels: '["Variable"]'
+    Name: VarExists
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname"]'
+  '4':
+    Id: 4
+    Labels: '["Seconds"]'
+    Name: ViewTimePassed
+    Restrictions: viewobject
+    Template: '["number"]'
+  '5':
+    Id: 5
+    Labels: '["Seconds"]'
+    Name: TotalTimePassed
+    Restrictions: viewobjectglobalpocket
+    Template: '["number"]'
+  '6':
+    Id: 6
+    Labels: '["Count"]'
+    Name: VarCountEq
+    Restrictions: viewobjectglobalpocket
+    Template: '["number"]'
+  '7':
+    Id: 7
+    Labels: '["Count"]'
+    Name: VarCountGtEq
+    Restrictions: viewobjectglobalpocket
+    Template: '["number"]'
+  '8':
+    Id: 8
+    Labels: '["Count"]'
+    Name: VarCountLtEq
+    Restrictions: viewobjectglobalpocket
+    Template: '["number"]'
+  '9':
+    Id: 9
+    Labels: '["Keys","IgnoreCase"]'
+    Name: KeyBufferContains
+    Restrictions: viewglobal
+    Template: '["value","bool"]'
+trigger_lst:
+  '0':
+    Id: 0
+    Labels: '[]'
+    Name: ''
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
+  '1':
+    Id: 1
+    Labels: '["Seconds"]'
+    Name: ViewTimePassed
+    Restrictions: view
+    Template: '["float"]'
+  '10':
+    Id: 10
+    Labels: '["Key"]'
+    Name: KeyPress
+    Restrictions: viewglobal
+    Template: '["key"]'
+  '2':
+    Id: 2
+    Labels: '["Seconds"]'
+    Name: TotalTimePassed
+    Restrictions: global
+    Template: '["float"]'
+  '3':
+    Id: 3
+    Labels: '[]'
+    Name: MouseClick
+    Restrictions: objectpocket
+    Template: '[]'
+  '4':
+    Id: 4
+    Labels: '[]'
+    Name: NavLeft
+    Restrictions: view
+    Template: '[]'
+  '5':
+    Id: 5
+    Labels: '[]'
+    Name: NavRight
+    Restrictions: view
+    Template: '[]'
+  '6':
+    Id: 6
+    Labels: '[]'
+    Name: NavTop
+    Restrictions: view
+    Template: '[]'
+  '7':
+    Id: 7
+    Labels: '[]'
+    Name: NavBottom
+    Restrictions: view
+    Template: '[]'
+  '8':
+    Id: 8
+    Labels: '[]'
+    Name: XXXXX
+    Restrictions: ''
+    Template: '[]'
+  '9':
+    Id: 9
+    Labels: '["Object"]'
+    Name: DroppedOn
+    Restrictions: objectpocket
+    Template: '["objnum"]'
