@@ -74,6 +74,7 @@ setup(
     scripts=[],
     entry_points={
         "gui_scripts": ["GEMSedit=gemsedit.main:main"],
+        "console_scripts": ["GEMSedit=gemsedit.main:main"],
     },
     zip_safe=False,
     install_requires=DEPENDENCIES,
