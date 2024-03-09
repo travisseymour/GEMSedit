@@ -73,23 +73,23 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             action_index = self.index(item.row(), 5)
             action = self.data(action_index, QtCore.Qt.ItemDataRole.DisplayRole)
             if (condition == trigger == action == "") or (
-                condition is trigger is action is None
+                    condition is trigger is action is None
             ):
                 self.problem[str(item.row())] = "Error: Row is completely blank."
             elif (condition != "" and condition is not None) and (
-                (trigger == "" or trigger is None) or (action == "" or action is None)
+                    (trigger == "" or trigger is None) or (action == "" or action is None)
             ):
                 self.problem[str(item.row())] = (
                     "Error: Row has a condition, but lacks a trigger or action."
                 )
             elif (action == "" or action is None) and (
-                trigger != "" and trigger is not None
+                    trigger != "" and trigger is not None
             ):
                 self.problem[str(item.row())] = (
                     "Error: Row has a trigger, but lacks an action."
                 )
             elif (trigger == "" or trigger is None) and (
-                action != "" and action is not None
+                    action != "" and action is not None
             ):
                 self.problem[str(item.row())] = (
                     "Error: Row has an action, but no trigger."
@@ -113,11 +113,11 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
                     if c.strip("(") in ("PortalTo",):
                         ss = getHumanReadableFromId("views", int(s))
                     elif c.strip("(") in (
-                        "DroppedOn",
-                        "HideObject",
-                        "ShowObject",
-                        "AllowTake",
-                        "DisallowTake",
+                            "DroppedOn",
+                            "HideObject",
+                            "ShowObject",
+                            "AllowTake",
+                            "DisallowTake",
                     ):
                         ss = getHumanReadableFromId("objects", int(s))
                     else:
@@ -164,6 +164,8 @@ class ActionList:
         self.actionType = actionType
         self.media_path = mediapath
 
+        self.add_del_busy: bool = False
+
         self.initializeDatabases()
         self.initializeViews()
 
@@ -189,58 +191,73 @@ class ActionList:
         self.tableView.resizeColumnsToContents()
 
     def handleActionAdd(self):
-        if self.parent_id is not None:
-            # (Id INT, Context TEXT, Condition TEXT, Trigger TEXT, Action TEXT)
-            new_id = get_next_value("Id", "actions", default=0)
-            new_order = get_next_value("RowOrder", "actions", default=0)
+        if self.add_del_busy:
+            return
 
-            query = QtSql.QSqlQuery()
-            query.prepare(
-                "INSERT INTO actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder) "
-                "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
-            )
-            query.bindValue(":id", new_id)
-            query.bindValue(":contexttype", self.actionType)
-            query.bindValue(":contextid", self.parent_id)
-            query.bindValue(":condition", "")
-            query.bindValue(":trigger", "")
-            query.bindValue(":action", "")
-            query.bindValue(":enabled", 1)
-            query.bindValue(":roworder", new_order)
-            query.exec()
-            if query.lastError().isValid():
-                log.error(f"Problem in handleActionAdd(): {query.lastError().text()}")
-            self.filterActions()
-            self.tableView.scrollToBottom()
+        self.add_del_busy = True
+        try:
+            if self.parent_id is not None:
+                # (Id INT, Context TEXT, Condition TEXT, Trigger TEXT, Action TEXT)
+                new_id = get_next_value("Id", "actions", default=0)
+                new_order = get_next_value("RowOrder", "actions", default=0)
+
+                query = QtSql.QSqlQuery()
+                query.prepare(
+                    "INSERT INTO actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder) "
+                    "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
+                )
+                query.bindValue(":id", new_id)
+                query.bindValue(":contexttype", self.actionType)
+                query.bindValue(":contextid", self.parent_id)
+                query.bindValue(":condition", "")
+                query.bindValue(":trigger", "")
+                query.bindValue(":action", "")
+                query.bindValue(":enabled", 1)
+                query.bindValue(":roworder", new_order)
+                query.exec()
+                if query.lastError().isValid():
+                    log.error(f"Problem in handleActionAdd(): {query.lastError().text()}")
+                self.filterActions()
+                self.tableView.scrollToBottom()
+        finally:
+            self.add_del_busy = False
 
     def handleActionDel(self):
-        if self.current_id is not None:
-            # Make sure first
-            ret = CustomMessageBox.question(
-                None,
-                f"Really Delete Action #{self.current_id}",
-                "Really delete this action?",
-                font=dialog_font,
-                buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                | QtWidgets.QMessageBox.StandardButton.Ok,
-                default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
-            )
+        if self.add_del_busy:
+            return
 
-            if ret == QtWidgets.QMessageBox.StandardButton.Ok:
-                # delete action
-                query1 = QtSql.QSqlQuery()
-                query1.prepare("DELETE FROM actions where Id = :id")
-                query1.bindValue(":id", self.current_id)
-                query1.exec()
-                if query1.lastError().isValid():
-                    log.error(
-                        f"Problem in handleActionDel(): {query1.lastError().text()}"
-                    )
-                # clear current_id
-                self.current_id = None
-                # reset actionview
-                if self.parent_id is not None:
-                    self.filterActions()
+        self.add_del_busy = True
+        try:
+
+            if self.current_id is not None:
+                # Make sure first
+                ret = CustomMessageBox.question(
+                    None,
+                    f"Really Delete Action #{self.current_id}",
+                    "Really delete this action?",
+                    font=dialog_font,
+                    buttons=QtWidgets.QMessageBox.StandardButton.Cancel
+                            | QtWidgets.QMessageBox.StandardButton.Ok,
+                    default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                )
+
+                if ret == QtWidgets.QMessageBox.StandardButton.Ok:
+                    # delete action
+                    query1 = QtSql.QSqlQuery()
+                    query1.prepare("DELETE FROM actions where Id = :id")
+                    query1.bindValue(":id", self.current_id)
+                    query1.exec()
+                    if query1.lastError().isValid():
+                        log.error(
+                            f"Problem in handleActionDel(): {query1.lastError().text()}"
+                        )
+                    # clear current_id
+                    self.current_id = None
+                    # reset actionview
+                    if self.parent_id is not None:
+                        self.filterActions()
+        finally:
+            self.add_del_busy = False
 
     def initializeVALModel(self, model, query):
         model.setQuery(query)
