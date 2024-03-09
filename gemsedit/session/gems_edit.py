@@ -352,6 +352,27 @@ class GemsViews:
     def runEnvironment(self):
         """Runs current environment with GEMSrun, if it's installed and can be found."""
 
+        if self.ui.actionSaveEnv.isEnabled():
+            ret = CustomMessageBox.question(
+                self.MainWindow,
+                f"Run Request With UnSaved Changes",
+                f"This environment has unsaved changes.\n"
+                f"OK: Run environment without current changes.\n"
+                f"SAVE: Save changes and then run the updated environment.\n"
+                f"CANCEL: Close this dialog window.",
+                font=dialog_font,
+                buttons=QtWidgets.QMessageBox.StandardButton.Cancel
+                        | QtWidgets.QMessageBox.StandardButton.Ok
+                        | QtWidgets.QMessageBox.StandardButton.Save,
+                default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+            )
+            if ret == QtWidgets.QMessageBox.StandardButton.Cancel:
+                return
+            elif ret == QtWidgets.QMessageBox.StandardButton.Save:
+                self.handle_save_db()
+            elif ret == QtWidgets.QMessageBox.StandardButton.Ok:
+                ...
+
         if self.db_filename:
             if not is_installed_via_pipx("GEMSrun"):
                 _ = CustomMessageBox.critical(
@@ -395,25 +416,12 @@ class GemsViews:
         )
 
     def launchMediaFolder(self):
-        # https://stackoverflow.com/questions/13419576/open-file-in-finder-or-explorer-on-linux-or-unix
-        # https://stackoverflow.com/questions/3520493/python-show-in-finder
         if not self.media_path or not Path(self.media_path).is_dir():
             return
 
-        if sys.platform.lower() in ("win32", "cygwin"):
-            mp = ["explorer", self.media_path]
-        elif sys.platform.lower() == "darwin":
-            mp = [f"open", f"{self.media_path}"]
-        elif "linux" in sys.platform.lower():
-            mp = ["xdg-open", f"{self.media_path}"]
-        else:
-            log.warning(
-                f"No contingency for opening media folder on this platform: ({sys.platform})."
-            )
-            return
-
         try:
-            subprocess.Popen(mp)
+            webbrowser.open(f'file://{self.media_path}')
+
         except Exception as e:
             log.error(
                 f"Unable to open media folder in this location: {self.media_path}. ({e})"
@@ -508,9 +516,9 @@ class GemsViews:
 
     def handlePicEdit(self, field_name, mode):
         if self.db_filename == "" or field_name not in (
-            "Foreground",
-            "Background",
-            "Overlay",
+                "Foreground",
+                "Background",
+                "Overlay",
         ):
             return
         new_value = ""
@@ -739,7 +747,7 @@ class GemsViews:
                 f"Really delete {name} and all of it's associated actions?",
                 font=dialog_font,
                 buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                | QtWidgets.QMessageBox.StandardButton.Ok,
+                        | QtWidgets.QMessageBox.StandardButton.Ok,
                 default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
             )
 
@@ -863,7 +871,7 @@ class GemsViews:
         new_name = "???"
         ok = True
         while ok is True and (
-            str(new_name).isalnum() is False or str(new_name) in name_list
+                str(new_name).isalnum() is False or str(new_name) in name_list
         ):
             text, ok = QtWidgets.QInputDialog.getText(
                 self.MainWindow,
@@ -882,7 +890,7 @@ class GemsViews:
                     f"Press OK to try another name.",
                     font=dialog_font,
                     buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                    | QtWidgets.QMessageBox.StandardButton.Ok,
+                            | QtWidgets.QMessageBox.StandardButton.Ok,
                     default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
                 )
 
@@ -1053,15 +1061,15 @@ class GemsViews:
 
         if not project_media_folder.is_dir():
             if (
-                self.askYesNo(
-                    "Create Media Folder?",
-                    f"GEMS expects a media folder in the same one where "
-                    f"the environment file was found. In particular, the "
-                    f"folder {str(project_media_folder)} appears to be missing. GEMS requires that "
-                    f"all media be placed in this folder. Would you like"
-                    f"to create it now?",
-                )
-                is True
+                    self.askYesNo(
+                        "Create Media Folder?",
+                        f"GEMS expects a media folder in the same one where "
+                        f"the environment file was found. In particular, the "
+                        f"folder {str(project_media_folder)} appears to be missing. GEMS requires that "
+                        f"all media be placed in this folder. Would you like"
+                        f"to create it now?",
+                    )
+                    is True
             ):
                 try:
                     project_media_folder.mkdir(exist_ok=True)
@@ -1083,7 +1091,7 @@ class GemsViews:
         ui_db_tables_file = get_resource("UiDBTables.yaml")
 
         if self.connection.open_db(
-            db_yaml_file=filename, ui_list_yaml_file=ui_db_tables_file
+                db_yaml_file=filename, ui_list_yaml_file=ui_db_tables_file
         ):
             self.db_filename = filename
             self.initializeDatabases()
@@ -1183,7 +1191,7 @@ class GemsViews:
             info_text,
             font=dialog_font,
             buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-            | QtWidgets.QMessageBox.StandardButton.Ok,
+                    | QtWidgets.QMessageBox.StandardButton.Ok,
             default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
         )
 
@@ -1199,7 +1207,7 @@ class GemsViews:
             info_text,
             font=dialog_font,
             buttons=QtWidgets.QMessageBox.StandardButton.No
-            | QtWidgets.QMessageBox.StandardButton.Yes,
+                    | QtWidgets.QMessageBox.StandardButton.Yes,
             default_button=QtWidgets.QMessageBox.StandardButton.No,
         )
 
