@@ -4,7 +4,6 @@ from typing import Optional
 
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication
-from PySide6.QtWebEngineWidgets import QWebEngineView
 
 import gemsedit.gui.gems_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql

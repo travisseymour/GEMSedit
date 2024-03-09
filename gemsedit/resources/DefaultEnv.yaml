@@ -45,7 +45,7 @@ Views:
         Top: 143
         Visible: 1
         Width: 208
-    Overlay: DefaultOverview.jpg
+    Overlay: DefaultOverview_small.jpg
     RowOrder: 0
   '1':
     Actions: {}
