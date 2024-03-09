@@ -1,3 +1,4 @@
+2024-03-09 : fixed default env image name broken in last commit
 2024-03-09 : fixed start-end size disparity in default environment
 2024-03-09 : fixed some of the visual/text changes sugested by JK
 2024-03-09 : fixed some of the visual/text changes sugested by JK
