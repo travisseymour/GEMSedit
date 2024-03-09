@@ -44,7 +44,6 @@ def main():
     # Run App
     # -------
 
-
     gems_views = GemsViews(log_path=log_file)
     gems_views.MainWindow.show()
 
