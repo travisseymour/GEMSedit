@@ -7,14 +7,14 @@ Global:
     ObjectHover: ChangeCursor
     Pocketcount: 4
     Preloadresources: 0
-    Roomtransition: None
+    Roomtransition: Fade
     StageColor: '[''Dark Slate Gray'',47,79,79,255]'
     Startview: 0
-    Version: TEMP_VERSION
-    Volume: 1.0
+    Version: 1.0.6
+    Volume: 0.5
   PocketActions: {}
 Id: 0
-Name: TEMP_NAME
+Name: freshenv
 Views:
   '0':
     Actions: {}
@@ -34,6 +34,7 @@ Views:
             Id: 1
             RowOrder: 1
             Trigger: MouseClick()
+        Draggable: 0
         Height: 108
         Id: 1
         Left: 536
@@ -41,7 +42,6 @@ Views:
         Parent: 0
         RowOrder: 1
         Takeable: 0
-        Draggable: 0
         Top: 143
         Visible: 1
         Width: 208
@@ -65,16 +65,16 @@ Views:
             Id: 2
             RowOrder: 2
             Trigger: MouseClick()
+        Draggable: 0
         Height: 374
         Id: 2
-        Left: 233
+        Left: 390
         Name: WavePicture
         Parent: 1
         RowOrder: 2
         Takeable: 0
-        Draggable: 0
-        Top: 124
+        Top: 239
         Visible: 1
-        Width: 234
+        Width: 240
     Overlay: ''
     RowOrder: 1

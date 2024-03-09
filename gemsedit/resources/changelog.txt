@@ -1,3 +1,5 @@
+2024-03-09 : fixed start-end size disparity in default environment
+2024-03-09 : fixed some of the visual/text changes sugested by JK
 2024-03-09 : fixed some of the visual/text changes sugested by JK
 2024-03-07 : added console scripts in setup.py
 2024-03-06 : Merge remote-tracking branch 'origin/main'
