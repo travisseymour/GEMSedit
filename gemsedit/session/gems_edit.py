@@ -9,7 +9,7 @@ import gemsedit.gui.gems_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
-from gemsedit.utils.get_version import app_long_name
+from gemsedit.version_info import app_long_name
 from gemsedit.session.version import __version__
 from gemsedit.session import objects
 import subprocess
@@ -355,7 +355,7 @@ class GemsViews:
             try:
                 log.debug(f'{self.db_filename=}')
                 output = start_external_app(
-                    "GEMSrun", params=[self.db_filename, '--skipgui'], wait=True
+                    "GEMSrun", params=["--file", self.db_filename], wait=True
                 )
                 log.info("\n".join(output))
             except Exception as e:

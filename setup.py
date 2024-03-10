@@ -1,14 +1,9 @@
-import ast
 import io
-import re
 import os
-
-# import platform
-# import shutil
-# from pathlib import Path
 
 from setuptools import find_packages, setup
 
+from gemsedit.version_info import get_version
 
 # if platform.system() == 'Darwin' and platform.platform().split('-')[1].startswith('10.'):
 #     qt_package = 'PySide2'
@@ -45,16 +40,16 @@ with io.open(os.path.join(CURDIR, "ReadMe.md"), "r", encoding="utf-8") as f:
 PYTHON_VERSION = ">=3.9.0,<3.12"
 
 
-def get_version():
-    main_file = os.path.join(CURDIR, "gemsedit", "session", "version.py")
-    _version_re = re.compile(r"__version__\s+=\s+(?P<version>.*)")
-    with open(main_file, "r", encoding="utf8") as f:
-        match = _version_re.search(f.read())
-        if match:
-            version = match.group("version")
-        else:
-            raise ValueError(f"{str(main_file)} has invalid version format!")
-    return str(ast.literal_eval(version))
+# def get_version():
+#     main_file = os.path.join(CURDIR, "gemsedit", "session", "version.py")
+#     _version_re = re.compile(r"__version__\s+=\s+(?P<version>.*)")
+#     with open(main_file, "r", encoding="utf8") as f:
+#         match = _version_re.search(f.read())
+#         if match:
+#             version = match.group("version")
+#         else:
+#             raise ValueError(f"{str(main_file)} has invalid version format!")
+#     return str(ast.literal_eval(version))
 
 
 setup(

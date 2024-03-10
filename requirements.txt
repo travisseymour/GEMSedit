@@ -1,4 +1,4 @@
-# Works in Python 3.10.2 June 2022
+# Works in Python 3.11.6 March 2024
 #------------------------------------
 
 pyside6
