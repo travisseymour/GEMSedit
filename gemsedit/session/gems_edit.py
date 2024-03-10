@@ -9,18 +9,15 @@ import gemsedit.gui.gems_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
-from gemsedit.version_info import app_long_name
 from gemsedit.session.version import __version__
 from gemsedit.session import objects
-import subprocess
-from gemsedit.session import settings, runlaunch
+from gemsedit.session import settings
 import os
 from pathlib import Path
 from loguru import logger as log
 import time
-import sys
 
-from gemsedit import dialog_font
+from gemsedit import dialog_font, app_long_name
 from gemsedit.utils.apputils import (
     get_resource,
     is_installed_via_pipx,

@@ -19,6 +19,8 @@ app_font_bold: Optional[QFont] = None
 
 dialog_font = QFont("Arial", 12)
 
+app_short_name = "GEMSrun"
+app_long_name = "GEMS Runner"
 
 def set_app_font(font: QFont):
     global app_font
