@@ -1,3 +1,5 @@
+2024-03-09 : removed run-tester stuff that I forgot was there. may fix issue with link to gemsrun not updating properly
+2024-03-09 : formatting fix
 2024-03-09 : used better x-plat approach to opening media folder
 2024-03-09 : fixed default env image name broken in last commit
 2024-03-09 : fixed start-end size disparity in default environment

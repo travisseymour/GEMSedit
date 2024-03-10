@@ -30,35 +30,6 @@ from gemsedit.gui.custom_messagebox import CustomMessageBox
 from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.database.sqltools import get_next_value
 
-AUTO_OPEN = Path(Path.home(), "Pictures", "2022").is_dir()
-RUNTESTER = Path(
-    Path.home(),
-    "Dropbox",
-    "Documents",
-    "python_coding",
-    "GEMS_2021",
-    "FreshEnv",
-    "freshenv.yaml",
-)
-RUNTESTER = Path(
-    Path.home(),
-    "Dropbox",
-    "Documents",
-    "python_coding",
-    "GEMS_2021",
-    "KidsRoom",
-    "kidsroom.yaml",
-)
-RUNTESTER = Path(
-    Path.home(),
-    "Dropbox",
-    "Documents",
-    "python_coding",
-    "GEMS_2024",
-    "KidsRoom",
-    "kidsroom.yaml",
-)
-
 
 class GemsViews:
     def __init__(self, log_path: Optional[Path]):
@@ -101,11 +72,6 @@ class GemsViews:
         self.center()
 
         self.MainWindow.setWindowTitle(f"{app_long_name} version {__version__}")
-
-        # self.MainWindow.show()
-
-        if AUTO_OPEN:
-            self.open_environment()
 
         self.ui.actionSaveEnv.setIconVisibleInMenu(True)
         self.ui_timer = QTimer()
@@ -1019,7 +985,7 @@ class GemsViews:
                 font=dialog_font,
             )
 
-    def open_environment(self, file_name: str = str(RUNTESTER)):
+    def open_environment(self, file_name: str = ''):
         if not file_name:
             editor = QtWidgets.QFileDialog(self.MainWindow)
             editor.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
