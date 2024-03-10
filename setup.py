@@ -1,9 +1,11 @@
 import io
 import os
+import re
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
-from gemsedit.session.version import __version__
+# from gemsedit.session.version import __version__
 
 # if platform.system() == 'Darwin' and platform.platform().split('-')[1].startswith('10.'):
 #     qt_package = 'PySide2'
@@ -36,6 +38,9 @@ CURDIR = os.path.abspath(os.path.dirname(__file__))
 
 with io.open(os.path.join(CURDIR, "ReadMe.md"), "r", encoding="utf-8") as f:
     README = f.read()
+
+version_text = Path('gemsedit', 'session', 'version.py').read_text()
+__version__ = re.search(r'__version__ *= *\"([\d\.]+)\"', version_text).group(1)
 
 PYTHON_VERSION = ">=3.9.0,<3.12"
 
