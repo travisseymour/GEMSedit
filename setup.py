@@ -3,7 +3,7 @@ import os
 
 from setuptools import find_packages, setup
 
-from gemsedit.version_info import get_version
+from gemsedit.session.version import __version__
 
 # if platform.system() == 'Darwin' and platform.platform().split('-')[1].startswith('10.'):
 #     qt_package = 'PySide2'
@@ -54,7 +54,7 @@ PYTHON_VERSION = ">=3.9.0,<3.12"
 
 setup(
     name="gemsedit",
-    version=get_version(),
+    version=__version__,
     author="Travis L. Seymour, PhD",
     author_email="nogard@ucsc.edu",
     description="GEMSedit: Editor for the Graphical Environment Management System (GEMS).",

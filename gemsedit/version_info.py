@@ -26,3 +26,7 @@ if __name__ == '__main__':
         '# [CURRENT_YEAR].[MONTH].[DAY].[HOUR][MINUTE]\n'
         f'__version__ = "{get_version()}"\n'
     )
+
+    from gemsedit.session.version import __version__
+
+    print(f'Upgraded {app_short_name} version to {__version__}')
