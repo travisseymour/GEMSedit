@@ -159,161 +159,161 @@ class GemsViews:
         self.MainWindow.close()
         event.accept()
 
-    def locate_gemsrun_OLD_KEEP(self):
-        # NOTE: We are no longer using this approach, because of our current
-        #       reliance on PipX. However, we're KEEPING this code here in case
-        #       we decide to switch back to a normal app+installer distribution approach
+    # def locate_gemsrun_OLD_KEEP(self):
+    #     # NOTE: We are no longer using this approach, because of our current
+    #     #       reliance on PipX. However, we're KEEPING this code here in case
+    #     #       we decide to switch back to a normal app+installer distribution approach
+    #
+    #     """try to automatically locate the GEMSrun application on various OS platforms"""
+    #
+    #     if sys.platform == "win32":  # same for 32 and 64bit windows.
+    #         app_path = Path("C:", "Programs", "GEMSrun", "GEMSrun.exe")
+    #         log.info(
+    #             f"Searching for GEMSrun on Linux at {str(app_path)}..."
+    #             f'{"Found!" if app_path.is_file() else "Not Found."}'
+    #         )
+    #         if not app_path.is_file():
+    #             app_path = None
+    #     elif sys.platform == "linux":
+    #         app_path = Path("/", "opt", "GEMSrun", "GEMSrun")
+    #         log.info(
+    #             f"Searching for GEMSrun on Linux at {str(app_path)}..."
+    #             f'{"Found!" if app_path.is_file() else "Not Found."}'
+    #         )
+    #         if not app_path.is_file():
+    #             app_path = None
+    #     elif sys.platform == "darwin":
+    #         app_path = Path(
+    #             "/", "Applications", "GEMSrun.app", "Contents", "Macos", "GEMSrun"
+    #         )
+    #         log.info(
+    #             f"Searching for GEMSrun on Linux at {str(app_path)}..."
+    #             f'{"Found!" if app_path.is_file() else "Not Found."}'
+    #         )
+    #         if not app_path.is_file():
+    #             app_path = None
+    #     else:
+    #         log.error(
+    #             f"You appear to be using an unsupported platform ({sys.platform}). "
+    #             f"Contact developer to see if a suitable version of GEMSrun is available "
+    #             f"for your operating system."
+    #         )
+    #         app_path = None
+    #
+    #     if app_path:
+    #         self.gems_runner_path = str(app_path.resolve())
+    #         _ = CustomMessageBox.information(
+    #             self.MainWindow,
+    #             "GEMSrun Found!",
+    #             f"GEMSrun has been successfully located in {self.gems_runner_path}.\n"
+    #             f"You should be able to run the current environment.",
+    #             dialog_font,
+    #         )
+    #         return
+    #
+    #     # See if the user can find it
+    #
+    #     _ = CustomMessageBox.information(
+    #         self.MainWindow,
+    #         "GEMSrun Not Found.",
+    #         f"GEMSrun could not be automatically located on your system. "
+    #         f"On the next window, you will be asked to manually locate GEMSrun.",
+    #         dialog_font,
+    #     )
+    #
+    #     new_value = QtWidgets.QFileDialog.getOpenFileName(
+    #         None, "Locate The GEMSrun Application", self.media_path
+    #     )
+    #     app_path = new_value[0]
+    #
+    #     # minimal check
+    #
+    #     if app_path and not Path(app_path).name.startswith("GEMSrun"):
+    #         _ = CustomMessageBox.warning(
+    #             self.MainWindow,
+    #             "Unrecognized File",
+    #             f'The selected file name "{Path(app_path).name}" does not appear to '
+    #             f"be the GEMSrun application.",
+    #             dialog_font,
+    #         )
+    #         app_path = ""
+    #
+    #     # set the global var
+    #
+    #     if app_path and Path(app_path).is_file():
+    #         if sys.platform == "darwin" and Path(app_path).suffix == "app":
+    #             app_path = Path(app_path, "Contents", "MacOS", "GEMSrun")
+    #     else:
+    #         app_path = ""
+    #
+    #     self.gems_runner_path = str(app_path)
+    #     self.settings.setValue("gems_runner_path", self.gems_runner_path)
 
-        """try to automatically locate the GEMSrun application on various OS platforms"""
-
-        if sys.platform == "win32":  # same for 32 and 64bit windows.
-            app_path = Path("C:", "Programs", "GEMSrun", "GEMSrun.exe")
-            log.info(
-                f"Searching for GEMSrun on Linux at {str(app_path)}..."
-                f'{"Found!" if app_path.is_file() else "Not Found."}'
-            )
-            if not app_path.is_file():
-                app_path = None
-        elif sys.platform == "linux":
-            app_path = Path("/", "opt", "GEMSrun", "GEMSrun")
-            log.info(
-                f"Searching for GEMSrun on Linux at {str(app_path)}..."
-                f'{"Found!" if app_path.is_file() else "Not Found."}'
-            )
-            if not app_path.is_file():
-                app_path = None
-        elif sys.platform == "darwin":
-            app_path = Path(
-                "/", "Applications", "GEMSrun.app", "Contents", "Macos", "GEMSrun"
-            )
-            log.info(
-                f"Searching for GEMSrun on Linux at {str(app_path)}..."
-                f'{"Found!" if app_path.is_file() else "Not Found."}'
-            )
-            if not app_path.is_file():
-                app_path = None
-        else:
-            log.error(
-                f"You appear to be using an unsupported platform ({sys.platform}). "
-                f"Contact developer to see if a suitable version of GEMSrun is available "
-                f"for your operating system."
-            )
-            app_path = None
-
-        if app_path:
-            self.gems_runner_path = str(app_path.resolve())
-            _ = CustomMessageBox.information(
-                self.MainWindow,
-                "GEMSrun Found!",
-                f"GEMSrun has been successfully located in {self.gems_runner_path}.\n"
-                f"You should be able to run the current environment.",
-                dialog_font,
-            )
-            return
-
-        # See if the user can find it
-
-        _ = CustomMessageBox.information(
-            self.MainWindow,
-            "GEMSrun Not Found.",
-            f"GEMSrun could not be automatically located on your system. "
-            f"On the next window, you will be asked to manually locate GEMSrun.",
-            dialog_font,
-        )
-
-        new_value = QtWidgets.QFileDialog.getOpenFileName(
-            None, "Locate The GEMSrun Application", self.media_path
-        )
-        app_path = new_value[0]
-
-        # minimal check
-
-        if app_path and not Path(app_path).name.startswith("GEMSrun"):
-            _ = CustomMessageBox.warning(
-                self.MainWindow,
-                "Unrecognized File",
-                f'The selected file name "{Path(app_path).name}" does not appear to '
-                f"be the GEMSrun application.",
-                dialog_font,
-            )
-            app_path = ""
-
-        # set the global var
-
-        if app_path and Path(app_path).is_file():
-            if sys.platform == "darwin" and Path(app_path).suffix == "app":
-                app_path = Path(app_path, "Contents", "MacOS", "GEMSrun")
-        else:
-            app_path = ""
-
-        self.gems_runner_path = str(app_path)
-        self.settings.setValue("gems_runner_path", self.gems_runner_path)
-
-    def runEnvironment_OLD_KEEP(self):
-        """Runs current environment with GEMSrun, if it's installed and can be found."""
-
-        # NOTE: This approach is useful when GEMSrun is compiled to a normal
-        #       executable and installed in the default system location.
-        #       ***KEEP*** This here in case we decide to go back to this
-        #       kind of distribution. For now, we'll use a different approach
-        #       with PipX.
-
-        if self.db_filename:
-            if not self.gems_runner_path or not Path(self.gems_runner_path).is_file():
-                _ = CustomMessageBox.critical(
-                    self.MainWindow,
-                    "GEMSrun Application Not Found",
-                    f"Unable to find GEMSrun application on your computer. "
-                    f"Go to the RUN menu and click the LOCATE_GEMSRUN item.",
-                    dialog_font,
-                )
-                return
-
-            gems_run = runlaunch.RunLaunch(self.db_filename)
-            if gems_run.MainWindow.result():
-                out = gems_run.outcome
-                filename = Path(out["filename"])
-                userid = out["userid"]
-
-                if not filename.is_file():
-                    _ = CustomMessageBox.critical(
-                        self.MainWindow,
-                        "GEMSrun Error",
-                        f"Environment file at {str(filename)} is not available or not readable.",
-                        dialog_font,
-                    )
-                    return
-
-                cmd_parts = [
-                    str(self.gems_runner_path),
-                    "-f",
-                    str(filename),
-                    "-u",
-                    str(userid),
-                ]
-                if not out["playmedia"]:
-                    cmd_parts.append("--skipmedia")
-                if not out["savedata"]:
-                    cmd_parts.append("--skipdata")
-                if out["debugging"]:
-                    cmd_parts.append("--debug")
-                cmd_parts.append("--skipgui")  # avoid the GEMSrun pop-up gui
-
-                try:
-                    process = subprocess.Popen(cmd_parts, stdout=subprocess.PIPE)
-                    output = [aline for aline in process.stdout]
-                    process.wait()
-                    # log.debug(f'RETURN CODE: {process.returncode}')
-                    # log.debug(f'OUTPUT:\n{"\n".join(output)')
-                except Exception as e:
-                    _ = CustomMessageBox.critical(
-                        self.MainWindow,
-                        "GEMSrun Error",
-                        f"Could not run environment, system gave this error message: {e}",
-                        dialog_font,
-                    )
-
-                    return
+    # def runEnvironment_OLD_KEEP(self):
+    #     """Runs current environment with GEMSrun, if it's installed and can be found."""
+    #
+    #     # NOTE: This approach is useful when GEMSrun is compiled to a normal
+    #     #       executable and installed in the default system location.
+    #     #       ***KEEP*** This here in case we decide to go back to this
+    #     #       kind of distribution. For now, we'll use a different approach
+    #     #       with PipX.
+    #
+    #     if self.db_filename:
+    #         if not self.gems_runner_path or not Path(self.gems_runner_path).is_file():
+    #             _ = CustomMessageBox.critical(
+    #                 self.MainWindow,
+    #                 "GEMSrun Application Not Found",
+    #                 f"Unable to find GEMSrun application on your computer. "
+    #                 f"Go to the RUN menu and click the LOCATE_GEMSRUN item.",
+    #                 dialog_font,
+    #             )
+    #             return
+    #
+    #         gems_run = runlaunch.RunLaunch(self.db_filename)
+    #         if gems_run.MainWindow.result():
+    #             out = gems_run.outcome
+    #             filename = Path(out["filename"])
+    #             userid = out["userid"]
+    #
+    #             if not filename.is_file():
+    #                 _ = CustomMessageBox.critical(
+    #                     self.MainWindow,
+    #                     "GEMSrun Error",
+    #                     f"Environment file at {str(filename)} is not available or not readable.",
+    #                     dialog_font,
+    #                 )
+    #                 return
+    #
+    #             cmd_parts = [
+    #                 str(self.gems_runner_path),
+    #                 "-f",
+    #                 str(filename),
+    #                 "-u",
+    #                 str(userid),
+    #             ]
+    #             if not out["playmedia"]:
+    #                 cmd_parts.append("--skipmedia")
+    #             if not out["savedata"]:
+    #                 cmd_parts.append("--skipdata")
+    #             if out["debugging"]:
+    #                 cmd_parts.append("--debug")
+    #             cmd_parts.append("--skipgui")  # avoid the GEMSrun pop-up gui
+    #
+    #             try:
+    #                 process = subprocess.Popen(cmd_parts, stdout=subprocess.PIPE)
+    #                 output = [aline for aline in process.stdout]
+    #                 process.wait()
+    #                 # log.debug(f'RETURN CODE: {process.returncode}')
+    #                 # log.debug(f'OUTPUT:\n{"\n".join(output)')
+    #             except Exception as e:
+    #                 _ = CustomMessageBox.critical(
+    #                     self.MainWindow,
+    #                     "GEMSrun Error",
+    #                     f"Could not run environment, system gave this error message: {e}",
+    #                     dialog_font,
+    #                 )
+    #
+    #                 return
 
     def runEnvironment(self):
         """Runs current environment with GEMSrun, if it's installed and can be found."""
@@ -340,6 +340,7 @@ class GemsViews:
                 ...
 
         if self.db_filename:
+            log.debug(self.db_filename)
             if not is_installed_via_pipx("GEMSrun"):
                 _ = CustomMessageBox.critical(
                     self.MainWindow,
@@ -353,7 +354,7 @@ class GemsViews:
 
             try:
                 output = start_external_app(
-                    "GEMSrun", params=[self.db_filename], wait=True
+                    "GEMSrun", params=[self.db_filename, '--skipgui'], wait=True
                 )
                 log.info("\n".join(output))
             except Exception as e:
