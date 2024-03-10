@@ -353,6 +353,7 @@ class GemsViews:
                 return
 
             try:
+                log.debug(f'{self.db_filename=}')
                 output = start_external_app(
                     "GEMSrun", params=[self.db_filename, '--skipgui'], wait=True
                 )
@@ -1072,6 +1073,8 @@ class GemsViews:
                 f"Database Error While Loading GEMS Environment file:\n{filename}",
                 font=dialog_font,
             )
+
+        log.debug(f'{self.db_filename=}')
 
     def closeEnv(self):
         if self.connection.db_opened():

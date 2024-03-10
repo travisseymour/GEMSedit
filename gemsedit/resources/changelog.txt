@@ -1,3 +1,4 @@
+2024-03-09 : debug
 2024-03-09 : added --skipgui to runner process
 2024-03-09 : removed run-tester stuff that I forgot was there. may fix issue with link to gemsrun not updating properly
 2024-03-09 : formatting fix
