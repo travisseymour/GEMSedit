@@ -6,6 +6,7 @@ loguru
 pyyaml
 sqlite-utils
 matplotlib
+pyvis
 
 # ---------------
 # local pyvis stuff
@@ -18,4 +19,4 @@ jsonpickle>=1.4.1
 
 # dev
 black
-ruff
+# ruff
