@@ -166,5 +166,5 @@ def show_gems_network_graph(
         # except Exception as e:
         #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
-        webbrowser.open(str(URL.absolute()), autoraise=True)
+        webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
