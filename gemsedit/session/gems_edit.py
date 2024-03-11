@@ -3,7 +3,7 @@ from functools import partial
 from typing import Optional
 
 from PySide6.QtCore import QSettings, QTimer
-from PySide6.QtGui import QCloseEvent, QGuiApplication
+from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
 
 import gemsedit.gui.gems_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
@@ -42,6 +42,8 @@ class GemsViews:
         self.selection_model = None
 
         self.MainWindow = QtWidgets.QMainWindow()
+        self.MainWindow.setWindowIcon(QIcon(str(get_resource('images', 'Icon.png'))))
+
         self.ui = win.Ui_ViewsWindow()
         self.ui.setupUi(self.MainWindow)
 

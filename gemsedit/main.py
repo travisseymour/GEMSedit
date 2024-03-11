@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 from PySide6.QtCore import QCoreApplication, QSettings
 from loguru import logger as log
 import sys
@@ -29,6 +29,9 @@ def main():
     gemsedit.APPLICATION = QApplication(sys.argv)
     gemsedit.default_font = QFont("Arial", 12)
     gemsedit.SETTINGS = QSettings()
+
+    tray = QSystemTrayIcon()
+
 
     log_folder = Path(Path.home(), "Documents", "GEMS")
     log_file = Path(log_folder, "gems_edit_log.txt")
