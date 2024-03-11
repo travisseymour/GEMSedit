@@ -28,7 +28,7 @@ def make_network(
         layout=layout,
         notebook=False,
         width="100%",
-        height="100%",
+        height="1200px",
     )
 
     # net.path = '/home/nogard/Dropbox/pythonProject1/pyvistemplate.html'
@@ -167,3 +167,4 @@ def show_gems_network_graph(
         #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
         webbrowser.open(str(URL.absolute()), autoraise=True)
+        # webbrowser.open_new(str(URL.absolute()))
