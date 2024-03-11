@@ -5,6 +5,7 @@ pyside6
 loguru
 pyyaml
 sqlite-utils
+matplotlib
 
 # ---------------
 # local pyvis stuff

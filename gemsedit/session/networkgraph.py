@@ -10,14 +10,19 @@ from PySide6.QtWidgets import QMainWindow
 from gemsedit.database.connection import GemsDB
 from gemsedit.utils.apputils import get_resource
 from gemsedit.utils.localmunch import Munch
-from gemsedit.pyvis.network import Network
+# from gemsedit.pyvis.network import Network
+from pyvis.network import Network
+# pip uninstall wcwidth pure-eval ptyprocess traitlets pygments prompt-toolkit pexpect parso executing decorator asttokens stack-data matplotlib-inline jedi ipython pyvis -y
 from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
+
+from loguru import logger as log
 
 
 def make_network(
-    db: Munch, media_path: Path, directed: bool = True, layout: bool = False
+        db: Munch, media_path: Path, directed: bool = True, layout: bool = False
 ) -> Network:
     net = Network(
+        # height="1200px",
         bgcolor="#FFFFFF",
         directed=directed,
         layout=layout,
@@ -25,6 +30,7 @@ def make_network(
         width="100%",
         height="100%",
     )
+
     # net.path = '/home/nogard/Dropbox/pythonProject1/pyvistemplate.html'
 
     # net.add_node('D', label='Delta', image=image, shape='image', title='Live Long and Prosper!')
@@ -35,13 +41,13 @@ def make_network(
         net.add_node(
             Id,
             label=view.Name,
+            shape="image",
             # vvv direct web ref works!
             # image="http://images4.fanpop.com/image/photos/14900000/Court-Martial-mr-spock-14948576-200-200.jpg",
-            # vvv name only (not surprisingly) does not work!
-            # image=str(view.Foreground),
             # vvv local disk reference DOES NOT WORK!?
+            # image=str(Path(media_path, view.Foreground)),
             image=str(Path(media_path, view.Foreground).as_uri()),
-            shape="image",
+            # image="https://13thdimension.com/wp-content/uploads/2016/07/xfrtoc70fgzg49ubheth.jpg",
             title=f"View {Id}: {view.Name}",
         )
 
@@ -55,8 +61,8 @@ def make_network(
 
     # add edges
     for (
-        Id,
-        view,
+            Id,
+            view,
     ) in db.Views.items():
         # check for view actions
         if view.Actions:
@@ -108,7 +114,7 @@ def create_network_window(url: Union[str, Path]) -> QWebEngineView:
 
 
 def show_gems_network_graph(
-    parent: QMainWindow, conn: GemsDB, media_path: Union[Path, str]
+        parent: QMainWindow, conn: GemsDB, media_path: Union[Path, str]
 ):
     graph_file = str(Path(conn.tmp_folder.name, "gems_network_graph.html"))
 
@@ -118,7 +124,7 @@ def show_gems_network_graph(
 
     db = Munch.fromDict(db)
 
-    network = make_network(db, media_path)
+    network = make_network(db, media_path, directed=True, layout=False)
 
     network.save_graph(graph_file)
 
@@ -160,4 +166,4 @@ def show_gems_network_graph(
         # except Exception as e:
         #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
-        webbrowser.open_new(str(URL.absolute()))
+        webbrowser.open(str(URL.absolute()), autoraise=True)
