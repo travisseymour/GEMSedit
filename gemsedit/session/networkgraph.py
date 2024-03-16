@@ -155,7 +155,7 @@ def show_gems_network_graph(
             _ = parent.network_window.close()
             parent.network_window = None
         except Exception as e:
-            log.info(f'>>>>>>>>>>>>>{e}')
+            log.error(f'>>>>>>>>>>>>>{e}')
 
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
         #        how I specify the path! Until this is fixed, going back to
@@ -166,6 +166,6 @@ def show_gems_network_graph(
         # except Exception as e:
         #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
-        log.info(f'URL={str(URL)}')
+        log.error(f'URL={str(URL)}')
         webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
