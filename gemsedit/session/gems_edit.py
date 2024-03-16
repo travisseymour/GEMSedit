@@ -1,3 +1,4 @@
+import platform
 import webbrowser
 from functools import partial
 
@@ -352,7 +353,9 @@ class GemsViews:
             try:
                 log.debug(f'{self.db_filename=}')
                 output = start_external_app(
-                    "GEMSrun", params=["--file", self.db_filename], wait=False
+                    "GEMSrun",
+                    params=["--file", self.db_filename],
+                    wait=False if platform.platform().startswith('Windows') else True
                 )
                 log.info("\n".join(output))
             except Exception as e:

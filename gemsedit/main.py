@@ -1,3 +1,4 @@
+import datetime
 import os
 from pathlib import Path
 
@@ -35,7 +36,7 @@ def main():
     gemsedit.log.add(str(gemsedit.LOG_PATH), rotation="5 MB")
 
     try:
-        print(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
+        gemsedit.log.info(f'\n----------------------{datetime.datetime.now().ctime()}-----------------------------')
         gemsedit.log.info(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
     except Exception as e:
         print(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
