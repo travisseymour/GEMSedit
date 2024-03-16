@@ -30,6 +30,7 @@ def main():
     gemsedit.SETTINGS = QSettings()
 
     gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), 'GEMS')
+    gemsedit.CONFIG_PATH.mkdir(exist_ok=True)
     gemsedit.LOG_PATH = Path(gemsedit.CONFIG_PATH, 'gems_run_log.txt')
     gemsedit.log.add(str(gemsedit.LOG_PATH), rotation="5 MB")
 
