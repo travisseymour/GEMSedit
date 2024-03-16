@@ -7,7 +7,7 @@ pyyaml
 sqlite-utils
 matplotlib
 pyvis
-appdata
+appdirs
 
 # ---------------
 # local pyvis stuff

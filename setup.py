@@ -24,7 +24,8 @@ DEPENDENCIES = [
     "Jinja2",
     "networkx",
     "jsonpickle",
-    "pyvis"
+    "pyvis",
+    "appdirs"
 ]
 EXCLUDE_FROM_PACKAGES = [
     "contrib",
