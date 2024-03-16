@@ -6,7 +6,7 @@ from PySide6.QtGui import QCloseEvent, QGuiApplication
 
 import gemsedit.gui.param_select_dlg as win
 from PySide6 import QtCore, QtWidgets, QtSql
-from loguru import logger as log
+from gemsedit import log
 from gemsedit.gui import helptext, mycolors, mycursors, mykeys, genericrowdelegates
 
 

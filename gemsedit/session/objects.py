@@ -6,7 +6,7 @@ from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
 import os
 import re
 from gemsedit.database.connection import mark_db_as_changed
-from loguru import logger as log
+from gemsedit import log
 
 from gemsedit import dialog_font
 from gemsedit.gui.custom_messagebox import CustomMessageBox
@@ -628,7 +628,7 @@ class objects:
             f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder",
         )
         self.connectBaseModelToTableView(self.model, self.ui.object_tableView)
-        # from loguru import logger as log
+        # from gemsedit import log
         # self.model.dataChanged.connect(lambda x: partial(log.debug, "objects 514 data changed"))
 
     def initializeViews(self):

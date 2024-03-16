@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QMainWindow, QTableView
 
 import gemsedit.gui.settings_dlg as win
 from PySide6 import QtCore, QtWidgets, QtSql
-from loguru import logger as log
+from gemsedit import log
 import gemsedit.gui.genericrowdelegates as generic_row_delegates
 from gemsedit.gui import helptext, mycolors
 from gemsedit.database.connection import mark_db_as_changed

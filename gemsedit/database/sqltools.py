@@ -1,7 +1,7 @@
 from typing import Optional, Union
 
 from PySide6 import QtSql
-from loguru import logger as log
+from gemsedit import log
 
 
 def get_last_value(column_name: str, table_name: str):

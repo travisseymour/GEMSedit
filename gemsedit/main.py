@@ -1,10 +1,8 @@
 import os
-from pathlib import Path
 
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 from PySide6.QtCore import QCoreApplication, QSettings
-from loguru import logger as log
 import sys
 import platform
 
@@ -32,22 +30,10 @@ def main():
 
     tray = QSystemTrayIcon()
 
-
-    log_folder = Path(Path.home(), "Documents", "GEMS")
-    log_file = Path(log_folder, "gems_edit_log.txt")
-
-    try:
-        log_folder.mkdir(exist_ok=True)
-        assert log_folder.is_dir()
-        log_file.write_text("")
-        log.add(log_file, level="INFO", backtrace=True, diagnose=True)
-    except Exception as e:
-        log.error(f"Unable to setup logging to {str(log_file)} ({e}).")
-
     # Run App
     # -------
 
-    gems_views = GemsViews(log_path=log_file)
+    gems_views = GemsViews()
     gems_views.MainWindow.show()
 
     sys.exit(gemsedit.APPLICATION.exec())

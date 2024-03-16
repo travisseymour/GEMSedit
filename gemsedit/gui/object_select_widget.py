@@ -2,7 +2,7 @@ from PySide6 import QtCore, QtGui, QtWidgets, QtSql
 import os
 
 from PySide6.QtCore import QPoint
-from loguru import logger as log
+from gemsedit import log
 
 
 class ObjectSelect(QtWidgets.QDialog):

@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from loguru import logger as log
+from gemsedit import log
 
 import platform
 
@@ -20,7 +20,7 @@ def frozen() -> bool:
 
 
 if frozen():
-    log.level("INFO")
+    log.level("DEBUG")  # FIXME: This should be "INFO" for release
 
 
 def addroot(currpath):
@@ -86,7 +86,7 @@ def is_installed_via_pipx(package_name: str) -> bool:
 
 
 def start_external_app(
-    app_name: str, params: Optional[list[str]] = None, wait: bool = False
+        app_name: str, params: Optional[list[str]] = None, wait: bool = False
 ) -> list:
     command = [app_name]
 

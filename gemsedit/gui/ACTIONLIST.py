@@ -3,7 +3,7 @@ from PySide6 import QtCore, QtGui, QtWidgets, QtSql
 import gemsedit.gui.genericcoldelegates as generic_col_delegates
 import re
 from gemsedit.database.connection import mark_db_as_changed
-from loguru import logger as log
+from gemsedit import log
 
 from gemsedit import dialog_font
 from gemsedit.gui.custom_messagebox import CustomMessageBox

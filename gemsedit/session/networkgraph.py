@@ -12,10 +12,9 @@ from gemsedit.utils.apputils import get_resource
 from gemsedit.utils.localmunch import Munch
 # from gemsedit.pyvis.network import Network
 from pyvis.network import Network
-# pip uninstall wcwidth pure-eval ptyprocess traitlets pygments prompt-toolkit pexpect parso executing decorator asttokens stack-data matplotlib-inline jedi ipython pyvis -y
 from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
 
-from loguru import logger as log
+from gemsedit import log
 
 
 def make_network(
@@ -155,7 +154,7 @@ def show_gems_network_graph(
             _ = parent.network_window.close()
             parent.network_window = None
         except Exception as e:
-            log.error(f'>>>>>>>>>>>>>{e}')
+            log.debug(f'>>>>>>>>>>>>>{e}')
 
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
         #        how I specify the path! Until this is fixed, going back to
@@ -166,6 +165,6 @@ def show_gems_network_graph(
         # except Exception as e:
         #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
-        log.error(f'URL={str(URL)}')
+        log.debug(f'URL={str(URL)}')
         webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))

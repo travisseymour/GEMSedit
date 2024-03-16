@@ -14,7 +14,7 @@ from gemsedit.session import objects
 from gemsedit.session import settings
 import os
 from pathlib import Path
-from loguru import logger as log
+from gemsedit import log, LOG_PATH
 import time
 
 from gemsedit import dialog_font, app_long_name
@@ -29,8 +29,7 @@ from gemsedit.database.sqltools import get_next_value
 
 
 class GemsViews:
-    def __init__(self, log_path: Optional[Path]):
-        self.log_path = log_path
+    def __init__(self):
         self.connection = connection.GemsDB()
         self.model = None
         self.current_row = None
@@ -369,13 +368,12 @@ class GemsViews:
 
     def window_tab_changed(self):
         if self.ui.tabWidget.currentIndex() == 1:
-            if self.log_path:
-                try:
-                    self.ui.log_plainTextEdit.setPlainText(self.log_path.read_text())
-                except Exception as e:
-                    self.ui.log_plainTextEdit.setPlainText(
-                        f"Error reading log file at {str(self.log_path)} ({e})"
-                    )
+            try:
+                self.ui.log_plainTextEdit.setPlainText(LOG_PATH.read_text())
+            except Exception as e:
+                self.ui.log_plainTextEdit.setPlainText(
+                    f"Error reading log file at {str(LOG_PATH)} ({e})"
+                )
 
     def check_for_db_changed(self):
         self.ui.actionSaveEnv.setEnabled(
