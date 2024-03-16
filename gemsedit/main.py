@@ -10,7 +10,6 @@ import platform
 
 import gemsedit
 
-from gemsedit.session.gems_edit import GemsViews
 
 os.environ["OUTDATED_IGNORE"] = "1"
 if platform.platform().split("-")[1].startswith("10."):
@@ -35,6 +34,7 @@ def main():
     gemsedit.log.add(str(gemsedit.LOG_PATH), rotation="5 MB")
 
     try:
+        print(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
         gemsedit.log.info(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
     except Exception as e:
         gemsedit.log.warning(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
@@ -43,6 +43,8 @@ def main():
 
     # Run App
     # -------
+
+    from gemsedit.session.gems_edit import GemsViews
 
     gems_views = GemsViews()
     gems_views.MainWindow.show()

@@ -153,8 +153,8 @@ def show_gems_network_graph(
         try:
             _ = parent.network_window.close()
             parent.network_window = None
-        except Exception as e:
-            log.debug(f'>>>>>>>>>>>>>{e}')
+        except AttributeError:
+            ...
 
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
         #        how I specify the path! Until this is fixed, going back to
