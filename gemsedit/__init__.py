@@ -29,6 +29,11 @@ app_long_name = "GEMS Runner"
 
 log.add(str(LOG_PATH), rotation="5 MB")
 
+try:
+    log.info(f'GEMSedit app logging enabled at {LOG_PATH}')
+except Exception as e:
+    log.warning(f'GEMSedit app logging to {LOG_PATH} failed: "{e}"')
+
 
 def set_app_font(font: QFont):
     global app_font
