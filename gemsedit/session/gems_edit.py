@@ -1,6 +1,5 @@
 import webbrowser
 from functools import partial
-from typing import Optional
 
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
@@ -353,7 +352,7 @@ class GemsViews:
             try:
                 log.debug(f'{self.db_filename=}')
                 output = start_external_app(
-                    "GEMSrun", params=["--file", self.db_filename], wait=True
+                    "GEMSrun", params=["--file", self.db_filename], wait=False
                 )
                 log.info("\n".join(output))
             except Exception as e:
