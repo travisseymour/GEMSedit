@@ -14,8 +14,9 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
 else:
     pathEX = Path(__file__).parent
 
-CONFIG_PATH = Path(appdirs.user_config_dir(), 'GEMS')
-LOG_PATH = Path(CONFIG_PATH, 'gems_run_log.txt')
+CONFIG_PATH: Optional[Path] = None
+LOG_PATH: Optional[Path] = None
+
 APPLICATION: Optional[QApplication] = None
 SETTINGS: Optional[QSettings] = None
 
@@ -26,13 +27,6 @@ dialog_font = QFont("Arial", 12)
 
 app_short_name = "GEMSrun"
 app_long_name = "GEMS Runner"
-
-log.add(str(LOG_PATH), rotation="5 MB")
-
-try:
-    log.info(f'GEMSedit app logging enabled at {LOG_PATH}')
-except Exception as e:
-    log.warning(f'GEMSedit app logging to {LOG_PATH} failed: "{e}"')
 
 
 def set_app_font(font: QFont):

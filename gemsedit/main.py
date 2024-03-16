@@ -1,5 +1,7 @@
 import os
+from pathlib import Path
 
+import appdirs
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 from PySide6.QtCore import QCoreApplication, QSettings
@@ -27,6 +29,15 @@ def main():
     gemsedit.APPLICATION = QApplication(sys.argv)
     gemsedit.default_font = QFont("Arial", 12)
     gemsedit.SETTINGS = QSettings()
+
+    gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), 'GEMS')
+    gemsedit.LOG_PATH = Path(gemsedit.CONFIG_PATH, 'gems_run_log.txt')
+    gemsedit.log.add(str(gemsedit.LOG_PATH), rotation="5 MB")
+
+    try:
+        gemsedit.log.info(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
+    except Exception as e:
+        gemsedit.log.warning(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
 
     tray = QSystemTrayIcon()
 
