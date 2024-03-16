@@ -11,6 +11,8 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
 else:
     pathEX = Path(__file__).parent
 
+from loguru import logger as log
+
 CONFIG_PATH: Optional[Path] = None
 LOG_PATH: Optional[Path] = None
 
