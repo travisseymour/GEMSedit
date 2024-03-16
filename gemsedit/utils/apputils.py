@@ -19,8 +19,8 @@ def frozen() -> bool:
     return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
 
-if frozen():
-    log.level("DEBUG")  # FIXME: This should be "INFO" for release
+# if frozen():
+#     log.level("DEBUG")  # FIXME: This should be "INFO" for release
 
 
 def addroot(currpath):

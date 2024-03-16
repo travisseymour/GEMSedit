@@ -2,12 +2,9 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-import appdirs
 from PySide6.QtCore import QSettings
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
-
-from loguru import logger as log
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     pathEX = Path(sys._MEIPASS)
