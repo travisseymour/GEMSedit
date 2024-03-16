@@ -44,6 +44,9 @@ def main():
     # Run App
     # -------
 
+    # NOTE: This import has to go here because the gemsedit.log and gemsedit.LOG_PATH need to already be set
+    #       before the gems_edit module gets loaded or else these paths don't point to the right place.
+    #       this is likely more of an issue with how gems is packaged.
     from gemsedit.session.gems_edit import GemsViews
 
     gems_views = GemsViews()
