@@ -119,6 +119,7 @@ def show_gems_network_graph(
 
     db = load_yaml_as_dict(conn.yaml_file_name, extra_yaml=conn.ui_list_yaml_file)
     if not db:
+        log.debug(f'Unable to load database!')
         return False
 
     db = Munch.fromDict(db)
@@ -126,6 +127,7 @@ def show_gems_network_graph(
     network = make_network(db, media_path, directed=True, layout=False)
 
     network.save_graph(graph_file)
+    log.debug(f'Saved network graph file to {graph_file}')
 
     html = Path(graph_file).read_text()
 
@@ -139,7 +141,9 @@ def show_gems_network_graph(
     #     f'{Path(media_path, "vis-network.min.js").as_uri()}',
     # )
 
-    Path(media_path, "env_graph.html").write_text(html)
+    graph_path = Path(media_path, "env_graph.html")
+    graph_path.write_text(html)
+    log.debug(f'Wrote {graph_path.stat().st_size} bytes to graph file.')
 
     # before we show graph, we need to copy over the vis components
     js = get_resource("local_cdn", "vis-network.min.js").read_text()
