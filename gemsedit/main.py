@@ -39,7 +39,6 @@ def main():
         gemsedit.log.info(f'\n---------------{datetime.datetime.now().ctime()}---------------')
         gemsedit.log.info(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
     except Exception as e:
-        print(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
         gemsedit.log.warning(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
 
     tray = QSystemTrayIcon()
