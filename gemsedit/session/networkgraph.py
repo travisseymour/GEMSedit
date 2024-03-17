@@ -127,7 +127,7 @@ def show_gems_network_graph(
     network = make_network(db, media_path, directed=True, layout=False)
 
     network.save_graph(graph_file)
-    log.debug(f'Saved network graph file to {graph_file}')
+    log.debug(f'Temporarily saved network graph file to {graph_file}')
 
     html = Path(graph_file).read_text()
 
@@ -152,6 +152,7 @@ def show_gems_network_graph(
     Path(media_path, "vis-network.min.js").write_text(js)
 
     URL = Path(media_path, "env_graph.html")
+    log.debug(f'URL for network graph will be {str(URL)}')
 
     try:
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
@@ -165,7 +166,7 @@ def show_gems_network_graph(
         # parent.network_window.show()
 
         # FIXME: this alternative just opens network graph html file in the default browser
-        log.debug(f'URL={str(URL)}')
+        log.debug(f'about to show network graph from {str(URL.absolute().as_uri())}')
         webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
     except Exception as e:
