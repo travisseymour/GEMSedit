@@ -149,22 +149,20 @@ def show_gems_network_graph(
 
     URL = Path(media_path, "env_graph.html")
 
-    if hasattr(parent, "network_window"):
-        try:
-            _ = parent.network_window.close()
-            parent.network_window = None
-        except AttributeError:
-            ...
-
+    try:
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
         #        how I specify the path! Until this is fixed, going back to
         #        trying to launch the graph using the default web browser.
-        # try:
-        #     parent.network_window = create_network_window(URL)
-        #     parent.network_window.show()
-        # except Exception as e:
-        #     log.warning(f'Unable to open web view window for "{URL=}":\n{e}')
 
+        # _ = parent.network_window.close()
+        # parent.network_window = None
+
+        # parent.network_window = create_network_window(URL)
+        # parent.network_window.show()
+
+        # FIXME: this alternative just opens network graph html file in the default browser
         log.debug(f'URL={str(URL)}')
         webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
+    except Exception as e:
+        log.warning(f'Unable to open network graph html file @ "{URL=}":\n{e}')
