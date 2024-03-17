@@ -11,7 +11,6 @@ import platform
 
 import gemsedit
 
-
 os.environ["OUTDATED_IGNORE"] = "1"
 if platform.platform().split("-")[1].startswith("10."):
     os.environ["QT_MAC_WANTS_LAYER"] = "1"
@@ -21,14 +20,14 @@ def main():
     # Setup App
     # ---------
 
+    gemsedit.APPLICATION = QApplication(sys.argv)
+    gemsedit.default_font = QFont("Arial", 12)
+    gemsedit.SETTINGS = QSettings()
+
     # Set some global vars
     QCoreApplication.setOrganizationName("TravisSeymour")
     QCoreApplication.setOrganizationDomain("travisseymour.com")
     QCoreApplication.setApplicationName("GEMSedit")
-
-    gemsedit.APPLICATION = QApplication(sys.argv)
-    gemsedit.default_font = QFont("Arial", 12)
-    gemsedit.SETTINGS = QSettings()
 
     gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), 'GEMS')
     gemsedit.CONFIG_PATH.mkdir(exist_ok=True)

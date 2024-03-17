@@ -303,7 +303,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Currnet GEMS Environment: </string>
+                  <string>Current GEMS Environment: </string>
                  </property>
                 </widget>
                </item>
@@ -346,7 +346,7 @@
                   <string>Manage objects for this view</string>
                  </property>
                  <property name="text">
-                  <string>Ojbects</string>
+                  <string>Objects</string>
                  </property>
                 </widget>
                </item>
@@ -964,6 +964,11 @@
    <property name="text">
     <string>Open</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionNew">
    <property name="icon">
@@ -972,6 +977,11 @@
    </property>
    <property name="text">
     <string>New</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionClose">
@@ -982,6 +992,11 @@
    <property name="text">
     <string>Close</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="icon">
@@ -990,6 +1005,11 @@
    </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionTask_Configuration">
@@ -1003,6 +1023,11 @@
    <property name="toolTip">
     <string>Edit Global Environmnet Settings</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionTask_Actions">
    <property name="icon">
@@ -1015,6 +1040,11 @@
    <property name="toolTip">
     <string>Edit Global Environment Actions</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionDocumentation">
    <property name="icon">
@@ -1023,6 +1053,11 @@
    </property>
    <property name="text">
     <string>Help</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionRun_Environment">
@@ -1036,6 +1071,11 @@
    <property name="toolTip">
     <string>Run Current GEMS Environment</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionMedia">
    <property name="icon">
@@ -1048,10 +1088,23 @@
    <property name="toolTip">
     <string>Launch Media Folder Viewer</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionLocate_GEMSrun">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Locate GEMSrun</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionSave">
@@ -1091,6 +1144,11 @@
    </property>
    <property name="toolTip">
     <string>Launch Network Graph in Default Browser</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
  </widget>
