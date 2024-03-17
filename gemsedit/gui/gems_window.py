@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLay
     QTableView, QToolBar, QToolButton, QWidget)
 
 from gemsedit.gui.CustomClickableLabel import ClickableLabel
-import gemsedit_rc
+import gemsedit.gui.gemsedit_rc
 
 class Ui_ViewsWindow(object):
     def setupUi(self, ViewsWindow):
