@@ -146,10 +146,13 @@ def show_gems_network_graph(
     log.debug(f'Wrote {graph_path.stat().st_size} bytes to graph file.')
 
     # before we show graph, we need to copy over the vis components
-    js = get_resource("local_cdn", "vis-network.min.js").read_text()
-    css = get_resource("local_cdn", "vis.css").read_text()
-    Path(media_path, "vis.css").write_text(css)
-    Path(media_path, "vis-network.min.js").write_text(js)
+    try:
+        js = get_resource("local_cdn", "vis-network.min.js").read_text()
+        css = get_resource("local_cdn", "vis.css").read_text()
+        Path(media_path, "vis.css").write_text(css)
+        Path(media_path, "vis-network.min.js").write_text(js)
+    except Exception as e:
+        log.debug(f'Unable to copy js and css files from {str(get_resource("local_cdn"))} to {str(media_path)}: "{e}"')
 
     URL = Path(media_path, "env_graph.html")
     log.debug(f'URL for network graph will be {str(URL)}')
