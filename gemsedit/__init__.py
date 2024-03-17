@@ -11,6 +11,7 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
 else:
     pathEX = Path(__file__).parent
 
+# NOTE: This vvv import is not used here, but must be here for reference!
 from loguru import logger as log
 
 CONFIG_PATH: Optional[Path] = None
