@@ -1,4 +1,8 @@
-# Works in Python 3.11.6 March 2024
+# Currently developing with Python 3.11 (GEMSIDE)
+# 1. Had to do this on linux:
+# sudo apt-get install libxcb-cursor0
+# 2. Use this on linux to give pycharm link to designer:
+# /home/MYUSERNAME/GLOBAL_VENVS/GEMS/lib/python3.11/site-packages/PySide6/designer
 #------------------------------------
 
 PySide6
@@ -12,10 +16,10 @@ appdirs
 # ---------------
 # local pyvis stuff
 # ---------------
-Jinja2>=2.10
-networkx>=1.11
-jsonpickle>=1.4.1
-# pyqtwebengine (for now we're launching in browser)
+# Jinja2>=2.10
+# networkx>=1.11
+# jsonpickle>=1.4.1
+# # pyqtwebengine (for now we're launching in browser)
 # ----------------
 
 # dev

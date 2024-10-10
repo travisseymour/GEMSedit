@@ -29,8 +29,8 @@ trigger_desc = {
 action_desc = {
     "": "<b>Blank</b> : Returns a blank action.",
     "PortalTo": "<b>PortalTo</b>(View) : This action causes GEMS to load <b><i>View</i></b>.",
-    "PlaySound": '<b>PlaySound</b>(SoundFile,Start,Volume,Loop) : This action instructs GEMS to play the audio in <b><i>SoundFile</i></b>. The soundfile beings playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\] and plays at the desired <b><i>Volume</i></b> \[0.0 to 1.0\]. If <b><i>Loop</i></b> is "True" \[default = "False"\], the soundfile will loop continually.',
-    "PlayVideo": "<b>PlayVideo</b>(VideoFile,Start,Left,Top,WithinObject) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> at position (<b><i>Left</i></b>,<b><i>Top</i></b>). The videofile beings playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\]. If <b><i>WithinObject</i></b> refers to a currently visible object, the video will play within that object's boundary. Otherwise, the video will play fullscreen.",
+    "PlaySound": '<b>PlaySound</b>(SoundFile,Start,Volume,Loop) : This action instructs GEMS to play the audio in <b><i>SoundFile</i></b>. The soundfile begins playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\] and plays at the desired <b><i>Volume</i></b> \[0.0 to 1.0\]. If <b><i>Loop</i></b> is "True" \[default = "False"\], the soundfile will loop continually.',
+    "PlayVideo": "<b>PlayVideo</b>(VideoFile,Start,Left,Top,WithinObject) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> at position (<b><i>Left</i></b>,<b><i>Top</i></b>). The videofile begins playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\]. If <b><i>WithinObject</i></b> refers to a currently visible object, the video will play within that object's boundary. Otherwise, the video will play fullscreen.",
     "ShowImage": '<b>ShowImage</b>(ImageFile,Left,Top,Duration,Clickthrough) : This action loads and displays <b><i>ImageFile</i></b> at (Left,Top) for <b><i>Duration</i></b> seconds \[default = 0 = forever\]. The image is removed when the view is changed. If <b><i>Clickthrough</i></b> is "True" \[default = "False"\], clickable objects <em>under</em> the image will continue to fire associated actions.',
     "RunProgram": "<b>RunProgram</b>(Application,Parameters) : This action causes GEMS to execute <b><i>Application</i></b> with any provided optional <b><i>Parameters</i></b>.",
 
@@ -65,7 +65,7 @@ action_desc = {
 
 # settings_desc = {
 #     'Id': '',
-#     'Startview': '<b>Starting View</b> : When run, the GEMS environment with first open this view.',
+#     'Startview': '<b>Starting View</b> : When run, the GEMS environment will first open this view.',
 #     'Pocketcount': '<b>Pocket Count</b> : Number of pockets to display/use in the environment.',
 #     'Roomtransition': '<b>Room Transition</b> : Dictates how images will transition between views.',
 #     'Preloadresources': '<b>Preload Resources</b> : Preload all resources into RAM before starting environment.',
@@ -78,7 +78,7 @@ action_desc = {
 #       feb 10 2022 -tls
 settings_desc = {
     "Id": "",
-    "Start View": "<b>Starting View</b> : When run, the GEMS environment with first open this view.",
+    "Start View": "<b>Starting View</b> : When run, the GEMS environment will first open this view.",
     "Pocket Count": "<b>Pocket Count</b> : Number of pockets to display/use in the environment.",
     "View Transition": "<b>Room Transition</b> : Dictates how images will transition between views.",
     "Preload Resources": "<b>Preload Resources</b> : Preload all resources into RAM before starting environment."
@@ -88,14 +88,14 @@ settings_desc = {
     "GEMSedit Version": "<b>GEMSedit Version</b> : GEMSrun version with which the environment database was last saved. "
     "NOTE: This setting updates automatically and is not user editable.",
     "Stage Color": "<b>Stage Color</b> : Background color of main window within GEMSrun. Will only be visible if "
-    "image size < screen size. It could possibly be visible during view changes on slower computers.",
+    "image size is less than screen size. It could be visible during view changes on slower computers.",
     "Display Type": "<b>Display Type</b> : Either Windowed (GEMSrun sizes its main window to the image size) or "
     "FullScreen (GEMSrun sets its main window to full screen mode).",
     "Object Hover": "<b>Object Hover</b> : Indicates what (if any) information GEMSrun gives users when the mouse "
     "cursor hovers over an object. The default is a subtle change in the mouse cursor. There are "
     "several less subtle options, mostly used in debugging. You can also choose to do nothing when"
     "objects are hovered -- this may be confusing to users and is not recommended.",
-    "Media Volume": "This settings sets the overall volume level for any media playback within GEMSrun (0.0 to 1.0).",
+    "Media Volume": "This setting sets the overall volume level for any media playback within GEMSrun (0.0 to 1.0).",
 }
 
 transistion_desc = {

@@ -25,7 +25,7 @@ DEPENDENCIES = [
     "networkx",
     "jsonpickle",
     "pyvis",
-    "appdirs"
+    "appdirs",
 ]
 EXCLUDE_FROM_PACKAGES = [
     "contrib",
@@ -41,26 +41,14 @@ CURDIR = os.path.abspath(os.path.dirname(__file__))
 with io.open(os.path.join(CURDIR, "ReadMe.md"), "r", encoding="utf-8") as f:
     README = f.read()
 
-version_text = Path('gemsedit', 'session', 'version.py').read_text()
-__version__ = re.search(r'__version__ *= *\"([\d\.]+)\"', version_text).group(1)
+version_text = Path("gemsedit", "session", "version.py").read_text()
+__version__ = re.search(r"__version__ *= *\"([\d\.]+)\"", version_text).group(1)
 
 PYTHON_VERSION = ">=3.9.0,<3.12"
 
-
-# def get_version():
-#     main_file = os.path.join(CURDIR, "gemsedit", "session", "version.py")
-#     _version_re = re.compile(r"__version__\s+=\s+(?P<version>.*)")
-#     with open(main_file, "r", encoding="utf8") as f:
-#         match = _version_re.search(f.read())
-#         if match:
-#             version = match.group("version")
-#         else:
-#             raise ValueError(f"{str(main_file)} has invalid version format!")
-#     return str(ast.literal_eval(version))
-
-
 setup(
     name="gemsedit",
+    requires_python="==3.11.*",
     version=__version__,
     author="Travis L. Seymour, PhD",
     author_email="nogard@ucsc.edu",

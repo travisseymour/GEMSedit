@@ -78,9 +78,9 @@ class MagicModel(QtCore.QAbstractTableModel):
 
     def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
         if (
-            not index.isValid()
-            or not 0 <= index.row() < self.rowCount()
-            or not self._settings_list
+                not index.isValid()
+                or not 0 <= index.row() < self.rowCount()
+                or not self._settings_list
         ):
             return None
 
@@ -130,33 +130,6 @@ class GlobalAct:
         self.connectSlots()
 
         self.center()
-
-        # >> 2022 - things seem to be working, consider removing this? wait until after QA finishes.
-        # ????: I don't know why these next three "# Magic" lines plus self.magicOne and self.magicTwo
-        #       Are needed to make this window persist when .show is used. But it works in settings.py
-        #       (where similar structures are needed) and I've blown almost two days trying to figure
-        #       it out. So no more -- we just declare this stuff for now and I (magically) get the
-        #       behavior I want. which is for this window to be non modal..requred when fileopen delegate is launched.
-        # self.model = None # Magic
-        # self.magicResult = None # Magic
-        # self.magicOne() # Magic
-
-    # def magicOne(self):
-    #     # create model
-    #     self.model = MagicModel()
-    #     settingslist = []
-    #     settingslist.append(['number','Id',0])
-    #     settingslist.append(['viewnum','Start View',0])
-    #     settingslist.append(['number','Pocket Count',0])
-    #     settingslist.append(['translist','View Transistion',0])
-    #     settingslist.append(['bool','Preload Resources',0])
-    #     settingslist.append(['picfile','Global Overlay',0])
-    #     settingslist.append(['number','Version',0])
-    #     if len(settingslist):
-    #         self.model.initData(settingslist, viewdict={0:'0:hi',1:'1:there'}, signalupdate=self.magicTwo)
-    #
-    # def magicTwo(self):
-    #     self.magicResult = 1
 
     def center(self):
         qr = self.MainWindow.frameGeometry()
