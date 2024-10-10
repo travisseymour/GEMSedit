@@ -44,10 +44,9 @@ with io.open(os.path.join(CURDIR, "ReadMe.md"), "r", encoding="utf-8") as f:
 version_text = Path("gemsedit", "session", "version.py").read_text()
 __version__ = re.search(r"__version__ *= *\"([\d\.]+)\"", version_text).group(1)
 
-PYTHON_VERSION = ">=3.9.0,<3.12"
-
 setup(
     name="gemsedit",
+    # requires_python=">=3.9.0,<3.12",
     requires_python="==3.11.*",
     version=__version__,
     author="Travis L. Seymour, PhD",
@@ -69,7 +68,6 @@ setup(
     zip_safe=False,
     install_requires=DEPENDENCIES,
     test_suite="",
-    python_requires=PYTHON_VERSION,
     # license and classifier list:
     # https://pypi.org/pypi?%3Aaction=list_classifiers
     license="License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
