@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'gems_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
     QToolButton,
     QWidget,
 )
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 from gemsedit.gui.CustomClickableLabel import ClickableLabel
 
@@ -53,7 +54,7 @@ class Ui_ViewsWindow(object):
         self.actionOpen = QAction(ViewsWindow)
         self.actionOpen.setObjectName("actionOpen")
         icon = QIcon()
-        icon.addFile(":/newPrefix/media/1409888970_Folder.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(":/newPrefix/media/1409888970_Folder.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionOpen.setIcon(icon)
         font1 = QFont()
         font1.setPointSize(12)
@@ -61,49 +62,49 @@ class Ui_ViewsWindow(object):
         self.actionNew = QAction(ViewsWindow)
         self.actionNew.setObjectName("actionNew")
         icon1 = QIcon()
-        icon1.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionNew.setIcon(icon1)
         self.actionNew.setFont(font1)
         self.actionClose = QAction(ViewsWindow)
         self.actionClose.setObjectName("actionClose")
         icon2 = QIcon()
-        icon2.addFile(":/newPrefix/media/1409889639_Cancel.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon2.addFile(":/newPrefix/media/1409889639_Cancel.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionClose.setIcon(icon2)
         self.actionClose.setFont(font1)
         self.actionQuit = QAction(ViewsWindow)
         self.actionQuit.setObjectName("actionQuit")
         icon3 = QIcon()
-        icon3.addFile(":/newPrefix/media/1409888938_Log Out.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon3.addFile(":/newPrefix/media/1409888938_Log Out.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionQuit.setIcon(icon3)
         self.actionQuit.setFont(font1)
         self.actionTask_Configuration = QAction(ViewsWindow)
         self.actionTask_Configuration.setObjectName("actionTask_Configuration")
         icon4 = QIcon()
-        icon4.addFile(":/newPrefix/media/1409888901_Settings.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon4.addFile(":/newPrefix/media/1409888901_Settings.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionTask_Configuration.setIcon(icon4)
         self.actionTask_Configuration.setFont(font1)
         self.actionTask_Actions = QAction(ViewsWindow)
         self.actionTask_Actions.setObjectName("actionTask_Actions")
         icon5 = QIcon()
-        icon5.addFile(":/newPrefix/media/1409889836_Properties.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon5.addFile(":/newPrefix/media/1409889836_Properties.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionTask_Actions.setIcon(icon5)
         self.actionTask_Actions.setFont(font1)
         self.actionDocumentation = QAction(ViewsWindow)
         self.actionDocumentation.setObjectName("actionDocumentation")
         icon6 = QIcon()
-        icon6.addFile(":/newPrefix/media/1409889623_Help.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon6.addFile(":/newPrefix/media/1409889623_Help.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionDocumentation.setIcon(icon6)
         self.actionDocumentation.setFont(font1)
         self.actionRun_Environment = QAction(ViewsWindow)
         self.actionRun_Environment.setObjectName("actionRun_Environment")
         icon7 = QIcon()
-        icon7.addFile(":/newPrefix/media/1409971621_Play.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon7.addFile(":/newPrefix/media/1409971621_Play.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionRun_Environment.setIcon(icon7)
         self.actionRun_Environment.setFont(font1)
         self.actionMedia = QAction(ViewsWindow)
         self.actionMedia.setObjectName("actionMedia")
         icon8 = QIcon()
-        icon8.addFile(":/newPrefix/media/folder-images-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon8.addFile(":/newPrefix/media/folder-images-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionMedia.setIcon(icon8)
         self.actionMedia.setFont(font1)
         self.actionLocate_GEMSrun = QAction(ViewsWindow)
@@ -114,7 +115,7 @@ class Ui_ViewsWindow(object):
         self.actionSave.setObjectName("actionSave")
         self.actionSave.setEnabled(False)
         icon9 = QIcon()
-        icon9.addFile(":/newPrefix/media/Save-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon9.addFile(":/newPrefix/media/Save-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionSave.setIcon(icon9)
         self.actionSaveEnv = QAction(ViewsWindow)
         self.actionSaveEnv.setObjectName("actionSaveEnv")
@@ -123,7 +124,7 @@ class Ui_ViewsWindow(object):
         self.actionNetwork_Graph = QAction(ViewsWindow)
         self.actionNetwork_Graph.setObjectName("actionNetwork_Graph")
         icon10 = QIcon()
-        icon10.addFile(":/newPrefix/media/network_color.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon10.addFile(":/newPrefix/media/network_color.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionNetwork_Graph.setIcon(icon10)
         self.actionNetwork_Graph.setFont(font1)
         self.centralwidget = QWidget(ViewsWindow)
@@ -185,7 +186,7 @@ class Ui_ViewsWindow(object):
         self.viewDel_toolButton = QToolButton(self.layoutWidget)
         self.viewDel_toolButton.setObjectName("viewDel_toolButton")
         icon11 = QIcon()
-        icon11.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon11.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.viewDel_toolButton.setIcon(icon11)
 
         self.gridLayout_3.addWidget(self.viewDel_toolButton, 1, 4, 1, 1)
@@ -351,7 +352,7 @@ class Ui_ViewsWindow(object):
         self.fgOpen_toolButton = QToolButton(self.layoutWidget2)
         self.fgOpen_toolButton.setObjectName("fgOpen_toolButton")
         icon12 = QIcon()
-        icon12.addFile(":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon12.addFile(":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.fgOpen_toolButton.setIcon(icon12)
 
         self.gridLayout_6.addWidget(self.fgOpen_toolButton, 0, 1, 1, 1)
@@ -359,7 +360,9 @@ class Ui_ViewsWindow(object):
         self.fgCopy_toolButton = QToolButton(self.layoutWidget2)
         self.fgCopy_toolButton.setObjectName("fgCopy_toolButton")
         icon13 = QIcon()
-        icon13.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon13.addFile(
+            ":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
         self.fgCopy_toolButton.setIcon(icon13)
 
         self.gridLayout_6.addWidget(self.fgCopy_toolButton, 0, 2, 1, 1)
@@ -410,7 +413,9 @@ class Ui_ViewsWindow(object):
         self.bgCopy_toolButton = QToolButton(self.layoutWidget2)
         self.bgCopy_toolButton.setObjectName("bgCopy_toolButton")
         icon14 = QIcon()
-        icon14.addFile(":/newPrefix/media/1409970876_circle-arrow-right-48.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon14.addFile(
+            ":/newPrefix/media/1409970876_circle-arrow-right-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
         self.bgCopy_toolButton.setIcon(icon14)
 
         self.gridLayout_7.addWidget(self.bgCopy_toolButton, 0, 2, 1, 1)
@@ -526,7 +531,7 @@ class Ui_ViewsWindow(object):
         self.toolBar.setEnabled(True)
         self.toolBar.setFont(font)
         self.toolBar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        ViewsWindow.addToolBar(Qt.TopToolBarArea, self.toolBar)
+        ViewsWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())

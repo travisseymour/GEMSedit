@@ -25,6 +25,12 @@ from plumbum import local
 """
 This converts .ui files to .py files for PyQt6, but to keep GIT history accurate, 
 I only want to process ui files that actually changed.
+
+After running this, files that try to import the _rc file may need this line added:
+
+import gemsedit.gui.gemsedit_rc  # noqa: F401
+
+the comment prevents black and ruff from deleting it!
 """
 
 try:

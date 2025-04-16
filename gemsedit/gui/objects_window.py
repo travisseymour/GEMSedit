@@ -3,22 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'objects_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (
-    QCoreApplication,
-    QMetaObject,
-    QSize,
-    Qt,
-)
-from PySide6.QtGui import (
-    QFont,
-    QIcon,
-    QPixmap,
-)
+from PySide6.QtCore import QCoreApplication, QMetaObject, QSize, Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -35,6 +26,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 from gemsedit.gui.CustomClickableLabel import ClickableLabel
 
@@ -113,7 +105,7 @@ class Ui_ObjectsWindow(object):
         self.objectAdd_toolButton = QToolButton(self.layoutWidget)
         self.objectAdd_toolButton.setObjectName("objectAdd_toolButton")
         icon = QIcon()
-        icon.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.objectAdd_toolButton.setIcon(icon)
 
         self.gridLayout_2.addWidget(self.objectAdd_toolButton, 1, 3, 1, 1)
@@ -121,7 +113,7 @@ class Ui_ObjectsWindow(object):
         self.objectDel_toolButton = QToolButton(self.layoutWidget)
         self.objectDel_toolButton.setObjectName("objectDel_toolButton")
         icon1 = QIcon()
-        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.objectDel_toolButton.setIcon(icon1)
 
         self.gridLayout_2.addWidget(self.objectDel_toolButton, 1, 4, 1, 1)
@@ -309,12 +301,7 @@ class Ui_ObjectsWindow(object):
         self.drawSelect_toolButton.setObjectName("drawSelect_toolButton")
         self.drawSelect_toolButton.setEnabled(True)
         icon2 = QIcon()
-        icon2.addFile(
-            ":/newPrefix/media/selection_arrow-256.png",
-            QSize(),
-            QIcon.Normal,
-            QIcon.Off,
-        )
+        icon2.addFile(":/newPrefix/media/selection_arrow-256.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.drawSelect_toolButton.setIcon(icon2)
 
         self.horizontalLayout.addWidget(self.drawSelect_toolButton)

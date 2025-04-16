@@ -3,21 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'settings_dlg.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (
-    QCoreApplication,
-    QMetaObject,
-    QSize,
-    Qt,
-)
-from PySide6.QtGui import (
-    QFont,
-    QPixmap,
-)
+from PySide6.QtCore import QCoreApplication, QMetaObject, QSize, Qt
+from PySide6.QtGui import QFont, QPixmap
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QFrame,
@@ -29,6 +21,7 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QTableView,
 )
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
 class Ui_SettingsDialog(object):

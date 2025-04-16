@@ -3,22 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'globalact_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (
-    QCoreApplication,
-    QMetaObject,
-    QSize,
-    Qt,
-)
-from PySide6.QtGui import (
-    QFont,
-    QIcon,
-    QPixmap,
-)
+from PySide6.QtCore import QCoreApplication, QMetaObject, QSize, Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QGridLayout,
@@ -30,6 +21,7 @@ from PySide6.QtWidgets import (
     QTableView,
     QToolButton,
 )
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
 class Ui_GlobalActionsDialog(object):
@@ -135,7 +127,7 @@ class Ui_GlobalActionsDialog(object):
         self.gaAdd_toolButton = QToolButton(GlobalActionsDialog)
         self.gaAdd_toolButton.setObjectName("gaAdd_toolButton")
         icon = QIcon()
-        icon.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(":/newPrefix/media/add-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.gaAdd_toolButton.setIcon(icon)
 
         self.horizontalLayout_4.addWidget(self.gaAdd_toolButton)
@@ -143,7 +135,7 @@ class Ui_GlobalActionsDialog(object):
         self.gaDel_toolButton = QToolButton(GlobalActionsDialog)
         self.gaDel_toolButton.setObjectName("gaDel_toolButton")
         icon1 = QIcon()
-        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.gaDel_toolButton.setIcon(icon1)
 
         self.horizontalLayout_4.addWidget(self.gaDel_toolButton)

@@ -3,22 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'run_launch_dlg.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (
-    QCoreApplication,
-    QMetaObject,
-    QSize,
-    Qt,
-)
-from PySide6.QtGui import (
-    QFont,
-    QIcon,
-    QPixmap,
-)
+from PySide6.QtCore import QCoreApplication, QMetaObject, QSize, Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QCheckBox,
     QGridLayout,
@@ -32,6 +23,7 @@ from PySide6.QtWidgets import (
     QToolButton,
     QVBoxLayout,
 )
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
 class Ui_GEMSRunDialog(object):
@@ -155,7 +147,7 @@ class Ui_GEMSRunDialog(object):
         font4.setUnderline(False)
         self.run_pushButton.setFont(font4)
         icon = QIcon()
-        icon.addFile(":/newPrefix/media/1409889607_Play.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(":/newPrefix/media/1409889607_Play.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.run_pushButton.setIcon(icon)
 
         self.horizontalLayout_4.addWidget(self.run_pushButton)
@@ -284,7 +276,7 @@ class Ui_GEMSRunDialog(object):
         self.fileselect_toolButton.setObjectName("fileselect_toolButton")
         self.fileselect_toolButton.setFont(font6)
         icon1 = QIcon()
-        icon1.addFile(":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.fileselect_toolButton.setIcon(icon1)
 
         self.horizontalLayout_12.addWidget(self.fileselect_toolButton)
@@ -338,11 +330,7 @@ class Ui_GEMSRunDialog(object):
         self.label_7.setText(QCoreApplication.translate("GEMSRunDialog", "If Data File Exists: ", None))
         # if QT_CONFIG(tooltip)
         self.overwrite_radioButton.setToolTip(
-            QCoreApplication.translate(
-                "GEMSRunDialog",
-                "Overwrite any existing data file with same filename.",
-                None,
-            )
+            QCoreApplication.translate("GEMSRunDialog", "Overwrite any existing data file with same filename.", None)
         )
         # endif // QT_CONFIG(tooltip)
         self.overwrite_radioButton.setText(QCoreApplication.translate("GEMSRunDialog", "Overwrite", None))
@@ -355,9 +343,7 @@ class Ui_GEMSRunDialog(object):
         # if QT_CONFIG(tooltip)
         self.debug_checkBox.setToolTip(
             QCoreApplication.translate(
-                "GEMSRunDialog",
-                "Primarily for printing behavioral data and gems_run errors to the terminal.",
-                None,
+                "GEMSRunDialog", "Primarily for printing behavioral data and gems_run errors to the terminal.", None
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -379,9 +365,7 @@ class Ui_GEMSRunDialog(object):
         # if QT_CONFIG(tooltip)
         self.save_checkBox.setToolTip(
             QCoreApplication.translate(
-                "GEMSRunDialog",
-                "If enabled, gems_run will save behavioral data to a data file.",
-                None,
+                "GEMSRunDialog", "If enabled, gems_run will save behavioral data to a data file.", None
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -394,19 +378,13 @@ class Ui_GEMSRunDialog(object):
         # if QT_CONFIG(tooltip)
         self.dbfile_plainTextEdit.setToolTip(
             QCoreApplication.translate(
-                "GEMSRunDialog",
-                "Click Folder Icon To Choose A Gems Environment Database File.",
-                None,
+                "GEMSRunDialog", "Click Folder Icon To Choose A Gems Environment Database File.", None
             )
         )
         # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(tooltip)
         self.fileselect_toolButton.setToolTip(
-            QCoreApplication.translate(
-                "GEMSRunDialog",
-                "Click To Choose A Gems Environment Database File.",
-                None,
-            )
+            QCoreApplication.translate("GEMSRunDialog", "Click To Choose A Gems Environment Database File.", None)
         )
         # endif // QT_CONFIG(tooltip)
         self.fileselect_toolButton.setText(QCoreApplication.translate("GEMSRunDialog", "...", None))
