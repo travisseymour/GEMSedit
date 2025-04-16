@@ -9,9 +9,6 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-from __future__ import division
-from __future__ import print_function
-
 from PySide6.QtCore import Qt, QDate, QSize
 from PySide6.QtGui import QIcon, QPixmap, QColor, QTextDocument
 from PySide6.QtWidgets import (
@@ -202,8 +199,8 @@ class ComboRowColoredDelegate(QStyledItemDelegate):
 class DirectoryRowDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         editor = QFileDialog(parent)
-        editor.filesSelected.connect(lambda: editor.setResult(QDialog.Accepted))
-        editor.setFileMode(QFileDialog.Directory)
+        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
+        editor.setFileMode(QFileDialog.FileMode.Directory)
         editor.setWindowTitle("Choose A Directory")
         # r = option.rect
         # r.setHeight(600)
@@ -225,7 +222,7 @@ class DirectoryRowDelegate(QStyledItemDelegate):
 
     def setModelData(self, editor, model, index):
         # model.setData(index, str(editor.selectedFiles()[0]))
-        if editor.result() == QDialog.Accepted:
+        if editor.result() == QDialog.DialogCode.Accepted:
             model.setData(index, str(editor.selectedFiles()[0]))
 
 
@@ -237,23 +234,18 @@ class FileRowDelegate(QStyledItemDelegate):
         self.oldwd = "./"
 
     def createEditor(self, parent, option, index):
-        editor = QFileDialog(parent, modal=False, directory=self.mediapath)
-        editor.filesSelected.connect(lambda: editor.setResult(QDialog.Accepted))
+        editor = QFileDialog(parent)
+        editor.setModal(False)
         editor.setDirectory(self.mediapath)
-        editor.setFileMode(QFileDialog.ExistingFile)
-        # editor.setFilter(self.filterstr)
+        editor.setFileMode(QFileDialog.FileMode.ExistingFile)
         editor.setNameFilter(self.filterstr)
         editor.setWindowTitle("Choose an existing " + self.filterstr)
-        # print("filerowdelegate called with this directory: {}".format(self.mediapath)) # DEBUG
-        # print("filerowdelegate is set to this directory: {}".format(editor.directory())) # DEBUG
+
+        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
+
         self.oldwd = os.getcwd()
         os.chdir(self.mediapath)
-        # editor.setWindowModality(Qt.ApplicationModal)
-        # editor.setModal(False)
-        # r = option.rect
-        # r.setHeight(600)
-        # r.setWidth(600)
-        # editor.setGeometry(r)
+
         return editor
 
     def setEditorData(self, editor, index):
@@ -271,7 +263,7 @@ class FileRowDelegate(QStyledItemDelegate):
     def setModelData(self, editor, model, index):
         # model.setData(index, str(editor.selectedFiles()[0]))
         # print("filerowdelegate: editor.result={} qdialog.accepted={}".format(editor.result(),QDialog.Accepted))
-        if editor.result() == QDialog.Accepted:
+        if editor.result() == QDialog.DialogCode.Accepted:
             model.setData(index, os.path.basename(str(editor.selectedFiles()[0])))
         os.chdir(self.oldwd)
 

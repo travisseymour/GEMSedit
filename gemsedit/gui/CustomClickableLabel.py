@@ -1,5 +1,3 @@
-__author__ = "nogard"
-
 # http://pastebin.com/Vaxg99P1
 
 import sys

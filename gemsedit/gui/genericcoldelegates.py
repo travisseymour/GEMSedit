@@ -8,6 +8,7 @@
 # it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
+
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtCore import QDate
 from PySide6.QtGui import QTextDocument, QColor
@@ -99,7 +100,7 @@ class IntegerColumnDelegate(QStyledItemDelegate):
     def setModelData(self, editor, model, index):
         # assumes editor has 2 attributes: 'interpretText' and 'value'
         editor.interpretText()
-        model.setData(index, editor.value(), Qt.EditRole)
+        model.setData(index, editor.value(), Qt.ItemDataRole.EditRole)
 
 
 class DateColumnDelegate(QStyledItemDelegate):

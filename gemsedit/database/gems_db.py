@@ -1,23 +1,40 @@
+"""
+GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
+Copyright (C) 2025 Travis L. Seymour, PhD
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 import shutil
 
 from pathlib import Path
 
 from PySide6.QtWidgets import QMessageBox
 
-from gemsedit import dialog_font
 from gemsedit.utils.apputils import get_resource
-from gemsedit.gui.custom_messagebox import CustomMessageBox
 from gemsedit.session.version import __version__
 
 
 def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
     errors = []
     if yaml_db_file.is_file():
-        answer = CustomMessageBox.question(
+        answer = QMessageBox.question(
             None,
             "Overwrite Existing Environment File?",
             f"The GEMS environment file {str(yaml_db_file)} already exists. Overwrite it with a new empty environment?",
-            dialog_font,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No
         )
         if answer == QMessageBox.StandardButton.No:
             return tuple(errors)

@@ -1,88 +1,71 @@
+"""
+GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
+Copyright (C) 2025 Travis L. Seymour, PhD
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 import subprocess
 import sys
 from pathlib import Path
 from typing import Optional
 
-from gemsedit import log
-
 import platform
 
-import warnings
-from functools import wraps
 
-from gemsedit import pathEX
+from importlib.resources import files, as_file
+
 
 OS = platform.system()
+
 
 
 def frozen() -> bool:
     return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
 
-# if frozen():
-#     log.level("DEBUG")  # FIXME: This should be "INFO" for release
-
-
-def addroot(currpath):
-    main_file_location = Path(__file__).parent.absolute()
-    return str(Path(main_file_location, currpath))
-
-
-def ospath(path_str: str) -> str:
-    if OS == "Windows":
-        return str(Path(path_str).absolute())
-    else:
-        return path_str
-
-
-def ignore_warnings(f):
-    # https://stackoverflow.com/questions/879173
-    @wraps(f)
-    def inner(*args, **kwargs):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("ignore")
-            response = f(*args, **kwargs)
-        return response
-
-    return inner
-
-
-class add_path:
+def get_resource(*args: str, project: str = "gemsedit") -> Path:
     """
-    Creates A Context Manager For Temporarily Adding Directory To System Path.
-    E.g., see https://stackoverflow.com/questions/17211078
+    Constructs and returns the full absolute path to a resource within '[PROJECT]/resources'.
+
+    Args:
+        *args: A sequence of strings representing the relative path components
+               within '[PROJECT]/resources', e.g., ("other", "devices.zip").
+
+    Returns:
+        pathlib.Path: An absolute Path object pointing to the resource that works
+                      during development and when packaged.
+
+    Raises:
+        FileNotFoundError: If the resource does not exist.
+        RuntimeError: If an error occurs while resolving the resource path.
     """
+    try:
+        # Base directory for resources in the package
+        base = files(project).joinpath("resources")
 
-    def __init__(self, path):
-        self.path = path
+        # Construct the resource path relative to the base
+        resource_path = base.joinpath(*args)
 
-    def __enter__(self):
-        sys.path.insert(0, self.path)
+        # Ensure the resource path is accessible as a file
+        with as_file(resource_path) as resolved_path:
+            return Path(resolved_path).resolve()  # Ensure the path is absolute
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Resource not found: {'/'.join(args)}")
+    except Exception as e:
+        raise RuntimeError(f"Error accessing resource: {e}")
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        try:
-            sys.path.remove(self.path)
-        except ValueError:
-            pass
-
-
-def fjoin(*elements):
-    return Path(pathEX, *elements).resolve()
-
-
-def get_resource(*args) -> Path:
-    base_folder = Path(pathEX, "resources").resolve()
-
-    target_path = Path(base_folder, *args)
-    if target_path.exists():
-        return target_path
-    else:
-        raise FileNotFoundError(f'Unable to locate resource "{str(target_path)}"')
-
-
-def is_installed_via_pipx(package_name: str) -> bool:
-    result = subprocess.run(["pipx", "list"], capture_output=True, text=True)
-    return package_name in result.stdout
 
 
 def start_external_app(

@@ -1,9 +1,28 @@
+"""
+GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
+Copyright (C) 2025 Travis L. Seymour, PhD
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 import platform
 import webbrowser
 from functools import partial
 
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
+from PySide6.QtWidgets import QMessageBox
 
 import gemsedit.gui.gems_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
@@ -20,10 +39,8 @@ import time
 from gemsedit import dialog_font, app_long_name
 from gemsedit.utils.apputils import (
     get_resource,
-    is_installed_via_pipx,
     start_external_app,
 )
-from gemsedit.gui.custom_messagebox import CustomMessageBox
 from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.database.sqltools import get_next_value
 
@@ -200,7 +217,7 @@ class GemsViews:
     #
     #     if app_path:
     #         self.gems_runner_path = str(app_path.resolve())
-    #         _ = CustomMessageBox.information(
+    #         _ = QMessageBox.information(
     #             self.MainWindow,
     #             "GEMSrun Found!",
     #             f"GEMSrun has been successfully located in {self.gems_runner_path}.\n"
@@ -211,7 +228,7 @@ class GemsViews:
     #
     #     # See if the user can find it
     #
-    #     _ = CustomMessageBox.information(
+    #     _ = QMessageBox.information(
     #         self.MainWindow,
     #         "GEMSrun Not Found.",
     #         f"GEMSrun could not be automatically located on your system. "
@@ -227,7 +244,7 @@ class GemsViews:
     #     # minimal check
     #
     #     if app_path and not Path(app_path).name.startswith("GEMSrun"):
-    #         _ = CustomMessageBox.warning(
+    #         _ = QMessageBox.warning(
     #             self.MainWindow,
     #             "Unrecognized File",
     #             f'The selected file name "{Path(app_path).name}" does not appear to '
@@ -258,7 +275,7 @@ class GemsViews:
     #
     #     if self.db_filename:
     #         if not self.gems_runner_path or not Path(self.gems_runner_path).is_file():
-    #             _ = CustomMessageBox.critical(
+    #             _ = QMessageBox.critical(
     #                 self.MainWindow,
     #                 "GEMSrun Application Not Found",
     #                 f"Unable to find GEMSrun application on your computer. "
@@ -274,7 +291,7 @@ class GemsViews:
     #             userid = out["userid"]
     #
     #             if not filename.is_file():
-    #                 _ = CustomMessageBox.critical(
+    #                 _ = QMessageBox.critical(
     #                     self.MainWindow,
     #                     "GEMSrun Error",
     #                     f"Environment file at {str(filename)} is not available or not readable.",
@@ -304,7 +321,7 @@ class GemsViews:
     #                 # log.debug(f'RETURN CODE: {process.returncode}')
     #                 # log.debug(f'OUTPUT:\n{"\n".join(output)')
     #             except Exception as e:
-    #                 _ = CustomMessageBox.critical(
+    #                 _ = QMessageBox.critical(
     #                     self.MainWindow,
     #                     "GEMSrun Error",
     #                     f"Could not run environment, system gave this error message: {e}",
@@ -317,18 +334,17 @@ class GemsViews:
         """Runs current environment with GEMSrun, if it's installed and can be found."""
 
         if self.ui.actionSaveEnv.isEnabled():
-            ret = CustomMessageBox.question(
+            ret = QMessageBox.question(
                 self.MainWindow,
-                f"Run Request With UnSaved Changes",
-                f"This environment has unsaved changes.\n"
-                f"OK: Run environment without current changes.\n"
-                f"SAVE: Save changes and then run the updated environment.\n"
-                f"CANCEL: Close this dialog window.",
-                font=dialog_font,
-                buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                        | QtWidgets.QMessageBox.StandardButton.Ok
-                        | QtWidgets.QMessageBox.StandardButton.Save,
-                default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                "Run Request With UnSaved Changes",
+                "This environment has unsaved changes.\n"
+                "OK: Run environment without current changes.\n"
+                "SAVE: Save changes and then run the updated environment.\n"
+                "CANCEL: Close this dialog window.",
+                QMessageBox.StandardButton.Ok
+                | QMessageBox.StandardButton.Save
+                | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel
             )
             if ret == QtWidgets.QMessageBox.StandardButton.Cancel:
                 return
@@ -339,16 +355,6 @@ class GemsViews:
 
         if self.db_filename:
             log.debug(self.db_filename)
-            if not is_installed_via_pipx("GEMSrun"):
-                _ = CustomMessageBox.critical(
-                    self.MainWindow,
-                    "GEMSrun Application Not Found",
-                    f"The 'GEMSrun' application does not appear to be installed on your computer using PipX. "
-                    f"In order to use GEMSrun (assuming you've already installed PipX; https://github.com/pypa/pipx), "
-                    f"go to a terminal commandline and run `pipx install https://github.com/travisseymour/GEMSrun`.",
-                    dialog_font,
-                )
-                return
 
             try:
                 log.debug(f'{self.db_filename=}')
@@ -359,12 +365,12 @@ class GemsViews:
                 )
                 log.info("\n".join(output))
             except Exception as e:
-                _ = CustomMessageBox.critical(
+                _ = QMessageBox.critical(
                     self.MainWindow,
                     "GEMSrun Application Failed",
-                    f"Attempting to run GEMSrun (installed via PipX) has failed with this error message:\n"
+                    f"Attempting to run GEMSrun has failed with this error message:\n"
                     f'"{e}"',
-                    dialog_font,
+                    QMessageBox.StandardButton.Ok,
                 )
                 return
 
@@ -424,11 +430,11 @@ class GemsViews:
             fg_pic = self.model.record(self.current_row).value("Foreground")
             # bgpic = self.model.record(self.current_row).value("Background")
             if fg_pic == "":
-                _ = CustomMessageBox.information(
+                _ = QMessageBox.information(
                     self.MainWindow,
                     "Unable To Comply",
                     "First select a foreground picture for this view.",
-                    dialog_font,
+                    QMessageBox.StandardButton.Ok,
                 )
             else:
                 self.object_win = objects.objects(
@@ -441,22 +447,22 @@ class GemsViews:
                 self.MainWindow.hide()
                 self.object_win.MainWindow.show()
         else:
-            _ = CustomMessageBox.information(
+            _ = QMessageBox.information(
                 self.MainWindow,
                 "Unable To Comply",
                 "Click on an existing view first.",
-                dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
 
     def handle_network_graph(self):
         if self.connection.db_opened():
             show_gems_network_graph(parent=self.MainWindow, conn=self.connection, media_path=self.media_path)
         else:
-            CustomMessageBox.information(
+            QMessageBox.information(
                 self.MainWindow,
                 "Network Graph Unavailable",
                 "You must load or create an environment first.",
-                dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
 
     def handle_save_db(self):
@@ -708,14 +714,12 @@ class GemsViews:
             name = self.model.record(self.current_row).value("Name")
             # Make sure first
 
-            ret = CustomMessageBox.question(
+            ret = QMessageBox.question(
                 self.MainWindow,
                 f"Delete {bn} {name}",
-                f"Really delete {name} and all of it's associated actions?",
-                font=dialog_font,
-                buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                        | QtWidgets.QMessageBox.StandardButton.Ok,
-                default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                f"Really delete {name} and all of its associated actions?",
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel
             )
 
             if ret == QtWidgets.QMessageBox.StandardButton.Ok:
@@ -849,16 +853,14 @@ class GemsViews:
             new_name = str(text)
             if new_name in name_list:
 
-                ret = CustomMessageBox.question(
+                ret = QMessageBox.question(
                     self.MainWindow,
                     "Duplicate Name Error",
-                    f"{new_name} refers to an existing {bn.lower()}. "
-                    f"You must choose a unique name for each {bn.lower()}. "
+                    f"{new_name} refers to an existing {bn.lower()}.\n"
+                    f"You must choose a unique name for each {bn.lower()}.\n"
                     f"Press OK to try another name.",
-                    font=dialog_font,
-                    buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                            | QtWidgets.QMessageBox.StandardButton.Ok,
-                    default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                    QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
+                    QMessageBox.StandardButton.Cancel
                 )
 
                 if ret == QtWidgets.QMessageBox.StandardButton.Cancel:
@@ -979,11 +981,11 @@ class GemsViews:
             self.open_environment(str(file_path))
         else:
             err_msg = "\n".join(errors)
-            CustomMessageBox.critical(
+            QMessageBox.critical(
                 self.MainWindow,
                 "Database Error",
                 f"Unable to create new GEMS environment:\n{err_msg}",
-                font=dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
 
     def open_environment(self, file_name: str = ''):
@@ -1003,21 +1005,21 @@ class GemsViews:
             filename = file_name
 
         if not filename.lower().endswith(".yaml"):
-            CustomMessageBox.critical(
+            QMessageBox.critical(
                 self.MainWindow,
                 "Filename Error",
                 f"File doesn't appear to be a GEMS Environment file, "
                 "filename doesn't end with '*.yaml':\n{filename}",
-                font=dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
             return
 
         if not Path(filename).is_file():
-            CustomMessageBox.critical(
+            QMessageBox.critical(
                 self.MainWindow,
                 "Filename Error",
                 f"Unable to load this file:\n{filename}",
-                font=dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
             return
 
@@ -1041,13 +1043,13 @@ class GemsViews:
                 try:
                     project_media_folder.mkdir(exist_ok=True)
                 except:
-                    CustomMessageBox.critical(
+                    QMessageBox.critical(
                         self.MainWindow,
                         "Filesystem Error",
                         f"Unable to create media folder {str(project_media_folder)}. "
                         f"You will need to manually create this folder"
                         f"in order to run GEMS.",
-                        font=dialog_font,
+                        QMessageBox.StandardButton.Ok,
                     )
                     return
             else:
@@ -1066,11 +1068,11 @@ class GemsViews:
             self.ui.dbfilename_Label.setText(os.path.basename(filename))
             self.enableButtons()
         else:
-            CustomMessageBox.critical(
+            QMessageBox.critical(
                 self.MainWindow,
                 "Database Error",
                 f"Database Error While Loading GEMS Environment file:\n{filename}",
-                font=dialog_font,
+                QMessageBox.StandardButton.Ok,
             )
 
         log.debug(f'{self.db_filename=}')
@@ -1154,14 +1156,12 @@ class GemsViews:
 
     def askOKCancel(self, text: str, info_text: str) -> bool:
 
-        ret = CustomMessageBox.question(
+        ret = QMessageBox.question(
             self.MainWindow,
             text,
             info_text,
-            font=dialog_font,
-            buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                    | QtWidgets.QMessageBox.StandardButton.Ok,
-            default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+            QtWidgets.QMessageBox.StandardButton.Cancel | QtWidgets.QMessageBox.StandardButton.Ok,
+            QtWidgets.QMessageBox.StandardButton.Cancel,
         )
 
         if ret == QtWidgets.QMessageBox.StandardButton.Ok:
@@ -1170,14 +1170,12 @@ class GemsViews:
             return False
 
     def askYesNo(self, text: str, info_text: str) -> bool:
-        ret = CustomMessageBox.question(
+        ret = QMessageBox.question(
             self.MainWindow,
             text,
             info_text,
-            font=dialog_font,
-            buttons=QtWidgets.QMessageBox.StandardButton.No
-                    | QtWidgets.QMessageBox.StandardButton.Yes,
-            default_button=QtWidgets.QMessageBox.StandardButton.No,
+            QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Yes,
+            QtWidgets.QMessageBox.StandardButton.No,
         )
 
         if ret == QtWidgets.QMessageBox.StandardButton.Yes:

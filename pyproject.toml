@@ -1,2 +1,80 @@
+# To install deps from toml
+# -------------------------
+# > make install
+
+# NOTE: Fix PySide6 xcb plugin error on linux by installing: sudo apt install libxcb-cursor0
+
+[build-system]
+requires = ["setuptools>=46.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "GEMSedit"
+description = "Enviroment Editor for GEMS (Graphical Environment Management System)"
+version = "2025.4.15.1"
+authors = [{name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu"}]
+license = {text = "GPLv3"}
+readme = "ReadMe.md"
+requires-python = ">=3.11"
+keywords = ["VR", "graphical", "environment", "editor"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "loguru",
+    "PySide6>=6.4.0,<7.0.0",
+    "pyyaml",
+    "sqlite-utils",
+    "matplotlib",
+    "pyvis",
+    "appdirs",
+    # "pyqtdarktheme",
+    # "darkdetect",
+    # "fastnumbers==5.1.1",
+    # "qdarkstyle==3.2.3",
+    # "appdirs",
+    "platformdirs",
+    "tomli",
+    "munch"
+
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/travisseymour/gemsedit/issues"
+"Documentation" = "https://github.com/travisseymour/gemsedit#readme"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+#    "pre-commit",
+    "build",
+    "plumbum",
+#    "qt6-tools",
+]
+
+[project.gui-scripts]
+gemsedit = "gemsedit.main:main"
+GEMSedit = "gemsedit.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gemsedit"]  # Include only the 'gemsedit' package
+namespaces = false
+
+# pull in any files in the resources folder for use with importlib.resources
+[tool.setuptools]
+include-package-data = true
+
 [tool.black]
-line-length = 88
+line-length = 120
+
+[tool.ruff]
+line-length = 120
+lint.ignore = ["F821", "F841", "E722"]  # undefined name, assigned but unused variable, bare except

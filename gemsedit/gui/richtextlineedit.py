@@ -12,6 +12,7 @@
 import platform
 import sys
 from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QFontMetrics, QTextCharFormat
 
 
@@ -37,8 +38,8 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
         self.seriffamily = "times"
         self.setLineWrapMode(QtWidgets.QTextEdit.LineWrapMode.NoWrap)
         self.setTabChangesFocus(True)
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         fm = QtGui.QFontMetrics(self.font())
         h = int(fm.height() * (1.4 if platform.system() == "Windows" else 1.2))
         self.setMinimumHeight(h)
@@ -72,7 +73,7 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
         self.textEffectMenu()
 
     def keyPressEvent(self, event):
-        if event.modifiers() & QtCore.Qt.ControlModifier:
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
             handled = False
             if event.key() == QtCore.Qt.Key.Key_B:
                 self.toggleBold()

@@ -1,4 +1,23 @@
+"""
+GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
+Copyright (C) 2025 Travis L. Seymour, PhD
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QMessageBox
 
 import gemsedit.gui.objects_window as win
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
@@ -9,7 +28,6 @@ from gemsedit.database.connection import mark_db_as_changed
 from gemsedit import log
 
 from gemsedit import dialog_font
-from gemsedit.gui.custom_messagebox import CustomMessageBox
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
@@ -338,20 +356,20 @@ class objects:
             newname = str(text)
             if ok:
                 if not self.strIsPattern(newname, "\w*"):  # newname.isalpha():
-                    _ = CustomMessageBox.information(
+                    _ = QMessageBox.information(
                         self.parent_win,
                         "Bad Object Name",
                         "Object Name Error: Name must consist of only characters from this "
                         "set: [a-zA-Z0-9_]. Please choose another name.",
-                        font=dialog_font,
+                        QMessageBox.StandardButton.Ok,
                     )
                 elif newname in namelist:
-                    _ = CustomMessageBox.information(
+                    _ = QMessageBox.information(
                         self.parent_win,
                         "Bad Object Name",
                         f'Object Name Error: An object called "{newname}" already exists in '
                         f'"{self.parentname}". Please choose another name.',
-                        font=dialog_font,
+                        QMessageBox.StandardButton.Ok,
                     )
 
         if ok:
@@ -404,14 +422,12 @@ class objects:
             except:
                 return
             # Make sure first
-            ret = CustomMessageBox.question(
+            ret = QMessageBox.question(
                 self.MainWindow,
                 f"Delete {bn} {name}",
                 f"Really delete {name} and all of it's associated actions?",
-                font=dialog_font,
-                buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                | QtWidgets.QMessageBox.StandardButton.Ok,
-                default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                QtWidgets.QMessageBox.StandardButton.Cancel | QtWidgets.QMessageBox.StandardButton.Ok,
+                QMessageBox.StandardButton.Cancel,
             )
 
             if ret == QtWidgets.QMessageBox.StandardButton.Ok:

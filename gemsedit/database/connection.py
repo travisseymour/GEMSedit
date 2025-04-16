@@ -1,3 +1,21 @@
+"""
+GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
+Copyright (C) 2025 Travis L. Seymour, PhD
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union
@@ -7,7 +25,6 @@ from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
 
 from gemsedit import dialog_font
-from gemsedit.gui.custom_messagebox import CustomMessageBox
 from gemsedit.session.version import __version__
 from gemsedit.database.yamlsqlexchange import (
     load_yaml_as_dict,
@@ -95,11 +112,12 @@ class GemsDB:
             return
 
         if confirm:
-            answer = CustomMessageBox.question(
+            answer = QMessageBox.question(
                 None,
                 "Save Changes?",
                 f"Save Environment Changes To {self.yaml_file_name}?",
-                dialog_font,
+                QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.No
             )
         else:
             answer = QMessageBox.StandardButton.Yes
@@ -144,11 +162,11 @@ class GemsDB:
 
             if problems:
                 endl = "\n"
-                _ = CustomMessageBox.critical(
+                _ = QMessageBox.critical(
                     None,
                     "Environment Save Error",
                     f"Error while trying to save environment to {self.yaml_file_name}:{endl.join(problems)}",
-                    dialog_font,
+                    QMessageBox.StandardButton.Ok,
                 )
             else:
                 DB_CHANGED = False
