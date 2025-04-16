@@ -23,8 +23,6 @@ import gemsedit.gui.run_launch_dlg as win
 from PySide6 import QtCore, QtWidgets
 import os
 
-from gemsedit import dialog_font
-
 
 class RunLaunch:
     def __init__(self, filename, editfile=False, defaultdir="/"):
@@ -68,8 +66,7 @@ class RunLaunch:
 
     def updateFN(self):
         self.ui.filename_label.setText(
-            "Data Filename: gemsrun_%s.txt"
-            % self.ui.user_plainTextEdit.toPlainText().strip()
+            "Data Filename: gemsrun_%s.txt" % self.ui.user_plainTextEdit.toPlainText().strip()
         )
         self.userid = self.ui.user_plainTextEdit.toPlainText().strip()
 
@@ -108,9 +105,7 @@ class RunLaunch:
         QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
     def selectDBFile(self):
-        fname, _ = QtWidgets.QFileDialog.getOpenFileName(
-            None, "Select Environment DB File", self.defaultdir
-        )
+        fname, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Environment DB File", self.defaultdir)
         if fname:
             if os.path.exists(fname) and os.path.isfile(fname):
                 self.ui.dbfile_plainTextEdit.setPlainText(fname)
@@ -120,7 +115,7 @@ class RunLaunch:
                     None,
                     "File Access Error!",
                     "Unable to access the selected file. Please close this dialog and select another file.",
-                    QMessageBox.StandardButton.Ok
+                    QMessageBox.StandardButton.Ok,
                 )
 
     def launchRunner(self):

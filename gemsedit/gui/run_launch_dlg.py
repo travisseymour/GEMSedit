@@ -10,40 +10,17 @@
 
 from PySide6.QtCore import (
     QCoreApplication,
-    QDate,
-    QDateTime,
-    QLocale,
     QMetaObject,
-    QObject,
-    QPoint,
-    QRect,
     QSize,
-    QTime,
-    QUrl,
     Qt,
 )
 from PySide6.QtGui import (
-    QBrush,
-    QColor,
-    QConicalGradient,
-    QCursor,
     QFont,
-    QFontDatabase,
-    QGradient,
     QIcon,
-    QImage,
-    QKeySequence,
-    QLinearGradient,
-    QPainter,
-    QPalette,
     QPixmap,
-    QRadialGradient,
-    QTransform,
 )
 from PySide6.QtWidgets import (
-    QApplication,
     QCheckBox,
-    QDialog,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -54,9 +31,7 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QToolButton,
     QVBoxLayout,
-    QWidget,
 )
-from gemsedit.gui import gemsedit_rc
 
 
 class Ui_GEMSRunDialog(object):
@@ -84,9 +59,7 @@ class Ui_GEMSRunDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_7 = QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.horizontalSpacer_5 = QSpacerItem(
-            58, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_5 = QSpacerItem(58, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_7.addItem(self.horizontalSpacer_5)
 
@@ -118,9 +91,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_7.addWidget(self.rename_radioButton)
 
-        self.horizontalSpacer_6 = QSpacerItem(
-            118, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_6 = QSpacerItem(118, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_7.addItem(self.horizontalSpacer_6)
 
@@ -136,9 +107,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_9.addWidget(self.debug_checkBox)
 
-        self.horizontalSpacer_7 = QSpacerItem(
-            348, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_7 = QSpacerItem(348, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_9.addItem(self.horizontalSpacer_7)
 
@@ -154,9 +123,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_8.addWidget(self.media_checkBox)
 
-        self.horizontalSpacer_4 = QSpacerItem(
-            308, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_4 = QSpacerItem(308, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer_4)
 
@@ -175,9 +142,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.horizontalSpacer_8 = QSpacerItem(
-            138, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_8 = QSpacerItem(138, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_8)
 
@@ -190,16 +155,12 @@ class Ui_GEMSRunDialog(object):
         font4.setUnderline(False)
         self.run_pushButton.setFont(font4)
         icon = QIcon()
-        icon.addFile(
-            ":/newPrefix/media/1409889607_Play.png", QSize(), QIcon.Normal, QIcon.Off
-        )
+        icon.addFile(":/newPrefix/media/1409889607_Play.png", QSize(), QIcon.Normal, QIcon.Off)
         self.run_pushButton.setIcon(icon)
 
         self.horizontalLayout_4.addWidget(self.run_pushButton)
 
-        self.horizontalSpacer_9 = QSpacerItem(
-            138, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_9 = QSpacerItem(138, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_9)
 
@@ -215,9 +176,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_6.addWidget(self.save_checkBox)
 
-        self.horizontalSpacer_3 = QSpacerItem(
-            418, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_3 = QSpacerItem(418, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_3)
 
@@ -238,9 +197,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout_3.addWidget(self.labelAppName)
 
-        self.horizontalSpacer = QSpacerItem(
-            18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
@@ -259,9 +216,7 @@ class Ui_GEMSRunDialog(object):
 
         self.horizontalLayout.addLayout(self.horizontalLayout_3)
 
-        self.horizontalSpacer_2 = QSpacerItem(
-            148, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_2 = QSpacerItem(148, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
@@ -291,9 +246,7 @@ class Ui_GEMSRunDialog(object):
 
         self.verticalLayout_2.addWidget(self.label)
 
-        self.verticalSpacer = QSpacerItem(
-            20, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding
-        )
+        self.verticalSpacer = QSpacerItem(20, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
@@ -306,9 +259,7 @@ class Ui_GEMSRunDialog(object):
 
         self.verticalLayout_2.addWidget(self.label_4)
 
-        self.verticalSpacer_2 = QSpacerItem(
-            20, 25, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
-        )
+        self.verticalSpacer_2 = QSpacerItem(20, 25, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 
@@ -333,9 +284,7 @@ class Ui_GEMSRunDialog(object):
         self.fileselect_toolButton.setObjectName("fileselect_toolButton")
         self.fileselect_toolButton.setFont(font6)
         icon1 = QIcon()
-        icon1.addFile(
-            ":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Normal, QIcon.Off
-        )
+        icon1.addFile(":/newPrefix/media/folder-open-icon.png", QSize(), QIcon.Normal, QIcon.Off)
         self.fileselect_toolButton.setIcon(icon1)
 
         self.horizontalLayout_12.addWidget(self.fileselect_toolButton)
@@ -384,13 +333,9 @@ class Ui_GEMSRunDialog(object):
 
     def retranslateUi(self, GEMSRunDialog):
         GEMSRunDialog.setWindowTitle(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Open Environment in GEMS Runner", None
-            )
+            QCoreApplication.translate("GEMSRunDialog", "Open Environment in GEMS Runner", None)
         )
-        self.label_7.setText(
-            QCoreApplication.translate("GEMSRunDialog", "If Data File Exists: ", None)
-        )
+        self.label_7.setText(QCoreApplication.translate("GEMSRunDialog", "If Data File Exists: ", None))
         # if QT_CONFIG(tooltip)
         self.overwrite_radioButton.setToolTip(
             QCoreApplication.translate(
@@ -400,19 +345,13 @@ class Ui_GEMSRunDialog(object):
             )
         )
         # endif // QT_CONFIG(tooltip)
-        self.overwrite_radioButton.setText(
-            QCoreApplication.translate("GEMSRunDialog", "Overwrite", None)
-        )
+        self.overwrite_radioButton.setText(QCoreApplication.translate("GEMSRunDialog", "Overwrite", None))
         # if QT_CONFIG(tooltip)
         self.rename_radioButton.setToolTip(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Rename data file if existing ones exist.", None
-            )
+            QCoreApplication.translate("GEMSRunDialog", "Rename data file if existing ones exist.", None)
         )
         # endif // QT_CONFIG(tooltip)
-        self.rename_radioButton.setText(
-            QCoreApplication.translate("GEMSRunDialog", "Rename", None)
-        )
+        self.rename_radioButton.setText(QCoreApplication.translate("GEMSRunDialog", "Rename", None))
         # if QT_CONFIG(tooltip)
         self.debug_checkBox.setToolTip(
             QCoreApplication.translate(
@@ -422,9 +361,7 @@ class Ui_GEMSRunDialog(object):
             )
         )
         # endif // QT_CONFIG(tooltip)
-        self.debug_checkBox.setText(
-            QCoreApplication.translate("GEMSRunDialog", "Enable Debug Mode:  ", None)
-        )
+        self.debug_checkBox.setText(QCoreApplication.translate("GEMSRunDialog", "Enable Debug Mode:  ", None))
         # if QT_CONFIG(tooltip)
         self.media_checkBox.setToolTip(
             QCoreApplication.translate(
@@ -436,17 +373,9 @@ class Ui_GEMSRunDialog(object):
             )
         )
         # endif // QT_CONFIG(tooltip)
-        self.media_checkBox.setText(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Enable Media Playback:  ", None
-            )
-        )
-        self.fn_label.setText(
-            QCoreApplication.translate("GEMSRunDialog", "GEMS Runner Settings", None)
-        )
-        self.run_pushButton.setText(
-            QCoreApplication.translate("GEMSRunDialog", "Launch GEMS Runner", None)
-        )
+        self.media_checkBox.setText(QCoreApplication.translate("GEMSRunDialog", "Enable Media Playback:  ", None))
+        self.fn_label.setText(QCoreApplication.translate("GEMSRunDialog", "GEMS Runner Settings", None))
+        self.run_pushButton.setText(QCoreApplication.translate("GEMSRunDialog", "Launch GEMS Runner", None))
         # if QT_CONFIG(tooltip)
         self.save_checkBox.setToolTip(
             QCoreApplication.translate(
@@ -456,24 +385,12 @@ class Ui_GEMSRunDialog(object):
             )
         )
         # endif // QT_CONFIG(tooltip)
-        self.save_checkBox.setText(
-            QCoreApplication.translate("GEMSRunDialog", "Save Data:  ", None)
-        )
-        self.labelAppName.setText(
-            QCoreApplication.translate("GEMSRunDialog", "GEMS Editor", None)
-        )
+        self.save_checkBox.setText(QCoreApplication.translate("GEMSRunDialog", "Save Data:  ", None))
+        self.labelAppName.setText(QCoreApplication.translate("GEMSRunDialog", "GEMS Editor", None))
         self.label_6.setText("")
-        self.close_pushButton.setText(
-            QCoreApplication.translate("GEMSRunDialog", "CLOSE", None)
-        )
-        self.label.setText(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Environment\n" " Database File:", None
-            )
-        )
-        self.label_4.setText(
-            QCoreApplication.translate("GEMSRunDialog", "User ID:", None)
-        )
+        self.close_pushButton.setText(QCoreApplication.translate("GEMSRunDialog", "CLOSE", None))
+        self.label.setText(QCoreApplication.translate("GEMSRunDialog", "Environment\n Database File:", None))
+        self.label_4.setText(QCoreApplication.translate("GEMSRunDialog", "User ID:", None))
         # if QT_CONFIG(tooltip)
         self.dbfile_plainTextEdit.setToolTip(
             QCoreApplication.translate(
@@ -492,20 +409,12 @@ class Ui_GEMSRunDialog(object):
             )
         )
         # endif // QT_CONFIG(tooltip)
-        self.fileselect_toolButton.setText(
-            QCoreApplication.translate("GEMSRunDialog", "...", None)
-        )
+        self.fileselect_toolButton.setText(QCoreApplication.translate("GEMSRunDialog", "...", None))
         # if QT_CONFIG(tooltip)
         self.user_plainTextEdit.setToolTip(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Specify a user id. Used to name data file.", None
-            )
+            QCoreApplication.translate("GEMSRunDialog", "Specify a user id. Used to name data file.", None)
         )
         # endif // QT_CONFIG(tooltip)
-        self.filename_label.setText(
-            QCoreApplication.translate(
-                "GEMSRunDialog", "Data Filename: gemsrun.txt", None
-            )
-        )
+        self.filename_label.setText(QCoreApplication.translate("GEMSRunDialog", "Data Filename: gemsrun.txt", None))
 
     # retranslateUi

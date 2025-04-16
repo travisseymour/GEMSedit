@@ -50,10 +50,7 @@ class MagicModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if orientation == QtCore.Qt.Orientation.Vertical:
                 return int(QtCore.Qt.AlignmentFlag.AlignRight)
-            return int(
-                QtCore.Qt.AlignmentFlag.AlignRight
-                | QtCore.Qt.AlignmentFlag.AlignVCenter
-            )
+            return int(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         if role != QtCore.Qt.ItemDataRole.DisplayRole:
             return None
         if orientation == QtCore.Qt.Orientation.Vertical:
@@ -95,11 +92,7 @@ class MagicModel(QtCore.QAbstractTableModel):
         return flag
 
     def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
-        if (
-                not index.isValid()
-                or not 0 <= index.row() < self.rowCount()
-                or not self._settings_list
-        ):
+        if not index.isValid() or not 0 <= index.row() < self.rowCount() or not self._settings_list:
             return None
 
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
@@ -134,12 +127,8 @@ class GlobalAct:
 
         self.ui.GAL_tableView.setModel(None)
         self.ui.PAL_tableView.setModel(None)
-        self.action_list_ga = ACTIONLIST.ActionList(
-            0, self.ui.GAL_tableView, "global", mediapath=self.media_path
-        )
-        self.action_list_pa = ACTIONLIST.ActionList(
-            0, self.ui.PAL_tableView, "pocket", mediapath=self.media_path
-        )
+        self.action_list_ga = ACTIONLIST.ActionList(0, self.ui.GAL_tableView, "global", mediapath=self.media_path)
+        self.action_list_pa = ACTIONLIST.ActionList(0, self.ui.PAL_tableView, "pocket", mediapath=self.media_path)
 
         self.initializeViews()
 

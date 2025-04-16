@@ -10,52 +10,25 @@
 
 from PySide6.QtCore import (
     QCoreApplication,
-    QDate,
-    QDateTime,
-    QLocale,
     QMetaObject,
-    QObject,
-    QPoint,
-    QRect,
     QSize,
-    QTime,
-    QUrl,
     Qt,
 )
 from PySide6.QtGui import (
-    QBrush,
-    QColor,
-    QConicalGradient,
-    QCursor,
     QFont,
-    QFontDatabase,
-    QGradient,
-    QIcon,
-    QImage,
-    QKeySequence,
-    QLinearGradient,
-    QPainter,
-    QPalette,
     QPixmap,
-    QRadialGradient,
-    QTransform,
 )
 from PySide6.QtWidgets import (
     QAbstractItemView,
-    QApplication,
-    QDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
-    QHeaderView,
     QLabel,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
     QTableView,
-    QWidget,
 )
-from gemsedit.gui import gemsedit_rc
 
 
 class Ui_SettingsDialog(object):
@@ -131,9 +104,7 @@ class Ui_SettingsDialog(object):
 
         self.horizontalLayout_3.addWidget(self.label_5)
 
-        self.horizontalSpacer = QSpacerItem(
-            18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
@@ -147,9 +118,7 @@ class Ui_SettingsDialog(object):
 
         self.horizontalLayout.addLayout(self.horizontalLayout_3)
 
-        self.horizontalSpacer_2 = QSpacerItem(
-            148, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_2 = QSpacerItem(148, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
@@ -180,26 +149,12 @@ class Ui_SettingsDialog(object):
     # setupUi
 
     def retranslateUi(self, SettingsDialog):
-        SettingsDialog.setWindowTitle(
-            QCoreApplication.translate("SettingsDialog", "Dialog", None)
-        )
-        self.Label9.setText(
-            QCoreApplication.translate("SettingsDialog", "Description:", None)
-        )
-        self.xxHelpLabel.setText(
-            QCoreApplication.translate("SettingsDialog", "...", None)
-        )
-        self.label_5.setText(
-            QCoreApplication.translate("SettingsDialog", "GEMS Editor", None)
-        )
+        SettingsDialog.setWindowTitle(QCoreApplication.translate("SettingsDialog", "Dialog", None))
+        self.Label9.setText(QCoreApplication.translate("SettingsDialog", "Description:", None))
+        self.xxHelpLabel.setText(QCoreApplication.translate("SettingsDialog", "...", None))
+        self.label_5.setText(QCoreApplication.translate("SettingsDialog", "GEMS Editor", None))
         self.label_6.setText("")
-        self.applyButton.setText(
-            QCoreApplication.translate("SettingsDialog", "Close", None)
-        )
-        self.label_2.setText(
-            QCoreApplication.translate(
-                "SettingsDialog", "Environment Settings List", None
-            )
-        )
+        self.applyButton.setText(QCoreApplication.translate("SettingsDialog", "Close", None))
+        self.label_2.setText(QCoreApplication.translate("SettingsDialog", "Environment Settings List", None))
 
     # retranslateUi

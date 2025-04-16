@@ -29,9 +29,7 @@ from gemsedit.gui import helptext, mycolors, mycursors, mykeys, genericrowdelega
 
 
 class CustomSqlModel(QtSql.QSqlQueryModel):
-    def data(
-        self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole
-    ):  # Qt.DisplayRole as ...
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole):  # Qt.DisplayRole as ...
         # value = super(CustomSqlModel, self).data(index, role)
         # if value is not None and role == QtCore.Qt.ItemDataRole.DisplayRole:
         #     if index.column() == 0:
@@ -52,9 +50,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
         self._param_key: str = ""
         self._signal_update: Optional[Callable] = None
 
-    def initData(
-        self, param_dict: dict, param_key: str, signal_update: Optional[Callable] = None
-    ):
+    def initData(self, param_dict: dict, param_key: str, signal_update: Optional[Callable] = None):
         # something like this: data=[['number', 'Seconds', '1000'],...]
         self._param_dict = param_dict
         self._param_key = param_key
@@ -74,10 +70,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if orientation == QtCore.Qt.Orientation.Vertical:
                 return int(QtCore.Qt.AlignmentFlag.AlignRight)
-            return int(
-                QtCore.Qt.AlignmentFlag.AlignRight
-                | QtCore.Qt.AlignmentFlag.AlignVCenter
-            )
+            return int(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         if role != QtCore.Qt.ItemDataRole.DisplayRole:
             return None
         if orientation == QtCore.Qt.Orientation.Vertical:
@@ -102,11 +95,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
         return flag
 
     def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
-        if (
-            not index.isValid()
-            or not 0 <= index.row() < self.rowCount()
-            or not self._param_dict
-        ):
+        if not index.isValid() or not 0 <= index.row() < self.rowCount() or not self._param_dict:
             return None
 
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
@@ -203,9 +192,7 @@ class ParamSelect:
 
     def signalUpdate(self):
         self.result = self.constructParamString(human_readable=False)
-        self.ui.resultLabel.setText(
-            f"{self.param_type.title()}: {self.constructParamString(human_readable=True)}"
-        )
+        self.ui.resultLabel.setText(f"{self.param_type.title()}: {self.constructParamString(human_readable=True)}")
 
     def constructParamString(self, human_readable=False):
         index_list = self.ui.xx_tableView.selectedIndexes()
@@ -219,11 +206,7 @@ class ParamSelect:
                 xx = str(x[2]).strip('"').strip("'")
                 if not human_readable and ":" in xx:
                     xx = xx.split(":")[0].strip()
-                if (
-                    xx.isdigit()
-                    or xx.replace(".", "").isdigit()
-                    or xx in ("True", "False")
-                ):
+                if xx.isdigit() or xx.replace(".", "").isdigit() or xx in ("True", "False"):
                     param_str += xx
                 else:
                     param_str += '"' + xx + '"'
@@ -240,16 +223,11 @@ class ParamSelect:
 
     def populateParamList(self):
         if self.current_xx_id is not None:
-
             # grab info about this type of xx from the database (actually get from data in xxmodel)
             initial_xx = self.param_string.split("(")[0]
             name = str(self.xx_model.record(self.current_xx_id).field("Name").value())
-            template = str(
-                self.xx_model.record(self.current_xx_id).field("Template").value()
-            )
-            labels = str(
-                self.xx_model.record(self.current_xx_id).field("Labels").value()
-            )
+            template = str(self.xx_model.record(self.current_xx_id).field("Template").value())
+            labels = str(self.xx_model.record(self.current_xx_id).field("Labels").value())
 
             template_list = eval(template)
             label_list = eval(labels)
@@ -259,7 +237,6 @@ class ParamSelect:
 
             # assuming everything is ok (i.e., this xx actually has parameters), proceed
             if len(template_list) and len(label_list):
-
                 # if somehow params come up short, create a blank set
                 if not param_value_list or len(param_value_list) != len(template_list):
                     param_value_list = [""] * len(template_list)
@@ -276,19 +253,13 @@ class ParamSelect:
                             # first adding param passed, need to include passed value
                             v = self.getParamValueList()
                             value_item = v[i]
-                        elif type_item in (
-                            "number",
-                        ):  # note: varnum and obj_num are now names
+                        elif type_item in ("number",):  # note: varnum and obj_num are now names
                             value_item = 0
-                        elif type_item in (
-                            "01float",
-                        ):  # current primary use for volume so start at 1.0
+                        elif type_item in ("01float",):  # current primary use for volume so start at 1.0
                             value_item = 1.0
                         elif type_item in ("float",):
                             value_item = 0.0
-                        elif type_item in (
-                            "fontsize",
-                        ):  # current primary use for volume so start at 1.0
+                        elif type_item in ("fontsize",):  # current primary use for volume so start at 1.0
                             value_item = 14
                         elif type_item in ("bool",):
                             value_item = "False"
@@ -300,17 +271,13 @@ class ParamSelect:
                             value_item = "['White',255,255,255,255]"
                         else:
                             value_item = ""
-                        self.param_data_dict[name].append(
-                            [type_item, param_item, value_item]
-                        )
+                        self.param_data_dict[name].append([type_item, param_item, value_item])
 
             # create model
             self.xx_param_model = ParamListModel()
 
             if self.param_data_dict:
-                self.xx_param_model.initData(
-                    self.param_data_dict, name, signal_update=self.signalUpdate
-                )
+                self.xx_param_model.initData(self.param_data_dict, name, signal_update=self.signalUpdate)
 
             # attach model to view
             self.ui.xxparam_tableView.setModel(self.xx_param_model)
@@ -322,9 +289,7 @@ class ParamSelect:
                 for i, x in enumerate(self.param_data_dict[name]):
                     type_item, param_item, value_item = x  # unpack components
                     if type_item == "number":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.IntegerRowDelegate(0, 10000)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.IntegerRowDelegate(0, 10000))
                     elif type_item == "fontsize":
                         font_size_list = [
                             "8",
@@ -347,37 +312,21 @@ class ParamSelect:
                             "38",
                             "40",
                         ]
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.ComboRowDelegate(font_size_list)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(font_size_list))
                     elif type_item == "float":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.FloatRowDelegate(0.0, 10000.0)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.FloatRowDelegate(0.0, 10000.0))
                     elif type_item == "01float":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.FloatRowDelegate(0.0, 1.0)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.FloatRowDelegate(0.0, 1.0))
                     elif type_item == "value":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.PlainTextRowDelegate()
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.PlainTextRowDelegate())
                     elif type_item == "richtext":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.RichTextRowDelegate()
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.RichTextRowDelegate())
                     elif type_item == "viewnum":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.ComboRowDelegate(self.view_list)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(self.view_list))
                     elif type_item == "objnum":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.ComboRowDelegate(self.obj_list)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(self.obj_list))
                     elif type_item == "key":
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.ComboRowDelegate(mykeys.keys)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(mykeys.keys))
                     elif type_item == "cursor":
                         delegate.insertRowDelegate(
                             i,
@@ -386,50 +335,34 @@ class ParamSelect:
                     elif "color" in type_item:
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.ComboRowColoredDelegate(
-                                self.color_list
-                            ),
+                            genericrowdelegates.ComboRowColoredDelegate(self.color_list),
                         )
                     elif type_item == "bool":
                         onoff = ["False", "True"]
-                        delegate.insertRowDelegate(
-                            i, genericrowdelegates.ComboRowDelegate(onoff)
-                        )
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(onoff))
                     elif type_item == "sndfile":
-                        file_filter = (
-                            "SoundFile (*.wav *.ogg *.mp3 *.wma *.au *.mp2 *.m4a)"
-                        )
+                        file_filter = "SoundFile (*.wav *.ogg *.mp3 *.wma *.au *.mp2 *.m4a)"
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.FileRowDelegate(
-                                self.media_path, file_filter
-                            ),
+                            genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "vidfile":
                         file_filter = "VideoFile (*.avi *.mov *.mp4 *.m4v *.ogg *.webm *.flv *.mpg *.mpeg *.wmv)"
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.FileRowDelegate(
-                                self.media_path, file_filter
-                            ),
+                            genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "exefile":
                         file_filter = "ProgramFile (*.exe *.app *.bat *.sh)"
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.FileRowDelegate(
-                                self.media_path, file_filter
-                            ),
+                            genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "picfile":
-                        file_filter = (
-                            "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
-                        )
+                        file_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.FileRowDelegate(
-                                self.media_path, file_filter
-                            ),
+                            genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
 
                         # otherwise, should evoke default delegate
@@ -475,9 +408,7 @@ class ParamSelect:
         elif self.param_type == "Action":
             xx_sql = f"select * from action_lst where Restrictions like '%{self.action_type}%';"
         else:
-            log.error(
-                f"Problem in initializeDatabases(), got bad coltype of {self.param_type}"
-            )
+            log.error(f"Problem in initializeDatabases(), got bad coltype of {self.param_type}")
             return
 
         self.initializeXXModel(self.xx_model, xx_sql)
@@ -544,9 +475,7 @@ class ParamSelect:
         # Colors
         self.color_list = []
         for color in mycolors.colors_large:
-            self.color_list.append(
-                f"['{str(color[0])}',{color[2][0]},{color[2][1]},{color[2][2]},255]"
-            )
+            self.color_list.append(f"['{str(color[0])}',{color[2][0]},{color[2][1]},{color[2][2]},255]")
 
     def setup_help_text(self):
         if self.param_type == "Condition":

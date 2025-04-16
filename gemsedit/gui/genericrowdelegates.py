@@ -31,7 +31,6 @@ from gemsedit.gui import richtextlineedit
 
 
 class GenericRowDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(GenericRowDelegate, self).__init__(parent)
         self.delegates = {}
@@ -74,7 +73,6 @@ class GenericRowDelegate(QStyledItemDelegate):
 
 
 class IntegerRowDelegate(QStyledItemDelegate):
-
     def __init__(self, minimum=0, maximum=100, parent=None):
         super(IntegerRowDelegate, self).__init__(parent)
         self.minimum = minimum
@@ -83,9 +81,7 @@ class IntegerRowDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         spinbox = QSpinBox(parent)
         spinbox.setRange(self.minimum, self.maximum)
-        spinbox.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        spinbox.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return spinbox
 
     def setEditorData(self, editor, index):
@@ -104,7 +100,6 @@ class IntegerRowDelegate(QStyledItemDelegate):
 
 
 class FloatRowDelegate(QStyledItemDelegate):
-
     def __init__(self, minimum=0.0, maximum=1.0, parent=None):
         super(FloatRowDelegate, self).__init__(parent)
         self.minimum = minimum
@@ -115,9 +110,7 @@ class FloatRowDelegate(QStyledItemDelegate):
         spinbox = QDoubleSpinBox(parent)
         spinbox.setRange(self.minimum, self.maximum)
         spinbox.setSingleStep(0.05)
-        spinbox.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        spinbox.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return spinbox
 
     def setEditorData(self, editor, index):
@@ -130,7 +123,6 @@ class FloatRowDelegate(QStyledItemDelegate):
 
 
 class ListRowDelegate(QStyledItemDelegate):
-
     def __init__(self, listitems=None, parent=None):
         super(ListRowDelegate, self).__init__(parent)
         self.listitems = listitems
@@ -150,7 +142,6 @@ class ListRowDelegate(QStyledItemDelegate):
 
 
 class ComboRowDelegate(QStyledItemDelegate):
-
     def __init__(self, listitems=None, parent=None):
         super(ComboRowDelegate, self).__init__(parent)
         self.listitems = listitems
@@ -170,7 +161,6 @@ class ComboRowDelegate(QStyledItemDelegate):
 
 
 class ComboRowColoredDelegate(QStyledItemDelegate):
-
     def __init__(self, listitems=None, parent=None):
         super(ComboRowColoredDelegate, self).__init__(parent)
         self.listitems = listitems  # list of these: "[NAME,R,G,B,A]"
@@ -269,7 +259,6 @@ class FileRowDelegate(QStyledItemDelegate):
 
 
 class DateRowDelegate(QStyledItemDelegate):
-
     def __init__(
         self,
         minimum=QDate(),
@@ -285,9 +274,7 @@ class DateRowDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         dateedit = QDateEdit(parent)
         dateedit.setDateRange(self.minimum, self.maximum)
-        dateedit.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        dateedit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         dateedit.setDisplayFormat(self.format)
         dateedit.setCalendarPopup(True)
         return dateedit
@@ -301,7 +288,6 @@ class DateRowDelegate(QStyledItemDelegate):
 
 
 class PlainTextRowDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(PlainTextRowDelegate, self).__init__(parent)
 
@@ -318,7 +304,6 @@ class PlainTextRowDelegate(QStyledItemDelegate):
 
 
 class RichTextRowDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(RichTextRowDelegate, self).__init__(parent)
 
@@ -328,11 +313,7 @@ class RichTextRowDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         if option.state & QStyle.StateFlag.State_Selected:
-            document.setHtml(
-                "<font color={}>{}</font>".format(
-                    palette.highlightedText().color().name(), text
-                )
-            )
+            document.setHtml("<font color={}>{}</font>".format(palette.highlightedText().color().name(), text))
         else:
             document.setHtml(text)
         painter.save()

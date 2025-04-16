@@ -122,9 +122,7 @@ class Controller(QObject):
     def onClickableLabel(self):
         """A label was clicked, show the text of the label in the display"""
 
-        self.view.labelDisplay.setText(
-            "The label with the following text " "was clicked:\n" + self.sender().text()
-        )
+        self.view.labelDisplay.setText("The label with the following text was clicked:\n" + self.sender().text())
 
 
 def main():

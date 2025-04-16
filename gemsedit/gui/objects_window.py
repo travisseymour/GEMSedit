@@ -10,45 +10,21 @@
 
 from PySide6.QtCore import (
     QCoreApplication,
-    QDate,
-    QDateTime,
-    QLocale,
     QMetaObject,
-    QObject,
-    QPoint,
-    QRect,
     QSize,
-    QTime,
-    QUrl,
     Qt,
 )
 from PySide6.QtGui import (
-    QBrush,
-    QColor,
-    QConicalGradient,
-    QCursor,
     QFont,
-    QFontDatabase,
-    QGradient,
     QIcon,
-    QImage,
-    QKeySequence,
-    QLinearGradient,
-    QPainter,
-    QPalette,
     QPixmap,
-    QRadialGradient,
-    QTransform,
 )
 from PySide6.QtWidgets import (
     QAbstractItemView,
-    QApplication,
     QCheckBox,
-    QDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
-    QHeaderView,
     QLabel,
     QPushButton,
     QSizePolicy,
@@ -61,7 +37,6 @@ from PySide6.QtWidgets import (
 )
 
 from gemsedit.gui.CustomClickableLabel import ClickableLabel
-from gemsedit.gui import gemsedit_rc
 
 
 class Ui_ObjectsWindow(object):
@@ -102,9 +77,7 @@ class Ui_ObjectsWindow(object):
 
         self.gridLayout_2.addWidget(self.labelAppName, 0, 0, 1, 2)
 
-        self.horizontalSpacer = QSpacerItem(
-            18, 20, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(18, 20, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
 
         self.gridLayout_2.addItem(self.horizontalSpacer, 0, 2, 1, 1)
 
@@ -116,9 +89,7 @@ class Ui_ObjectsWindow(object):
         sizePolicy1.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
         self.label_6.setSizePolicy(sizePolicy1)
         self.label_6.setMaximumSize(QSize(50, 50))
-        self.label_6.setPixmap(
-            QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico")
-        )
+        self.label_6.setPixmap(QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico"))
         self.label_6.setScaledContents(True)
 
         self.gridLayout_2.addWidget(self.label_6, 0, 3, 1, 2)
@@ -135,9 +106,7 @@ class Ui_ObjectsWindow(object):
 
         self.gridLayout_2.addWidget(self.label_4, 1, 0, 1, 1)
 
-        self.horizontalSpacer_6 = QSpacerItem(
-            80, 28, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_6 = QSpacerItem(80, 28, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
 
         self.gridLayout_2.addItem(self.horizontalSpacer_6, 1, 1, 1, 2)
 
@@ -152,23 +121,17 @@ class Ui_ObjectsWindow(object):
         self.objectDel_toolButton = QToolButton(self.layoutWidget)
         self.objectDel_toolButton.setObjectName("objectDel_toolButton")
         icon1 = QIcon()
-        icon1.addFile(
-            ":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off
-        )
+        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off)
         self.objectDel_toolButton.setIcon(icon1)
 
         self.gridLayout_2.addWidget(self.objectDel_toolButton, 1, 4, 1, 1)
 
         self.object_tableView = QTableView(self.layoutWidget)
         self.object_tableView.setObjectName("object_tableView")
-        sizePolicy2 = QSizePolicy(
-            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding
-        )
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(
-            self.object_tableView.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy2.setHeightForWidth(self.object_tableView.sizePolicy().hasHeightForWidth())
         self.object_tableView.setSizePolicy(sizePolicy2)
         self.object_tableView.setMaximumSize(QSize(16777215, 16777215))
         font3 = QFont()
@@ -225,9 +188,7 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_7.addWidget(self.draggable_checkBox)
 
-        self.horizontalSpacer_7 = QSpacerItem(
-            158, 18, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_7 = QSpacerItem(158, 18, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_7.addItem(self.horizontalSpacer_7)
 
@@ -264,9 +225,7 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_5.addWidget(self.parent_Label)
 
-        self.horizontalSpacer_2 = QSpacerItem(
-            158, 18, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_2 = QSpacerItem(158, 18, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_2)
 
@@ -284,9 +243,7 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_2.addWidget(self.label_3)
 
-        self.horizontalSpacer_4 = QSpacerItem(
-            538, 28, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_4 = QSpacerItem(538, 28, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_4)
 
@@ -381,9 +338,7 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_6.addLayout(self.verticalLayout_2)
 
-        self.horizontalSpacer_3 = QSpacerItem(
-            58, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_3 = QSpacerItem(58, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_3)
 
@@ -427,62 +382,26 @@ class Ui_ObjectsWindow(object):
     # setupUi
 
     def retranslateUi(self, ObjectsWindow):
-        ObjectsWindow.setWindowTitle(
-            QCoreApplication.translate("ObjectsWindow", "GEMS Object Editor", None)
-        )
-        self.labelAppName.setText(
-            QCoreApplication.translate("ObjectsWindow", "GEMS Editor", None)
-        )
+        ObjectsWindow.setWindowTitle(QCoreApplication.translate("ObjectsWindow", "GEMS Object Editor", None))
+        self.labelAppName.setText(QCoreApplication.translate("ObjectsWindow", "GEMS Editor", None))
         self.label_6.setText("")
-        self.label_4.setText(
-            QCoreApplication.translate("ObjectsWindow", "Object List", None)
-        )
-        self.objectAdd_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
-        self.objectDel_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
-        self.visible_checkBox.setText(
-            QCoreApplication.translate("ObjectsWindow", "Visible? ", None)
-        )
-        self.takeable_checkBox.setText(
-            QCoreApplication.translate("ObjectsWindow", "Takeable? ", None)
-        )
-        self.draggable_checkBox.setText(
-            QCoreApplication.translate("ObjectsWindow", "Draggable?", None)
-        )
-        self.closeButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "Close", None)
-        )
-        self.label_9.setText(
-            QCoreApplication.translate("ObjectsWindow", "Parent View:", None)
-        )
-        self.parent_Label.setText(
-            QCoreApplication.translate("ObjectsWindow", "-", None)
-        )
-        self.label_3.setText(
-            QCoreApplication.translate("ObjectsWindow", "Object Action List", None)
-        )
-        self.actionAdd_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
-        self.actionDel_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
-        self.label_7.setText(
-            QCoreApplication.translate("ObjectsWindow", "Object Pic", None)
-        )
-        self.drawSelect_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
-        self.delSelect_toolButton.setText(
-            QCoreApplication.translate("ObjectsWindow", "...", None)
-        )
+        self.label_4.setText(QCoreApplication.translate("ObjectsWindow", "Object List", None))
+        self.objectAdd_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        self.objectDel_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        self.visible_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Visible? ", None))
+        self.takeable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Takeable? ", None))
+        self.draggable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Draggable?", None))
+        self.closeButton.setText(QCoreApplication.translate("ObjectsWindow", "Close", None))
+        self.label_9.setText(QCoreApplication.translate("ObjectsWindow", "Parent View:", None))
+        self.parent_Label.setText(QCoreApplication.translate("ObjectsWindow", "-", None))
+        self.label_3.setText(QCoreApplication.translate("ObjectsWindow", "Object Action List", None))
+        self.actionAdd_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        self.actionDel_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        self.label_7.setText(QCoreApplication.translate("ObjectsWindow", "Object Pic", None))
+        self.drawSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        self.delSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.objectPic_label.setText("")
-        self.label_8.setText(
-            QCoreApplication.translate("ObjectsWindow", "Object Location in View", None)
-        )
+        self.label_8.setText(QCoreApplication.translate("ObjectsWindow", "Object Location in View", None))
         self.objectLocPic_label.setText("")
 
     # retranslateUi

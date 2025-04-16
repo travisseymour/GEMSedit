@@ -11,8 +11,8 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
 else:
     pathEX = Path(__file__).parent
 
-# NOTE: This vvv import is not used here, but must be here for reference from other modules!
 from loguru import logger as log
+
 
 CONFIG_PATH: Optional[Path] = None
 LOG_PATH: Optional[Path] = None
@@ -35,6 +35,7 @@ def set_app_font(font: QFont):
     app_font = font
     try:
         QApplication.instance().setFont(font)
+        log.debug(f"Global app font changed to {font.styleName()} ({font.pointSize()} pt)")
     except AttributeError:
         ...
 

@@ -44,10 +44,7 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
         h = int(fm.height() * (1.4 if platform.system() == "Windows" else 1.2))
         self.setMinimumHeight(h)
         self.setMaximumHeight(int(h * 1.2))
-        self.setToolTip(
-            "Press <b>Ctrl+M</b> for the text effects "
-            "menu and <b>Ctrl+K</b> for the color menu"
-        )
+        self.setToolTip("Press <b>Ctrl+M</b> for the text effects menu and <b>Ctrl+K</b> for the color menu")
 
     def toggleItalic(self):
         self.setFontItalic(not self.fontItalic())
@@ -57,9 +54,7 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
 
     def toggleBold(self):
         self.setFontWeight(
-            QtGui.QFont.Weight.Normal
-            if self.fontWeight() > QtGui.QFont.Weight.Normal
-            else QtGui.QFont.Weight.Bold
+            QtGui.QFont.Weight.Normal if self.fontWeight() > QtGui.QFont.Weight.Normal else QtGui.QFont.Weight.Bold
         )
 
     def sizeHint(self):
@@ -168,22 +163,19 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                 "&No super or subscript",
                 None,
                 RichTextLineEdit.NoSuperOrSubscript,
-                format.verticalAlignment()
-                == QTextCharFormat.VerticalAlignment.AlignNormal,
+                format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignNormal,
             ),
             (
                 "Su&perscript",
                 None,
                 RichTextLineEdit.Superscript,
-                format.verticalAlignment()
-                == QTextCharFormat.VerticalAlignment.AlignSuperScript,
+                format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSuperScript,
             ),
             (
                 "Subs&cript",
                 None,
                 RichTextLineEdit.Subscript,
-                format.verticalAlignment()
-                == QTextCharFormat.VerticalAlignment.AlignSubScript,
+                format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSubScript,
             ),
         ):
             action = menu.addAction(text, self.setTextEffect)
@@ -218,17 +210,11 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
             if what == RichTextLineEdit.StrikeOut:
                 format.setFontStrikeOut(not format.fontStrikeOut())
             if what == RichTextLineEdit.NoSuperOrSubscript:
-                format.setVerticalAlignment(
-                    QTextCharFormat.VerticalAlignment.AlignNormal
-                )
+                format.setVerticalAlignment(QTextCharFormat.VerticalAlignment.AlignNormal)
             elif what == RichTextLineEdit.Superscript:
-                format.setVerticalAlignment(
-                    QTextCharFormat.VerticalAlignment.AlignSuperScript
-                )
+                format.setVerticalAlignment(QTextCharFormat.VerticalAlignment.AlignSuperScript)
             elif what == RichTextLineEdit.Subscript:
-                format.setVerticalAlignment(
-                    QTextCharFormat.VerticalAlignment.AlignSubScript
-                )
+                format.setVerticalAlignment(QTextCharFormat.VerticalAlignment.AlignSubScript)
             self.mergeCurrentCharFormat(format)
 
     def toSimpleHtml(self):
@@ -249,15 +235,9 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                     import cgi
 
                     text = cgi.escape(fragment.text(), True)
-                    if (
-                        format.verticalAlignment()
-                        == QTextCharFormat.VerticalAlignment.AlignSubScript
-                    ):
+                    if format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSubScript:
                         text = "<sub>{}</sub>".format(text)
-                    elif (
-                        format.verticalAlignment()
-                        == QTextCharFormat.VerticalAlignment.AlignSuperScript
-                    ):
+                    elif format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSuperScript:
                         text = "<sup>{}</sup>".format(text)
                     if format.fontUnderline():
                         text = "<u>{}</u>".format(text)

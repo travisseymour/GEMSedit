@@ -10,52 +10,26 @@
 
 from PySide6.QtCore import (
     QCoreApplication,
-    QDate,
-    QDateTime,
-    QLocale,
     QMetaObject,
-    QObject,
-    QPoint,
-    QRect,
     QSize,
-    QTime,
-    QUrl,
     Qt,
 )
 from PySide6.QtGui import (
-    QBrush,
-    QColor,
-    QConicalGradient,
-    QCursor,
     QFont,
-    QFontDatabase,
-    QGradient,
     QIcon,
-    QImage,
-    QKeySequence,
-    QLinearGradient,
-    QPainter,
-    QPalette,
     QPixmap,
-    QRadialGradient,
-    QTransform,
 )
 from PySide6.QtWidgets import (
     QAbstractItemView,
-    QApplication,
-    QDialog,
     QGridLayout,
     QHBoxLayout,
-    QHeaderView,
     QLabel,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
     QTableView,
     QToolButton,
-    QWidget,
 )
-from gemsedit.gui import gemsedit_rc
 
 
 class Ui_GlobalActionsDialog(object):
@@ -86,16 +60,12 @@ class Ui_GlobalActionsDialog(object):
         self.label_8 = QLabel(GlobalActionsDialog)
         self.label_8.setObjectName("label_8")
         self.label_8.setMaximumSize(QSize(50, 50))
-        self.label_8.setPixmap(
-            QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico")
-        )
+        self.label_8.setPixmap(QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico"))
         self.label_8.setScaledContents(True)
 
         self.horizontalLayout_3.addWidget(self.label_8)
 
-        self.horizontalSpacer_4 = QSpacerItem(
-            18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_4 = QSpacerItem(18, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
 
@@ -113,9 +83,7 @@ class Ui_GlobalActionsDialog(object):
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.horizontalSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
@@ -160,9 +128,7 @@ class Ui_GlobalActionsDialog(object):
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.horizontalSpacer_2 = QSpacerItem(
-            638, 38, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_2 = QSpacerItem(638, 38, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_2)
 
@@ -177,9 +143,7 @@ class Ui_GlobalActionsDialog(object):
         self.gaDel_toolButton = QToolButton(GlobalActionsDialog)
         self.gaDel_toolButton.setObjectName("gaDel_toolButton")
         icon1 = QIcon()
-        icon1.addFile(
-            ":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off
-        )
+        icon1.addFile(":/newPrefix/media/delete-icon.png", QSize(), QIcon.Normal, QIcon.Off)
         self.gaDel_toolButton.setIcon(icon1)
 
         self.horizontalLayout_4.addWidget(self.gaDel_toolButton)
@@ -208,9 +172,7 @@ class Ui_GlobalActionsDialog(object):
 
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.horizontalSpacer_3 = QSpacerItem(
-            638, 38, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        self.horizontalSpacer_3 = QSpacerItem(638, 38, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_3)
 
@@ -239,43 +201,17 @@ class Ui_GlobalActionsDialog(object):
 
     def retranslateUi(self, GlobalActionsDialog):
         GlobalActionsDialog.setWindowTitle(
-            QCoreApplication.translate(
-                "GlobalActionsDialog", "Task Action Editor", None
-            )
+            QCoreApplication.translate("GlobalActionsDialog", "Task Action Editor", None)
         )
-        self.labelAppName.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "GEMS Editor", None)
-        )
+        self.labelAppName.setText(QCoreApplication.translate("GlobalActionsDialog", "GEMS Editor", None))
         self.label_8.setText("")
-        self.label.setText(
-            QCoreApplication.translate(
-                "GlobalActionsDialog", "Global Environment Actions", None
-            )
-        )
-        self.closeButton.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "Close", None)
-        )
-        self.label_2.setText(
-            QCoreApplication.translate(
-                "GlobalActionsDialog", "Global Action List", None
-            )
-        )
-        self.gaAdd_toolButton.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "...", None)
-        )
-        self.gaDel_toolButton.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "...", None)
-        )
-        self.label_3.setText(
-            QCoreApplication.translate(
-                "GlobalActionsDialog", "Pocket Action List", None
-            )
-        )
-        self.paAdd_toolButton.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "...", None)
-        )
-        self.paDel_toolButton.setText(
-            QCoreApplication.translate("GlobalActionsDialog", "...", None)
-        )
+        self.label.setText(QCoreApplication.translate("GlobalActionsDialog", "Global Environment Actions", None))
+        self.closeButton.setText(QCoreApplication.translate("GlobalActionsDialog", "Close", None))
+        self.label_2.setText(QCoreApplication.translate("GlobalActionsDialog", "Global Action List", None))
+        self.gaAdd_toolButton.setText(QCoreApplication.translate("GlobalActionsDialog", "...", None))
+        self.gaDel_toolButton.setText(QCoreApplication.translate("GlobalActionsDialog", "...", None))
+        self.label_3.setText(QCoreApplication.translate("GlobalActionsDialog", "Pocket Action List", None))
+        self.paAdd_toolButton.setText(QCoreApplication.translate("GlobalActionsDialog", "...", None))
+        self.paDel_toolButton.setText(QCoreApplication.translate("GlobalActionsDialog", "...", None))
 
     # retranslateUi

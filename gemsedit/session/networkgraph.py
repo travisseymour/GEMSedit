@@ -28,6 +28,7 @@ from PySide6.QtWidgets import QMainWindow
 from gemsedit.database.connection import GemsDB
 from gemsedit.utils.apputils import get_resource
 from munch import Munch
+
 # from gemsedit.pyvis.network import Network
 from pyvis.network import Network
 from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
@@ -35,9 +36,7 @@ from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
 from gemsedit import log
 
 
-def make_network(
-        db: Munch, media_path: Path, directed: bool = True, layout: bool = False
-) -> Network:
+def make_network(db: Munch, media_path: Path, directed: bool = True, layout: bool = False) -> Network:
     net = Network(
         # height="1200px",
         bgcolor="#FFFFFF",
@@ -78,8 +77,8 @@ def make_network(
 
     # add edges
     for (
-            Id,
-            view,
+        Id,
+        view,
     ) in db.Views.items():
         # check for view actions
         if view.Actions:
@@ -130,14 +129,12 @@ def create_network_window(url: Union[str, Path]) -> QWebEngineView:
     return view
 
 
-def show_gems_network_graph(
-        parent: QMainWindow, conn: GemsDB, media_path: Union[Path, str]
-):
+def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Union[Path, str]):
     graph_file = str(Path(conn.tmp_folder.name, "gems_network_graph.html"))
 
     db = load_yaml_as_dict(conn.yaml_file_name, extra_yaml=conn.ui_list_yaml_file)
     if not db:
-        log.debug(f'Unable to load database!')
+        log.debug("Unable to load database!")
         return False
 
     db = Munch.fromDict(db)
@@ -145,7 +142,7 @@ def show_gems_network_graph(
     network = make_network(db, media_path, directed=True, layout=False)
 
     network.save_graph(graph_file)
-    log.debug(f'Temporarily saved network graph file to {graph_file}')
+    log.debug(f"Temporarily saved network graph file to {graph_file}")
 
     html = Path(graph_file).read_text()
 
@@ -161,7 +158,7 @@ def show_gems_network_graph(
 
     graph_path = Path(media_path, "env_graph.html")
     graph_path.write_text(html)
-    log.debug(f'Wrote {graph_path.stat().st_size} bytes to graph file.')
+    log.debug(f"Wrote {graph_path.stat().st_size} bytes to graph file.")
 
     # before we show graph, we need to copy over the vis components
     try:
@@ -173,7 +170,7 @@ def show_gems_network_graph(
         log.debug(f'Unable to copy js and css files from {str(get_resource("local_cdn"))} to {str(media_path)}: "{e}"')
 
     URL = Path(media_path, "env_graph.html")
-    log.debug(f'URL for network graph will be {str(URL)}')
+    log.debug(f"URL for network graph will be {str(URL)}")
 
     try:
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
@@ -187,7 +184,7 @@ def show_gems_network_graph(
         # parent.network_window.show()
 
         # FIXME: this alternative just opens network graph html file in the default browser
-        log.debug(f'about to show network graph from {str(URL.absolute().as_uri())}')
+        log.debug(f"about to show network graph from {str(URL.absolute().as_uri())}")
         webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
     except Exception as e:

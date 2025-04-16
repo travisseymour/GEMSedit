@@ -67,10 +67,7 @@ class SettingsListModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if orientation == QtCore.Qt.Orientation.Vertical:
                 return int(QtCore.Qt.AlignmentFlag.AlignRight)
-            return int(
-                QtCore.Qt.AlignmentFlag.AlignRight
-                | QtCore.Qt.AlignmentFlag.AlignVCenter
-            )
+            return int(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         if role != QtCore.Qt.ItemDataRole.DisplayRole:
             return None
         if orientation == QtCore.Qt.Orientation.Vertical:
@@ -98,9 +95,7 @@ class SettingsListModel(QtCore.QAbstractTableModel):
             v = value
 
             if index.row() == 0:  # >>>>>> view id
-                log.warning(
-                    "NOTE: GEMSedit is not allowing the view Id setting to be changed at the moment."
-                )
+                log.warning("NOTE: GEMSedit is not allowing the view Id setting to be changed at the moment.")
                 return False
 
             elif index.row() == 1:  # >>>>>> start view
@@ -121,8 +116,7 @@ class SettingsListModel(QtCore.QAbstractTableModel):
 
             elif index.row() == 6:  # >>>>>> gemsrun version
                 log.warning(
-                    "NOTE: GEMSedit will automatically update the GEMSedit version when you next "
-                    "save your environment."
+                    "NOTE: GEMSedit will automatically update the GEMSedit version when you next save your environment."
                 )
                 return False
 
@@ -150,15 +144,10 @@ class SettingsListModel(QtCore.QAbstractTableModel):
         # except:
         #     ...
 
-        if (
-            not index.isValid()
-            or not 0 <= index.row() < self.rowCount()
-            or not self._settings_list
-        ):
+        if not index.isValid() or not 0 <= index.row() < self.rowCount() or not self._settings_list:
             return None
 
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
-
             disp_value = self._settings_list[index.row()][2]
 
             if index.row() == 1:  # >>>>>> start view
@@ -185,7 +174,6 @@ class SettingsListModel(QtCore.QAbstractTableModel):
 
 class Settings:
     def __init__(self, media_path: str, parent_win: QMainWindow):
-
         self.media_path = media_path
         self.parent_win = parent_win
         self.model: Optional[SettingsListModel] = None
@@ -251,9 +239,7 @@ class Settings:
         #     self.colorlist.append(f"{color[0]}\t{color[2]}")
         self.color_list = []
         for color in mycolors.colors_large:
-            self.color_list.append(
-                f"['{str(color[0])}',{color[2][0]},{color[2][1]},{color[2][2]},255]"
-            )
+            self.color_list.append(f"['{str(color[0])}',{color[2][0]},{color[2][1]},{color[2][2]},255]")
 
         # Displaylist
         tmp_dict = helptext.display_desc
@@ -280,9 +266,7 @@ class Settings:
                 self.settings_list.append(["number", "Id", query.value(0)])
                 self.settings_list.append(["viewnum", "Start View", query.value(1)])
                 self.settings_list.append(["number", "Pocket Count", query.value(2)])
-                self.settings_list.append(
-                    ["translist", "View Transition", query.value(3)]
-                )
+                self.settings_list.append(["translist", "View Transition", query.value(3)])
                 self.settings_list.append(["bool", "Preload Resources", query.value(4)])
                 self.settings_list.append(
                     [
@@ -293,9 +277,7 @@ class Settings:
                 )
                 self.settings_list.append(["value", "GEMSedit Version", query.value(6)])
                 self.settings_list.append(["colorlist", "Stage Color", query.value(7)])
-                self.settings_list.append(
-                    ["displaylist", "Display Type", query.value(8)]
-                )
+                self.settings_list.append(["displaylist", "Display Type", query.value(8)])
                 self.settings_list.append(["hoverlist", "Object Hover", query.value(9)])
                 self.settings_list.append(["01float", "Media Volume", query.value(10)])
 
@@ -379,9 +361,7 @@ class Settings:
             )
 
         # add hook for deleting global overlay
-        self.ui.settings_tableView.mousePressEvent = (
-            self.mouse_press_global_overlay_reset
-        )
+        self.ui.settings_tableView.mousePressEvent = self.mouse_press_global_overlay_reset
 
         # attach model to view
         self.ui.settings_tableView.setModel(self.model)
@@ -395,52 +375,32 @@ class Settings:
 
             if setting_item not in ("Id", "Version"):
                 if type_item == "number":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.IntegerRowDelegate(0, 6)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(0, 6))
                 elif type_item == "01float":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.FloatRowDelegate(0.0, 1.0)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.FloatRowDelegate(0.0, 1.0))
                 elif type_item == "value":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.PlainTextRowDelegate()
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.PlainTextRowDelegate())
                 elif type_item == "viewnum":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.ComboRowDelegate(self.viewlist)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(self.viewlist))
                 elif type_item == "translist":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.ComboRowDelegate(self.trans_list)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(self.trans_list))
                 elif type_item == "colorlist":
                     delegate.insertRowDelegate(
                         i,
                         generic_row_delegates.ComboRowColoredDelegate(self.color_list),
                     )
                 elif type_item == "displaylist":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.ComboRowDelegate(self.display_list)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(self.display_list))
                 elif type_item == "hoverlist":
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.ComboRowDelegate(self.hover_list)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(self.hover_list))
                 elif type_item == "bool":
                     onoff = ["False", "True"]
-                    delegate.insertRowDelegate(
-                        i, generic_row_delegates.ComboRowDelegate(onoff)
-                    )
+                    delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(onoff))
                 elif type_item == "picfile":
-                    pic_filter = (
-                        "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
-                    )
+                    pic_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
                     delegate.insertRowDelegate(
                         i,
-                        generic_row_delegates.FileRowDelegate(
-                            self.media_path, pic_filter
-                        ),
+                        generic_row_delegates.FileRowDelegate(self.media_path, pic_filter),
                     )
                 # otherwise, should evoke default delegate
 

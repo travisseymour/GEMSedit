@@ -39,12 +39,7 @@ def un_string_lists(text: str) -> str:
             return text  # something is fishy here...too many brackets to handle
         candidate = candidate.split(",")
         candidate = [
-            (
-                eval(item)
-                if str(item).isdigit()
-                else f"""{str(item).strip('"').strip("'")}"""
-            )
-            for item in candidate
+            (eval(item) if str(item).isdigit() else f"""{str(item).strip('"').strip("'")}""") for item in candidate
         ]
         return str(candidate).replace(", ", ",")
     else:
@@ -75,20 +70,13 @@ def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) ->
 
     # init dict db
     dict_db = dict()
-    dict_db["Name"] = (
-        Path(db_file).stem.title()
-        if not isinstance(env_name, str)
-        else env_name.strip()
-    )
+    dict_db["Name"] = Path(db_file).stem.title() if not isinstance(env_name, str) else env_name.strip()
     dict_db["Id"] = 0
 
     options = [k for k in db["options"].rows][0]
 
     # convert and listy strings to actual lists
-    options = {
-        key: un_string_lists(value) if isinstance(value, str) else value
-        for key, value in options.items()
-    }
+    options = {key: un_string_lists(value) if isinstance(value, str) else value for key, value in options.items()}
 
     # convert version to strings
     options["Version"] = str(options["Version"])
@@ -105,14 +93,14 @@ def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) ->
 
     # add global actions
     dict_db["Global"]["GlobalActions"] = {}
-    for action in db["actions"].rows_where(f'ContextType == "global"'):
+    for action in db["actions"].rows_where('ContextType == "global"'):
         action["Action"] = un_string_lists(action["Action"])
         # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
         dict_db["Global"]["GlobalActions"][str(action["Id"])] = action
 
     # add pocket actions
     dict_db["Global"]["PocketActions"] = {}
-    for action in db["actions"].rows_where(f'ContextType == "pocket"'):
+    for action in db["actions"].rows_where('ContextType == "pocket"'):
         action["Action"] = un_string_lists(action["Action"])
         # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
         dict_db["Global"]["PocketActions"][str(action["Id"])] = action
@@ -120,29 +108,23 @@ def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) ->
     # add views
     dict_db["Views"] = {}
     for view in db["views"].rows:
-
         # add view actions
         view["Actions"] = {}
-        for action in db["actions"].rows_where(
-            f'ContextType == "view" and ContextId == {view["Id"]}'
-        ):
+        for action in db["actions"].rows_where(f'ContextType == "view" and ContextId == {view["Id"]}'):
             action["Action"] = un_string_lists(action["Action"])
             # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
             view["Actions"][str(action["Id"])] = action
 
         # add view objects
         view["Objects"] = {}
-        for obj in db["objects"].rows_where(f'Parent == {view["Id"]}'):
-
+        for obj in db["objects"].rows_where(f"Parent == {view['Id']}"):
             # update draggable is needed
             if "Draggable" not in obj:
                 obj["Draggable"] = obj["Takeable"]
 
             # add view object actions
             obj["Actions"] = {}
-            for action in db["actions"].rows_where(
-                f'ContextType == "object" and ContextId == {obj["Id"]}'
-            ):
+            for action in db["actions"].rows_where(f'ContextType == "object" and ContextId == {obj["Id"]}'):
                 action["Action"] = un_string_lists(action["Action"])
                 # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
                 obj["Actions"][str(action["Id"])] = action
@@ -174,9 +156,7 @@ def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) ->
     return dict_db
 
 
-def load_yaml_as_dict(
-    yaml_file: Union[str, Path], extra_yaml: Optional[Union[str, Path]] = None
-) -> dict:
+def load_yaml_as_dict(yaml_file: Union[str, Path], extra_yaml: Optional[Union[str, Path]] = None) -> dict:
     with open(yaml_file, "r") as infile:
         db_dict = yaml.safe_load(infile)
 
@@ -188,9 +168,7 @@ def load_yaml_as_dict(
     return db_dict
 
 
-def dict_to_sqlite_file(
-    db: dict, db_file_name: Union[str, Path], overwrite: bool = False
-) -> Path:
+def dict_to_sqlite_file(db: dict, db_file_name: Union[str, Path], overwrite: bool = False) -> Path:
     """Automatically saves to disk as sqlite db is constructed from the dict. Returns path of sqlite db."""
     db_path = Path(db_file_name)
     sql_db = Database(db_path, recreate=overwrite)
@@ -323,6 +301,4 @@ if __name__ == "__main__":
     new_db_file = Path(Path(db_file).parent, Path(db_file).stem + "_y2s2y.db")
     db_as_dict_from_disk = load_yaml_as_dict(new_yaml_file)
 
-    sqlite_db_file = dict_to_sqlite_file(
-        db_as_dict_from_disk, new_db_file, overwrite=True
-    )
+    sqlite_db_file = dict_to_sqlite_file(db_as_dict_from_disk, new_db_file, overwrite=True)

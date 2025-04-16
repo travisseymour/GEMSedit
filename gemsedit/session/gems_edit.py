@@ -36,7 +36,7 @@ from pathlib import Path
 from gemsedit import log, LOG_PATH
 import time
 
-from gemsedit import dialog_font, app_long_name
+from gemsedit import app_long_name
 from gemsedit.utils.apputils import (
     get_resource,
     start_external_app,
@@ -58,22 +58,16 @@ class GemsViews:
         self.selection_model = None
 
         self.MainWindow = QtWidgets.QMainWindow()
-        self.MainWindow.setWindowIcon(QIcon(str(get_resource('images', 'Icon.png'))))
+        self.MainWindow.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
 
         self.ui = win.Ui_ViewsWindow()
         self.ui.setupUi(self.MainWindow)
 
         self.settings = QSettings()
-        self.prev_db_filename = self.settings.value(
-            "prev_db_filename", type=str, defaultValue=""
-        )
-        self.gems_runner_path = self.settings.value(
-            "gems_runner_path", type=str, defaultValue=""
-        )
+        self.prev_db_filename = self.settings.value("prev_db_filename", type=str, defaultValue="")
+        self.gems_runner_path = self.settings.value("gems_runner_path", type=str, defaultValue="")
 
-        log.info(
-            f"GEMS_EDIT START v{__version__} ({time.strftime('%x')}-{time.strftime('%X')})."
-        )
+        log.info(f"GEMS_EDIT START v{__version__} ({time.strftime('%x')}-{time.strftime('%X')}).")
 
         self.MainWindow.network_window = None  # Optional[QWebEngineView]
 
@@ -109,32 +103,16 @@ class GemsViews:
         self.ui.actionTask_Actions.triggered.connect(self.launchTaskActionEditor)
         self.ui.actionTask_Configuration.triggered.connect(self.launchTaskConfigEditor)
 
-        self.ui.fgDel_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Foreground", mode="delete")
-        )
-        self.ui.bgDel_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Background", mode="delete")
-        )
-        self.ui.olDel_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Overlay", mode="delete")
-        )
+        self.ui.fgDel_toolButton.pressed.connect(lambda: self.handlePicEdit("Foreground", mode="delete"))
+        self.ui.bgDel_toolButton.pressed.connect(lambda: self.handlePicEdit("Background", mode="delete"))
+        self.ui.olDel_toolButton.pressed.connect(lambda: self.handlePicEdit("Overlay", mode="delete"))
 
-        self.ui.fgOpen_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Foreground", mode="open")
-        )
-        self.ui.bgOpen_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Background", mode="open")
-        )
-        self.ui.olOpen_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Overlay", mode="open")
-        )
+        self.ui.fgOpen_toolButton.pressed.connect(lambda: self.handlePicEdit("Foreground", mode="open"))
+        self.ui.bgOpen_toolButton.pressed.connect(lambda: self.handlePicEdit("Background", mode="open"))
+        self.ui.olOpen_toolButton.pressed.connect(lambda: self.handlePicEdit("Overlay", mode="open"))
 
-        self.ui.fgCopy_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Foreground", mode="copy")
-        )
-        self.ui.bgCopy_toolButton.pressed.connect(
-            lambda: self.handlePicEdit("Background", mode="copy")
-        )
+        self.ui.fgCopy_toolButton.pressed.connect(lambda: self.handlePicEdit("Foreground", mode="copy"))
+        self.ui.bgCopy_toolButton.pressed.connect(lambda: self.handlePicEdit("Background", mode="copy"))
 
         self.ui.actionNetwork_Graph.triggered.connect(self.handle_network_graph)
         self.ui.actionOpen.triggered.connect(self.open_environment)
@@ -149,9 +127,7 @@ class GemsViews:
         self.ui.actionSaveEnv.triggered.connect(self.handle_save_db)
         # FIXME: Eventually move this to somewhere stable!!!
         help_url = "https://www.dropbox.com/s/eb772nead9qkzja/GEMSOverview.pdf"
-        self.ui.actionDocumentation.triggered.connect(
-            partial(webbrowser.open, help_url)
-        )
+        self.ui.actionDocumentation.triggered.connect(partial(webbrowser.open, help_url))
 
         self.MainWindow.closeEvent = self.main_window_close
 
@@ -341,10 +317,8 @@ class GemsViews:
                 "OK: Run environment without current changes.\n"
                 "SAVE: Save changes and then run the updated environment.\n"
                 "CANCEL: Close this dialog window.",
-                QMessageBox.StandardButton.Ok
-                | QMessageBox.StandardButton.Save
-                | QMessageBox.StandardButton.Cancel,
-                QMessageBox.StandardButton.Cancel
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
             )
             if ret == QtWidgets.QMessageBox.StandardButton.Cancel:
                 return
@@ -357,19 +331,18 @@ class GemsViews:
             log.debug(self.db_filename)
 
             try:
-                log.debug(f'{self.db_filename=}')
+                log.debug(f"{self.db_filename=}")
                 output = start_external_app(
                     "GEMSrun",
                     params=["--file", self.db_filename],
-                    wait=False if platform.platform().startswith('Windows') else True
+                    wait=False if platform.platform().startswith("Windows") else True,
                 )
                 log.info("\n".join(output))
             except Exception as e:
                 _ = QMessageBox.critical(
                     self.MainWindow,
                     "GEMSrun Application Failed",
-                    f"Attempting to run GEMSrun has failed with this error message:\n"
-                    f'"{e}"',
+                    f'Attempting to run GEMSrun has failed with this error message:\n"{e}"',
                     QMessageBox.StandardButton.Ok,
                 )
                 return
@@ -379,40 +352,30 @@ class GemsViews:
             try:
                 self.ui.log_plainTextEdit.setPlainText(LOG_PATH.read_text())
             except Exception as e:
-                self.ui.log_plainTextEdit.setPlainText(
-                    f"Error reading log file at {str(LOG_PATH)} ({e})"
-                )
+                self.ui.log_plainTextEdit.setPlainText(f"Error reading log file at {str(LOG_PATH)} ({e})")
 
     def check_for_db_changed(self):
-        self.ui.actionSaveEnv.setEnabled(
-            self.connection.db_opened() and connection.DB_CHANGED
-        )
+        self.ui.actionSaveEnv.setEnabled(self.connection.db_opened() and connection.DB_CHANGED)
 
     def launchMediaFolder(self):
         if not self.media_path or not Path(self.media_path).is_dir():
             return
 
         try:
-            webbrowser.open(f'file://{self.media_path}')
+            webbrowser.open(f"file://{self.media_path}")
 
         except Exception as e:
-            log.error(
-                f"Unable to open media folder in this location: {self.media_path}. ({e})"
-            )
+            log.error(f"Unable to open media folder in this location: {self.media_path}. ({e})")
 
     def launchTaskActionEditor(self):
         if self.model is not None:
-            self.task_action_editor = globalact.GlobalAct(
-                media_path=self.media_path, parent_win=self.MainWindow
-            )
+            self.task_action_editor = globalact.GlobalAct(media_path=self.media_path, parent_win=self.MainWindow)
             self.MainWindow.hide()
             self.task_action_editor.MainWindow.show()
 
     def launchTaskConfigEditor(self):
         if self.model is not None:
-            self.task_config_editor = settings.Settings(
-                media_path=self.media_path, parent_win=self.MainWindow
-            )
+            self.task_config_editor = settings.Settings(media_path=self.media_path, parent_win=self.MainWindow)
             self.MainWindow.hide()
             self.task_config_editor.MainWindow.show()
 
@@ -437,13 +400,9 @@ class GemsViews:
                     QMessageBox.StandardButton.Ok,
                 )
             else:
-                self.object_win = objects.objects(
-                    parentid=Id, mediapath=self.media_path, parent_win=self.MainWindow
-                )
+                self.object_win = objects.objects(parentid=Id, mediapath=self.media_path, parent_win=self.MainWindow)
                 self.object_win.MainWindow.setModal(False)
-                self.MainWindow.move(
-                    self.MainWindow.pos().x(), self.MainWindow.pos().y()
-                )
+                self.MainWindow.move(self.MainWindow.pos().x(), self.MainWindow.pos().y())
                 self.MainWindow.hide()
                 self.object_win.MainWindow.show()
         else:
@@ -482,16 +441,14 @@ class GemsViews:
         if curr_row is not None and curr_row >= 0:
             curr_row_index = self.model.index(curr_row, 0, QtCore.QModelIndex())
             sel = QtCore.QItemSelection(curr_row_index, curr_row_index)
-            self.selection_model.select(
-                sel, QtCore.QItemSelectionModel.SelectionFlag.Select
-            )
+            self.selection_model.select(sel, QtCore.QItemSelectionModel.SelectionFlag.Select)
             self.ui.view_tableView.selectRow(curr_row)
 
     def handlePicEdit(self, field_name, mode):
         if self.db_filename == "" or field_name not in (
-                "Foreground",
-                "Background",
-                "Overlay",
+            "Foreground",
+            "Background",
+            "Overlay",
         ):
             return
         new_value = ""
@@ -522,20 +479,14 @@ class GemsViews:
 
         Id = self.model.record(self.current_row).value("Id")
         query = QtSql.QSqlQuery()
-        query.prepare(
-            f"UPDATE {self.base_table_name} SET {field_name} = :newvalue WHERE Id = :id"
-        )
+        query.prepare(f"UPDATE {self.base_table_name} SET {field_name} = :newvalue WHERE Id = :id")
         query.bindValue(":newvalue", new_value)
         query.bindValue(":id", Id)
         query.exec()
         if query.lastError().isValid():
-            log.error(
-                f"Problem in handlePicEdit() update query: {query.lastError().text()}"
-            )
+            log.error(f"Problem in handlePicEdit() update query: {query.lastError().text()}")
 
-        self.model.setQuery(
-            "select * from " + self.base_table_name + " order by RowOrder"
-        )
+        self.model.setQuery("select * from " + self.base_table_name + " order by RowOrder")
 
         if mode != "normal":
             self.loadPicFields(skip_show_files=False)
@@ -562,15 +513,9 @@ class GemsViews:
             return
 
         # get the info from the model
-        fg = os.path.join(
-            self.media_path, self.model.record(self.current_row).value("Foreground")
-        )
-        bg = os.path.join(
-            self.media_path, self.model.record(self.current_row).value("Background")
-        )
-        ol = os.path.join(
-            self.media_path, self.model.record(self.current_row).value("Overlay")
-        )
+        fg = os.path.join(self.media_path, self.model.record(self.current_row).value("Foreground"))
+        bg = os.path.join(self.media_path, self.model.record(self.current_row).value("Background"))
+        ol = os.path.join(self.media_path, self.model.record(self.current_row).value("Overlay"))
 
         # show filenames
         if not skip_show_files:
@@ -630,9 +575,7 @@ class GemsViews:
             else:
                 self.ui.objectsButton.setText("Objects")
         except Exception as e:
-            log.error(
-                f"Problem in handleSelectionChange({selected}, {deselected}): {e}"
-            )
+            log.error(f"Problem in handleSelectionChange({selected}, {deselected}): {e}")
 
     def handleBaseDoubleClick(self, index):
         id = index.model().record(index.row()).value("Id")
@@ -641,12 +584,8 @@ class GemsViews:
 
     def handleBaseAdd(self):
         bn = self.basename.title()
-        new_id = get_next_value(
-            column_name="Id", table_name=self.basename.lower() + "s", default=0
-        )
-        new_order = get_next_value(
-            column_name="RowOrder", table_name=self.basename.lower() + "s", default=0
-        )
+        new_id = get_next_value(column_name="Id", table_name=self.basename.lower() + "s", default=0)
+        new_order = get_next_value(column_name="RowOrder", table_name=self.basename.lower() + "s", default=0)
         newname = f"New{bn}{new_id}"
 
         text = newname  # '???'
@@ -675,9 +614,7 @@ class GemsViews:
             if query.lastError().isValid():
                 log.error(f"Problem in handleBaseAdd(): {query.lastError().text()}")
             else:
-                self.model.setQuery(
-                    f"select * from {self.base_table_name} order by RowOrder"
-                )
+                self.model.setQuery(f"select * from {self.base_table_name} order by RowOrder")
                 if self.model.rowCount() > 0:
                     self.current_row = self.model.rowCount() - 1
                     self.ui.view_tableView.selectRow(self.current_row)
@@ -719,35 +656,27 @@ class GemsViews:
                 f"Delete {bn} {name}",
                 f"Really delete {name} and all of its associated actions?",
                 QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
-                QMessageBox.StandardButton.Cancel
+                QMessageBox.StandardButton.Cancel,
             )
 
             if ret == QtWidgets.QMessageBox.StandardButton.Ok:
                 error_list = []
                 # delete base (view)
                 query1 = QtSql.QSqlQuery()
-                query1.prepare(
-                    "DELETE FROM " + self.base_table_name + " where Id = :id"
-                )
+                query1.prepare("DELETE FROM " + self.base_table_name + " where Id = :id")
                 query1.bindValue(":id", Id)
                 query1.exec()
                 if query1.lastError().isValid():
-                    log.error(
-                        f"Problem in handleBaseDel() deleting base: {query1.lastError().text()}"
-                    )
+                    log.error(f"Problem in handleBaseDel() deleting base: {query1.lastError().text()}")
                     error_list.append(1)
                 # delete associated actions for base (view actions)
                 query2 = QtSql.QSqlQuery()
-                query2.prepare(
-                    "DELETE FROM actions where ContextType = :actiontype and ContextId = :id"
-                )
+                query2.prepare("DELETE FROM actions where ContextType = :actiontype and ContextId = :id")
                 query2.bindValue(":actiontype", self.basename.lower())
                 query2.bindValue(":id", Id)
                 query2.exec()
                 if query2.lastError().isValid():
-                    log.error(
-                        f"Problem in handleBaseDel() deleting associated actions: {query2.lastError().text()}"
-                    )
+                    log.error(f"Problem in handleBaseDel() deleting associated actions: {query2.lastError().text()}")
                     error_list.append(2)
                 # delete actions associated with base (view) objects. yeah, really!
                 # first get list of associated objects mama
@@ -756,9 +685,7 @@ class GemsViews:
                 query3.bindValue(":id", Id)
                 query3.exec()
                 if query3.lastError().isValid():
-                    log.error(
-                        f"Problem in handleBaseDel(): listing associated objects {query3.lastError().text()}"
-                    )
+                    log.error(f"Problem in handleBaseDel(): listing associated objects {query3.lastError().text()}")
                     error_list.append(3)
                 else:
                     IdList = []
@@ -771,8 +698,7 @@ class GemsViews:
                         # delete associated actions for base
                         query3 = QtSql.QSqlQuery()
                         query3.prepare(
-                            "DELETE FROM actions where ContextType = 'object' and ContextId in %s"
-                            % id_str_list
+                            "DELETE FROM actions where ContextType = 'object' and ContextId in %s" % id_str_list
                         )
                         query3.exec()
                         if query3.lastError().isValid():
@@ -787,15 +713,11 @@ class GemsViews:
                 query4.bindValue(":id", Id)
                 query4.exec()
                 if query4.lastError().isValid():
-                    log.error(
-                        f"Problem in handleBaseDel(): deleting associated objects {query4.lastError().text()}"
-                    )
+                    log.error(f"Problem in handleBaseDel(): deleting associated objects {query4.lastError().text()}")
                     error_list.append(4)
                 # ok, refresh the display
                 if not error_list:
-                    self.model.setQuery(
-                        "select * from " + self.base_table_name + " order by RowOrder"
-                    )
+                    self.model.setQuery("select * from " + self.base_table_name + " order by RowOrder")
                     if self.model.rowCount() > 0:
                         self.current_row = self.model.rowCount() - 1
                         self.ui.view_tableView.selectRow(self.current_row)
@@ -809,9 +731,7 @@ class GemsViews:
                         # QtCore.QObject.connect(self.selectionmodel,
                         #                        QtCore.SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
                         #                        self.handleSelectionChange)
-                        self.selection_model.selectionChanged.connect(
-                            self.handleSelectionChange
-                        )
+                        self.selection_model.selectionChanged.connect(self.handleSelectionChange)
                         if self.model.rowCount() > 0:
                             self.reinstateViewSelection(self.model.rowCount() - 1)
                     else:
@@ -819,9 +739,7 @@ class GemsViews:
                         # QtCore.QObject.disconnect(self.selectionmodel,
                         #                           QtCore.SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
                         #                           self.handleSelectionChange)
-                        self.selection_model.selectionChanged.connect(
-                            self.handleSelectionChange
-                        )
+                        self.selection_model.selectionChanged.connect(self.handleSelectionChange)
                     self.action_list.filterActions()
                     self.loadPicFields()
 
@@ -841,9 +759,7 @@ class GemsViews:
         # get the name
         new_name = "???"
         ok = True
-        while ok is True and (
-                str(new_name).isalnum() is False or str(new_name) in name_list
-        ):
+        while ok is True and (str(new_name).isalnum() is False or str(new_name) in name_list):
             text, ok = QtWidgets.QInputDialog.getText(
                 self.MainWindow,
                 "Change " + bn + " Name",
@@ -852,7 +768,6 @@ class GemsViews:
             )
             new_name = str(text)
             if new_name in name_list:
-
                 ret = QMessageBox.question(
                     self.MainWindow,
                     "Duplicate Name Error",
@@ -860,7 +775,7 @@ class GemsViews:
                     f"You must choose a unique name for each {bn.lower()}.\n"
                     f"Press OK to try another name.",
                     QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
-                    QMessageBox.StandardButton.Cancel
+                    QMessageBox.StandardButton.Cancel,
                 )
 
                 if ret == QtWidgets.QMessageBox.StandardButton.Cancel:
@@ -869,22 +784,14 @@ class GemsViews:
             # change name if it's actually different
             if new_name != name:
                 query = QtSql.QSqlQuery()
-                query.prepare(
-                    "UPDATE "
-                    + self.base_table_name
-                    + " SET Name = :name WHERE Id = :id"
-                )
+                query.prepare("UPDATE " + self.base_table_name + " SET Name = :name WHERE Id = :id")
                 query.bindValue(":id", Id)
                 query.bindValue(":name", new_name)
                 query.exec()
                 if query.lastError().isValid():
-                    log.error(
-                        f"Problem in editBaseName() update query: {query.lastError().text()}"
-                    )
+                    log.error(f"Problem in editBaseName() update query: {query.lastError().text()}")
                 else:
-                    self.model.setQuery(
-                        "select * from " + self.base_table_name + " order by RowOrder"
-                    )
+                    self.model.setQuery("select * from " + self.base_table_name + " order by RowOrder")
 
                 connection.mark_db_as_changed()
 
@@ -910,9 +817,7 @@ class GemsViews:
 
     def initializeDatabases(self):
         self.model = QtSql.QSqlQueryModel()
-        self.initializeBaseModel(
-            self.model, "select * from " + self.base_table_name + " order by RowOrder"
-        )
+        self.initializeBaseModel(self.model, "select * from " + self.base_table_name + " order by RowOrder")
         self.connectBaseModelToTableView(self.model, self.ui.view_tableView)
 
     def initializeViews(self):
@@ -923,18 +828,12 @@ class GemsViews:
             self.ui.view_tableView.selectRow(0)
             self.current_row = 0
             # load any corresponding actions
-            self.action_list = ACTIONLIST.ActionList(
-                Id, self.ui.VAL_tableView, "view", mediapath=self.media_path
-            )
+            self.action_list = ACTIONLIST.ActionList(Id, self.ui.VAL_tableView, "view", mediapath=self.media_path)
             self.action_list.parent_id = Id
             self.action_list.filterActions()
             # setup action_list buttons
-            self.ui.actionAdd_toolButton.pressed.connect(
-                self.action_list.handleActionAdd
-            )
-            self.ui.actionDel_toolButton.pressed.connect(
-                self.action_list.handleActionDel
-            )
+            self.ui.actionAdd_toolButton.pressed.connect(self.action_list.handleActionAdd)
+            self.ui.actionDel_toolButton.pressed.connect(self.action_list.handleActionDel)
 
             # handle pic fields
             self.loadPicFields(False)
@@ -946,9 +845,7 @@ class GemsViews:
 
             # This clause just added to fix problem loading objects win when there are no objects
         else:
-            self.action_list = ACTIONLIST.ActionList(
-                None, self.ui.view_tableView, "view", mediapath=self.media_path
-            )
+            self.action_list = ACTIONLIST.ActionList(None, self.ui.view_tableView, "view", mediapath=self.media_path)
             self.action_list.parent_id = None
             self.selection_model.selectionChanged.connect(self.handleSelectionChange)
 
@@ -968,14 +865,10 @@ class GemsViews:
             return
 
         file_path = Path(filename)
-        file_path = Path(
-            file_path.parent, file_path.stem.replace(" ", "_").strip() + ".yaml"
-        )
+        file_path = Path(file_path.parent, file_path.stem.replace(" ", "_").strip() + ".yaml")
         media_folder = Path(file_path.parent, f"{file_path.stem}_media")
 
-        errors = gems_db.new_database(
-            yaml_db_file=file_path, media_folder=media_folder
-        )
+        errors = gems_db.new_database(yaml_db_file=file_path, media_folder=media_folder)
 
         if not errors:
             self.open_environment(str(file_path))
@@ -988,7 +881,7 @@ class GemsViews:
                 QMessageBox.StandardButton.Ok,
             )
 
-    def open_environment(self, file_name: str = ''):
+    def open_environment(self, file_name: str = ""):
         if not file_name:
             editor = QtWidgets.QFileDialog(self.MainWindow)
             editor.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
@@ -1008,8 +901,7 @@ class GemsViews:
             QMessageBox.critical(
                 self.MainWindow,
                 "Filename Error",
-                f"File doesn't appear to be a GEMS Environment file, "
-                "filename doesn't end with '*.yaml':\n{filename}",
+                "File doesn't appear to be a GEMS Environment file, filename doesn't end with '*.yaml':\n{filename}",
                 QMessageBox.StandardButton.Ok,
             )
             return
@@ -1030,15 +922,15 @@ class GemsViews:
 
         if not project_media_folder.is_dir():
             if (
-                    self.askYesNo(
-                        "Create Media Folder?",
-                        f"GEMS expects a media folder in the same one where "
-                        f"the environment file was found. In particular, the "
-                        f"folder {str(project_media_folder)} appears to be missing. GEMS requires that "
-                        f"all media be placed in this folder. Would you like"
-                        f"to create it now?",
-                    )
-                    is True
+                self.askYesNo(
+                    "Create Media Folder?",
+                    f"GEMS expects a media folder in the same one where "
+                    f"the environment file was found. In particular, the "
+                    f"folder {str(project_media_folder)} appears to be missing. GEMS requires that "
+                    f"all media be placed in this folder. Would you like"
+                    f"to create it now?",
+                )
+                is True
             ):
                 try:
                     project_media_folder.mkdir(exist_ok=True)
@@ -1059,9 +951,7 @@ class GemsViews:
 
         ui_db_tables_file = get_resource("UiDBTables.yaml")
 
-        if self.connection.open_db(
-                db_yaml_file=filename, ui_list_yaml_file=ui_db_tables_file
-        ):
+        if self.connection.open_db(db_yaml_file=filename, ui_list_yaml_file=ui_db_tables_file):
             self.db_filename = filename
             self.initializeDatabases()
             self.initializeViews()
@@ -1075,7 +965,7 @@ class GemsViews:
                 QMessageBox.StandardButton.Ok,
             )
 
-        log.debug(f'{self.db_filename=}')
+        log.debug(f"{self.db_filename=}")
 
     def closeEnv(self):
         if self.connection.db_opened():
@@ -1155,7 +1045,6 @@ class GemsViews:
         self.ui.bgCopy_toolButton.setEnabled(False)
 
     def askOKCancel(self, text: str, info_text: str) -> bool:
-
         ret = QMessageBox.question(
             self.MainWindow,
             text,

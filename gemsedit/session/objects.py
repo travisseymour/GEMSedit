@@ -35,7 +35,6 @@ from gemsedit.database.sqltools import get_next_value
 
 class objects:
     def __init__(self, parentid, mediapath, parent_win):
-
         self.parentid = parentid
         self.mediapath = mediapath
         self.parent_win = parent_win
@@ -51,9 +50,7 @@ class objects:
         self.ui = win.Ui_ObjectsWindow()
         self.ui.setupUi(self.MainWindow)
         self.selectionmodel = None
-        self.objbox = self.create_box(
-            self.ui.objectLocPic_label, 0, 0, 0, 0, "yellow", "ObjectBox"
-        )
+        self.objbox = self.create_box(self.ui.objectLocPic_label, 0, 0, 0, 0, "yellow", "ObjectBox")
 
         self.actionlist = None
 
@@ -84,16 +81,10 @@ class objects:
         self.ui.takeable_checkBox.toggled.connect(self.updateTakeable)
         self.ui.draggable_checkBox.toggled.connect(self.updateDraggable)
         self.ui.visible_checkBox.toggled.connect(self.updateVisible)
-        self.ui.delSelect_toolButton.pressed.connect(
-            lambda: self.handlePicEdit(mode="delete")
-        )
-        self.ui.drawSelect_toolButton.pressed.connect(
-            lambda: self.handlePicEdit(mode="select")
-        )
+        self.ui.delSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="delete"))
+        self.ui.drawSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="select"))
 
-        self.ui.objectLocPic_label.signalClicked.connect(
-            lambda: self.handlePicEdit(mode="viewonly")
-        )
+        self.ui.objectLocPic_label.signalClicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
 
         self.ui.closeButton.pressed.connect(self.closeTheWindow)
 
@@ -120,9 +111,7 @@ class objects:
         if curr_row is not None and curr_row >= 0:
             currrowindex = self.model.index(curr_row, 0, QtCore.QModelIndex())
             sel = QtCore.QItemSelection(currrowindex, currrowindex)
-            self.selectionmodel.select(
-                sel, QtCore.QItemSelectionModel.SelectionFlag.Select
-            )
+            self.selectionmodel.select(sel, QtCore.QItemSelectionModel.SelectionFlag.Select)
             self.ui.object_tableView.selectRow(curr_row)
 
     def handlePicEdit(self, mode):
@@ -161,9 +150,7 @@ class objects:
                 query.bindValue(":id", id)
                 query.exec()
                 if query.lastError().isValid():
-                    log.error(
-                        f"Problem in handlePicEdit() update query: {query.lastError().text()}"
-                    )
+                    log.error(f"Problem in handlePicEdit() update query: {query.lastError().text()}")
                 sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
                 self.model.setQuery(sql)
                 self.loadPicFields()
@@ -260,34 +247,10 @@ class objects:
         try:
             # get some required info
             row = QtCore.QItemSelection(selected).indexes()[0].row()
-            id = (
-                QtCore.QItemSelection(selected)
-                .indexes()[0]
-                .model()
-                .record(row)
-                .value("Id")
-            )
-            visible = (
-                QtCore.QItemSelection(selected)
-                .indexes()[0]
-                .model()
-                .record(row)
-                .value("Visible")
-            )
-            takeable = (
-                QtCore.QItemSelection(selected)
-                .indexes()[0]
-                .model()
-                .record(row)
-                .value("Takeable")
-            )
-            draggable = (
-                QtCore.QItemSelection(selected)
-                .indexes()[0]
-                .model()
-                .record(row)
-                .value("Draggable")
-            )
+            id = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Id")
+            visible = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Visible")
+            takeable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Takeable")
+            draggable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Draggable")
 
             # disable checkbox handerls prior to updating checkboxes or you'll get circular mess
             self.ui.takeable_checkBox.toggled.disconnect()
@@ -311,9 +274,7 @@ class objects:
 
             self.loadPicFields()
         except Exception as e:
-            log.error(
-                f"Problem in handleSelectionChange({selected}, {deselected}): {e}"
-            )
+            log.error(f"Problem in handleSelectionChange({selected}, {deselected}): {e}")
 
     def handleBaseDoubleClick(self, index):
         # id =  self.getIdFromClick(index)
@@ -324,20 +285,14 @@ class objects:
 
     def handleBaseAdd(self):
         bn = self.basename.title()
-        newid = get_next_value(
-            column_name="Id", table_name=self.basename.lower() + "s", default=0
-        )
-        neworder = get_next_value(
-            column_name="RowOrder", table_name=self.basename.lower() + "s", default=0
-        )
+        newid = get_next_value(column_name="Id", table_name=self.basename.lower() + "s", default=0)
+        neworder = get_next_value(column_name="RowOrder", table_name=self.basename.lower() + "s", default=0)
         newname = f"New{bn}{newid}"
 
         # get list of old names
         namelist = []
         query = QtSql.QSqlQuery()
-        query.exec(
-            f"select Name from {self.basetablename} where Parent = {self.parentid}"
-        )
+        query.exec(f"select Name from {self.basetablename} where Parent = {self.parentid}")
         if query.isActive():
             while query.next():
                 namelist.append(query.value(0))
@@ -345,9 +300,7 @@ class objects:
         text = "???"
         newname = text
         ok = True
-        while ok is True and (
-            (not self.strIsPattern(newname, "\w*")) or (newname in namelist)
-        ):
+        while ok is True and ((not self.strIsPattern(newname, r"\w*")) or (newname in namelist)):
             text, ok = QtWidgets.QInputDialog.getText(
                 self.MainWindow,
                 "Adding New " + bn,
@@ -355,7 +308,7 @@ class objects:
             )
             newname = str(text)
             if ok:
-                if not self.strIsPattern(newname, "\w*"):  # newname.isalpha():
+                if not self.strIsPattern(newname, r"\w*"):  # newname.isalpha():
                     _ = QMessageBox.information(
                         self.parent_win,
                         "Bad Object Name",
@@ -437,22 +390,16 @@ class objects:
                 query1.bindValue(":id", id)
                 query1.exec()
                 if query1.lastError().isValid():
-                    log.error(
-                        f"Problem in handleBaseDel(): {query1.lastError().text()}"
-                    )
+                    log.error(f"Problem in handleBaseDel(): {query1.lastError().text()}")
                 else:
                     # delete associated actions for base
                     query2 = QtSql.QSqlQuery()
-                    query2.prepare(
-                        "DELETE FROM actions where ContextType = :actiontype and ContextId = :id"
-                    )
+                    query2.prepare("DELETE FROM actions where ContextType = :actiontype and ContextId = :id")
                     query2.bindValue(":actiontype", self.basename.lower())
                     query2.bindValue(":id", id)
                     query2.exec()
                     if query2.lastError().isValid():
-                        log.error(
-                            f"Problem in handleBaseDel(): {query1.lastError().text()}"
-                        )
+                        log.error(f"Problem in handleBaseDel(): {query1.lastError().text()}")
                 if not query1.lastError().isValid():
                     sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
                     self.model.setQuery(sql)
@@ -487,9 +434,7 @@ class objects:
         newname = text
         ok = True
 
-        while ok is True and (
-            (not self.strIsPattern(newname, "\w*")) or (newname in namelist)
-        ):
+        while ok is True and ((not self.strIsPattern(newname, r"\w*")) or (newname in namelist)):
             text, ok = QtWidgets.QInputDialog.getText(
                 self.MainWindow,
                 f"Change {bn} Name",
@@ -498,7 +443,7 @@ class objects:
             )
             newname = str(text)
             if ok:
-                if not self.strIsPattern(newname, "\w*"):
+                if not self.strIsPattern(newname, r"\w*"):
                     msgbox = QtWidgets.QMessageBox()
                     msgbox.setText(
                         "Object Name Error: Name must consist of only characters from this set: "
@@ -518,22 +463,16 @@ class objects:
             # change name if it's actually different
             if newname != name:
                 query = QtSql.QSqlQuery()
-                query.prepare(
-                    "UPDATE " + self.basetablename + " SET Name = :name WHERE Id = :id"
-                )
+                query.prepare("UPDATE " + self.basetablename + " SET Name = :name WHERE Id = :id")
                 query.bindValue(":id", id)
                 query.bindValue(":name", newname)
                 query.exec()
                 if query.lastError().isValid():
-                    log.error(
-                        f"Problem in editBaseName() update query: {query.lastError().text()}"
-                    )
+                    log.error(f"Problem in editBaseName() update query: {query.lastError().text()}")
                 sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
                 self.model.setQuery(sql)
                 if self.model.lastError().isValid():
-                    log.error(
-                        f"Problem in editBaseName() list refresh: {query.lastError().text()}"
-                    )
+                    log.error(f"Problem in editBaseName() list refresh: {query.lastError().text()}")
 
                 mark_db_as_changed()
 
@@ -569,9 +508,7 @@ class objects:
             sqlstr = f"UPDATE {self.basetablename} SET {columnname.title()} = {int(checked)} WHERE Id = {id}"
             query.exec(sqlstr)
             if query.lastError().isValid():
-                log.error(
-                    f"Problem in updateCheckbox() update query: {query.lastError().text()}"
-                )
+                log.error(f"Problem in updateCheckbox() update query: {query.lastError().text()}")
             else:
                 # reload model after change
                 sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
@@ -658,22 +595,16 @@ class objects:
             # - note: slots don't need to be disabled here because they are not connected until after db init!
             self.ui.visible_checkBox.setChecked(self.model.record(0).value("Visible"))
             self.ui.takeable_checkBox.setChecked(self.model.record(0).value("Takeable"))
-            self.ui.draggable_checkBox.setChecked(
-                self.model.record(0).value("Draggable")
-            )
+            self.ui.draggable_checkBox.setChecked(self.model.record(0).value("Draggable"))
             # load any corresponding actions
-            self.actionlist = ACTIONLIST.ActionList(
-                id, self.ui.OAL_tableView, "object", mediapath=self.mediapath
-            )
+            self.actionlist = ACTIONLIST.ActionList(id, self.ui.OAL_tableView, "object", mediapath=self.mediapath)
             self.actionlist.parent_id = id
             self.actionlist.filterActions()
             # handle pic fields
             self.loadPicFields()
         # This clause just added to fix problem loading objects win when there are no objects
         else:
-            self.actionlist = ACTIONLIST.ActionList(
-                None, self.ui.OAL_tableView, "object", mediapath=self.mediapath
-            )
+            self.actionlist = ACTIONLIST.ActionList(None, self.ui.OAL_tableView, "object", mediapath=self.mediapath)
             self.actionlist.parent_id = None
 
         # setup selection model handler (mouse or keyboard)...have to do *after* table is filled: http://goo.gl/KPaajQ

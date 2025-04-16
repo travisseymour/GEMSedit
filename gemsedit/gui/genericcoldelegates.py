@@ -26,7 +26,6 @@ from gemsedit.gui import richtextlineedit
 
 
 class GenericDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(GenericDelegate, self).__init__(parent)
         self.delegates = {}
@@ -69,7 +68,6 @@ class GenericDelegate(QStyledItemDelegate):
 
 
 class IntegerColumnDelegate(QStyledItemDelegate):
-
     def __init__(self, minimum=0, maximum=100, parent=None):
         super(IntegerColumnDelegate, self).__init__(parent)
         self.minimum = minimum
@@ -78,9 +76,7 @@ class IntegerColumnDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         spinbox = QSpinBox(parent)
         spinbox.setRange(self.minimum, self.maximum)
-        spinbox.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        spinbox.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return spinbox
 
     def setEditorData(self, editor, index):
@@ -92,9 +88,7 @@ class IntegerColumnDelegate(QStyledItemDelegate):
             case "False":
                 value = 0
             case _:
-                raise ValueError(
-                    f"setEditorData called on IntegerColumnDelegate from invalid {value=}"
-                )
+                raise ValueError(f"setEditorData called on IntegerColumnDelegate from invalid {value=}")
         editor.setValue(value)
 
     def setModelData(self, editor, model, index):
@@ -104,7 +98,6 @@ class IntegerColumnDelegate(QStyledItemDelegate):
 
 
 class DateColumnDelegate(QStyledItemDelegate):
-
     def __init__(
         self,
         minimum=QDate(),
@@ -120,9 +113,7 @@ class DateColumnDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         dateedit = QDateEdit(parent)
         dateedit.setDateRange(self.minimum, self.maximum)
-        dateedit.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        dateedit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         dateedit.setDisplayFormat(self.format)
         dateedit.setCalendarPopup(True)
         return dateedit
@@ -136,7 +127,6 @@ class DateColumnDelegate(QStyledItemDelegate):
 
 
 class PlainTextColumnDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(PlainTextColumnDelegate, self).__init__(parent)
 
@@ -153,7 +143,6 @@ class PlainTextColumnDelegate(QStyledItemDelegate):
 
 
 class ActionColumnDelegate(QStyledItemDelegate):
-
     def __init__(self, coltype, actiontype, mediapath, parent=None):
         super(ActionColumnDelegate, self).__init__(parent)
         self.coltype = coltype
@@ -187,7 +176,6 @@ class ActionColumnDelegate(QStyledItemDelegate):
 
 
 class RichTextColumnDelegate(QStyledItemDelegate):
-
     def __init__(self, parent=None):
         super(RichTextColumnDelegate, self).__init__(parent)
 
@@ -197,11 +185,7 @@ class RichTextColumnDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         if option.state & QStyle.StateFlag.State_Selected:
-            document.setHtml(
-                "<font color={}>{}</font>".format(
-                    palette.highlightedText().color().name(), text
-                )
-            )
+            document.setHtml("<font color={}>{}</font>".format(palette.highlightedText().color().name(), text))
         else:
             document.setHtml(text)
         painter.save()

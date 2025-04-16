@@ -30,7 +30,6 @@ from importlib.resources import files, as_file
 OS = platform.system()
 
 
-
 def frozen() -> bool:
     return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
@@ -67,10 +66,7 @@ def get_resource(*args: str, project: str = "gemsedit") -> Path:
         raise RuntimeError(f"Error accessing resource: {e}")
 
 
-
-def start_external_app(
-        app_name: str, params: Optional[list[str]] = None, wait: bool = False
-) -> list:
+def start_external_app(app_name: str, params: Optional[list[str]] = None, wait: bool = False) -> list:
     command = [app_name]
 
     if params is not None and len(params):

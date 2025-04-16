@@ -24,7 +24,6 @@ import yaml
 from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
 
-from gemsedit import dialog_font
 from gemsedit.session.version import __version__
 from gemsedit.database.yamlsqlexchange import (
     load_yaml_as_dict,
@@ -92,9 +91,7 @@ class GemsDB:
         db_as_dict = load_yaml_as_dict(db_yaml_file, extra_yaml=ui_list_yaml_file)
         self.tmp_file = Path(self.tmp_folder.name, "gems_sqlite_temp.db")
 
-        tmp_db_in_sqlite_file = dict_to_sqlite_file(
-            db_as_dict, self.tmp_file, overwrite=True
-        )
+        tmp_db_in_sqlite_file = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
         self.db.setDatabaseName(str(tmp_db_in_sqlite_file))
         self.db.open()
         DB_CHANGED = False
@@ -117,7 +114,7 @@ class GemsDB:
                 "Save Changes?",
                 f"Save Environment Changes To {self.yaml_file_name}?",
                 QMessageBox.StandardButton.Yes,
-                QMessageBox.StandardButton.No
+                QMessageBox.StandardButton.No,
             )
         else:
             answer = QMessageBox.StandardButton.Yes
@@ -126,14 +123,10 @@ class GemsDB:
             problems = list()
             # convert db to dict representation first
             try:
-                db_as_dict = sqlite_to_dict(
-                    sqlite_db_file, Path(self.yaml_file_name).stem
-                )
+                db_as_dict = sqlite_to_dict(sqlite_db_file, Path(self.yaml_file_name).stem)
             except Exception as e:
                 db_as_dict = {}
-                problems.append(
-                    f"- Problem saving internal sqlite db to dict prior to saving as yaml file: {e}"
-                )
+                problems.append(f"- Problem saving internal sqlite db to dict prior to saving as yaml file: {e}")
 
             if not problems:
                 # strip off ui tables
@@ -141,17 +134,13 @@ class GemsDB:
                     for ui_table_name in ("action_lst", "condition_lst", "trigger_lst"):
                         del db_as_dict[ui_table_name]
                 except Exception as e:
-                    problems.append(
-                        f"- Problem removing ui table lists from db before save: {e}"
-                    )
+                    problems.append(f"- Problem removing ui table lists from db before save: {e}")
 
                 # update version
                 try:
                     db_as_dict["Global"]["Options"]["Version"] = __version__
                 except Exception as e:
-                    problems.append(
-                        f"- Problem updating GEMSedit version number before save: {e}"
-                    )
+                    problems.append(f"- Problem updating GEMSedit version number before save: {e}")
 
                 # save it now
                 try:

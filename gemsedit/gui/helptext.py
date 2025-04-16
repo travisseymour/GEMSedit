@@ -28,7 +28,7 @@ condition_desc = {
     "VarCountEq": "<b>VarCountEq</b>(Count) : This condition returns <i>true</i> if the number of user-created variables <u>equals</u> <b><i>Count</i></b>.",
     "VarCountGtEq": "<b>VarCountGtEq</b>(Count) : This condition returns <i>true</i> if the number of user-created variables is <u>greater than or equal to</u> <b><i>Count</i></b>.",
     "VarCountLtEq": "<b>VarCountLtEq</b>(Count) : This condition returns <i>true</i> if the number of user-created variables is <u>less than or equal to</u> <b><i>Count</i></b>.",
-    "KeyBufferContains": "<b>KeyBufferContains</b>(String,IgnoreCase) : This condition returns <i>true</i> when the keyboard buffer contains the characters in <b><i>Keys</i></b>. Use only these characters: \[a-zA-Z0-9 -_./\]. Optionally set <b>IgnoreCase</b> to True (default is False). It is recommended that the action ClearKeyBuffer() precede use of this condition. You can Optionally set <b>IgnoreCase</b> to True(default is False).",
+    "KeyBufferContains": "<b>KeyBufferContains</b>(String,IgnoreCase) : This condition returns <i>true</i> when the keyboard buffer contains the characters in <b><i>Keys</i></b>. Use only these characters: [a-zA-Z0-9 -_./]. Optionally set <b>IgnoreCase</b> to True (default is False). It is recommended that the action ClearKeyBuffer() precede use of this condition. You can Optionally set <b>IgnoreCase</b> to True(default is False).",
 }
 
 trigger_desc = {
@@ -47,17 +47,15 @@ trigger_desc = {
 action_desc = {
     "": "<b>Blank</b> : Returns a blank action.",
     "PortalTo": "<b>PortalTo</b>(View) : This action causes GEMS to load <b><i>View</i></b>.",
-    "PlaySound": '<b>PlaySound</b>(SoundFile,Start,Volume,Loop) : This action instructs GEMS to play the audio in <b><i>SoundFile</i></b>. The soundfile begins playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\] and plays at the desired <b><i>Volume</i></b> \[0.0 to 1.0\]. If <b><i>Loop</i></b> is "True" \[default = "False"\], the soundfile will loop continually.',
-    "PlayVideo": "<b>PlayVideo</b>(VideoFile,Start,Left,Top,WithinObject) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> at position (<b><i>Left</i></b>,<b><i>Top</i></b>). The videofile begins playing at <b><i>Start</i></b> seconds \[Default = 0 = beginning\]. If <b><i>WithinObject</i></b> refers to a currently visible object, the video will play within that object's boundary. Otherwise, the video will play fullscreen.",
-    "ShowImage": '<b>ShowImage</b>(ImageFile,Left,Top,Duration,Clickthrough) : This action loads and displays <b><i>ImageFile</i></b> at (Left,Top) for <b><i>Duration</i></b> seconds \[default = 0 = forever\]. The image is removed when the view is changed. If <b><i>Clickthrough</i></b> is "True" \[default = "False"\], clickable objects <em>under</em> the image will continue to fire associated actions.',
+    "PlaySound": '<b>PlaySound</b>(SoundFile,Start,Volume,Loop) : This action instructs GEMS to play the audio in <b><i>SoundFile</i></b>. The soundfile begins playing at <b><i>Start</i></b> seconds [Default = 0 = beginning] and plays at the desired <b><i>Volume</i></b> [0.0 to 1.0]. If <b><i>Loop</i></b> is "True" [default = "False"], the soundfile will loop continually.',
+    "PlayVideo": "<b>PlayVideo</b>(VideoFile,Start,Left,Top,WithinObject) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> at position (<b><i>Left</i></b>,<b><i>Top</i></b>). The videofile begins playing at <b><i>Start</i></b> seconds [Default = 0 = beginning]. If <b><i>WithinObject</i></b> refers to a currently visible object, the video will play within that object's boundary. Otherwise, the video will play fullscreen.",
+    "ShowImage": '<b>ShowImage</b>(ImageFile,Left,Top,Duration,Clickthrough) : This action loads and displays <b><i>ImageFile</i></b> at (Left,Top) for <b><i>Duration</i></b> seconds [default = 0 = forever]. The image is removed when the view is changed. If <b><i>Clickthrough</i></b> is "True" [default = "False"], clickable objects <em>under</em> the image will continue to fire associated actions.',
     "RunProgram": "<b>RunProgram</b>(Application,Parameters) : This action causes GEMS to execute <b><i>Application</i></b> with any provided optional <b><i>Parameters</i></b>.",
-
     # TODO: Add volume parameter to SayText vvv
     "SayText": "<b>SayText</b>(Message) : This action causes GEMS to speak aloud the given <b><i>Message</i></b> using the default text-to-speech voice.",
-
     # TODO: Consider using this approach vvv for describing pixel position in other descriptions.
     #       Alternatively, put this verbiage in the hovertext for the left/top input boxes
-    "TextBox": "<b>TextBox</b>(Message,Left,Top,Duration,FontColor) : This action causes GEMS to draw a textbox over the current view containing the text in <b><i>Message</i></b>. The message will be positioned at <b><i>Left</i></b> pixels from the left and <b><i>Top</i></b> pixels from the top of the view. After <b><i>Duration</i></b> seconds \[default = 0 = forever\], the textbox will be removed. Set <b><i>FontColor</i></b> as desired. if left,top is (-1, -1), message origin will be current mouse position.",
+    "TextBox": "<b>TextBox</b>(Message,Left,Top,Duration,FontColor) : This action causes GEMS to draw a textbox over the current view containing the text in <b><i>Message</i></b>. The message will be positioned at <b><i>Left</i></b> pixels from the left and <b><i>Top</i></b> pixels from the top of the view. After <b><i>Duration</i></b> seconds [default = 0 = forever], the textbox will be removed. Set <b><i>FontColor</i></b> as desired. if left,top is (-1, -1), message origin will be current mouse position.",
     "TextDialog": "<b>TextDialog</b>(Message) : This action causes GEMS to display an input dialog box containing <b><i>Message</i></b>. The dialog box will remain until the user presses the SUBMIT button.",
     "InputDialog": "<b>InputDialog</b>(Prompt,Variable) : This action causes GEMS to display an input dialog box containing the query <b><i>Prompt</i></b>. The dialog box will remain until the user presses the SUBMIT button. The entered text will be associated with the user variable <b><i>Variable</i></b>",
     "ShowURL": "<b>ShowURL</b>(URL) : This action shows a custom browser window and loads the page at the supplied <b><i>URL</i></b>. The window remains atop the GEMS environment until dismissed by the user (close button).",
@@ -65,7 +63,6 @@ action_desc = {
     "ShowObject": "<b>ShowObject</b>(Object) : This action causes the object identified as <b><i>Object</i></b> visible.",
     "AllowTake": "<b>AllowTake</b>(Object) : This action sets the <i>Takeable</i> property on the object identified as <b><i>Object</i></b>.",
     "DisallowTake": "<b>DisallowTake</b>(Object) : This action sets the <i>Takeable</i> property of the object identified as <b><i>Object</i></b>.",
-
     # TODO: This doesn't get exposed anywhere vvv, is it supposed to?
     "ChangeCursor": "<b>ChangeCursor</b>(Cursor) : This action causes GEMS to change the mouse cursor to <b><i>Cursor</i></b>.",
     "SetVariable": "<b>SetVariable</b>(Variable,Value) : This action sets the user-created token <b><i>Variable</i></b> to <b><i>Value</i></b>. If <b><i>Variable</i></b> does not exist, it will be created first.",
@@ -125,9 +122,9 @@ transistion_desc = {
 # helptext.hover_desc
 
 display_desc = {
-    "Windowed": "<b>Windowed</b> : Each view\'s image is viewed in an application window of the same size.",
-    "Fullscreen": "<b>Stretch</b> : GEMS is run in fullscreen mode, with each view\'s image stretched to fill "
-                  "the screen.",
+    "Windowed": "<b>Windowed</b> : Each view's image is viewed in an application window of the same size.",
+    "Fullscreen": "<b>Stretch</b> : GEMS is run in fullscreen mode, with each view's image stretched to fill "
+    "the screen.",
 }
 
 hover_desc = {

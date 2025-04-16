@@ -28,16 +28,12 @@ I only want to process ui files that actually changed.
 """
 
 try:
-    import PySide6.QtGui
-
     qt_type = "pyside6"
 except:
     qt_type = ""
 
 if not qt_type:
     try:
-        import PyQt6.QtGui
-
         qt_type = "pyqt6"
     except:
         qt_type = "???"
@@ -59,14 +55,12 @@ for ui in ui_files:
         found_anything = True
         print(f"Converting {ui.name} to {py.name}" | cyan)
         try:
-            local["pyuic6" if qt_type == "pyqt6" else "pyside6-uic"](
-                [str(ui.resolve()), "-o", str(py.resolve())]
-            )
-            print(f"\tSuccess!" | green)
+            local["pyuic6" if qt_type == "pyqt6" else "pyside6-uic"]([str(ui.resolve()), "-o", str(py.resolve())])
+            print("\tSuccess!" | green)
         except Exception as e:
             print(f"\tERROR: {e}" | red & bold)
 
 if not found_anything:
-    print(f"All files up to date. Nothing done." | yellow & bold)
+    print("All files up to date. Nothing done." | yellow & bold)
 
 print("Finished." | yellow & bold)

@@ -54,9 +54,7 @@ class ObjectSelect(QtWidgets.QDialog):
         else:
             self.msg = "Press ENTER to close."
         # self.setStyleSheet("background-color: rgb(0, 0, 0);")
-        QtCore.QTimer.singleShot(
-            1000, self.allow_clicks
-        )  # Avoids ghost click from objects ui
+        QtCore.QTimer.singleShot(1000, self.allow_clicks)  # Avoids ghost click from objects ui
 
     def allow_clicks(self):
         if self.allow_selection:
@@ -67,9 +65,7 @@ class ObjectSelect(QtWidgets.QDialog):
         # (Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT)
         if self.current_view is not None:
             query = QtSql.QSqlQuery()
-            query.prepare(
-                "SELECT * FROM views where Id = :viewid" + " order by RowOrder"
-            )
+            query.prepare("SELECT * FROM views where Id = :viewid" + " order by RowOrder")
             query.bindValue(":viewid", self.current_view)
             query.exec()
             if query.isActive():
@@ -84,16 +80,12 @@ class ObjectSelect(QtWidgets.QDialog):
                 elif self.view_pic == "Overlay" and os.path.isfile(overlay):
                     self.bgPic = overlay
                 else:
-                    log.error(
-                        "Error in objects.showEvent(): viewpic is invalid or associated file is unreadable."
-                    )
+                    log.error("Error in objects.showEvent(): viewpic is invalid or associated file is unreadable.")
                     return
 
         # Load Object Coordinates
         query = QtSql.QSqlQuery()
-        query.prepare(
-            "SELECT * FROM objects where Parent = :viewid" + " order by RowOrder"
-        )
+        query.prepare("SELECT * FROM objects where Parent = :viewid" + " order by RowOrder")
         query.bindValue(":viewid", self.current_view)
         query.exec()
         if query.isActive():
@@ -158,9 +150,7 @@ class ObjectSelect(QtWidgets.QDialog):
                 self.msg = "Mouse tracking is on. Move mouse to select object. Single click to end selection."
             else:
                 # selection ended, show result
-                self.msg = (
-                    "Single Click to begin object selection. Press ENTER to submit."
-                )
+                self.msg = "Single Click to begin object selection. Press ENTER to submit."
             self.update()
 
         super(ObjectSelect, self).mouseReleaseEvent(event)
@@ -195,9 +185,7 @@ class ObjectSelect(QtWidgets.QDialog):
         # draw image
         if self.bgPic:
             # http://goo.gl/bbBNQ6
-            painter.drawPixmap(
-                0, 0, QtGui.QPixmap(self.bgPic)
-            )  # for scaled: QPixmap(blah).scaled(size())
+            painter.drawPixmap(0, 0, QtGui.QPixmap(self.bgPic))  # for scaled: QPixmap(blah).scaled(size())
 
         if self.msg:
             painter.setFont(QtGui.QFont("Arial", 14))  # 'Decorative'
@@ -209,9 +197,7 @@ class ObjectSelect(QtWidgets.QDialog):
             line_width = 3
             fontsize = 12
             for param_list in self.other_objects:
-                Name, Left, Top, Width, Height, Visible, Takeable, Draggable = (
-                    param_list
-                )
+                Name, Left, Top, Width, Height, Visible, Takeable, Draggable = param_list
 
                 # Draw box
                 if Takeable:
@@ -271,9 +257,7 @@ class ObjectSelect(QtWidgets.QDialog):
         # b = (event.key())
         # c = (QtCore.QEvent.Type.KeyPress)
         # log.debug(f"{a=}, {b=}, {c=}")
-        if (
-            event.type() == QtCore.QEvent.Type.KeyPress and event.key() == 16777220
-        ):  # QtCore.Qt.Key_Enter):
+        if event.type() == QtCore.QEvent.Type.KeyPress and event.key() == 16777220:  # QtCore.Qt.Key_Enter):
             self.update()
             self.close()
             # return True

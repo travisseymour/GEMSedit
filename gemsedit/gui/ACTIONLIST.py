@@ -17,14 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from PySide6 import QtCore, QtGui, QtWidgets, QtSql
+from PySide6.QtWidgets import QMessageBox
 
 import gemsedit.gui.genericcoldelegates as generic_col_delegates
 import re
 from gemsedit.database.connection import mark_db_as_changed
 from gemsedit import log
 
-from gemsedit import dialog_font
-from gemsedit.gui.custom_messagebox import CustomMessageBox
 
 # from html import escape
 from gemsedit.database.sqltools import get_next_value
@@ -90,28 +89,16 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             trigger = self.data(trigger_index, QtCore.Qt.ItemDataRole.DisplayRole)
             action_index = self.index(item.row(), 5)
             action = self.data(action_index, QtCore.Qt.ItemDataRole.DisplayRole)
-            if (condition == trigger == action == "") or (
-                    condition is trigger is action is None
-            ):
+            if (condition == trigger == action == "") or (condition is trigger is action is None):
                 self.problem[str(item.row())] = "Error: Row is completely blank."
             elif (condition != "" and condition is not None) and (
-                    (trigger == "" or trigger is None) or (action == "" or action is None)
+                (trigger == "" or trigger is None) or (action == "" or action is None)
             ):
-                self.problem[str(item.row())] = (
-                    "Error: Row has a condition, but lacks a trigger or action."
-                )
-            elif (action == "" or action is None) and (
-                    trigger != "" and trigger is not None
-            ):
-                self.problem[str(item.row())] = (
-                    "Error: Row has a trigger, but lacks an action."
-                )
-            elif (trigger == "" or trigger is None) and (
-                    action != "" and action is not None
-            ):
-                self.problem[str(item.row())] = (
-                    "Error: Row has an action, but no trigger."
-                )
+                self.problem[str(item.row())] = "Error: Row has a condition, but lacks a trigger or action."
+            elif (action == "" or action is None) and (trigger != "" and trigger is not None):
+                self.problem[str(item.row())] = "Error: Row has a trigger, but lacks an action."
+            elif (trigger == "" or trigger is None) and (action != "" and action is not None):
+                self.problem[str(item.row())] = "Error: Row has an action, but no trigger."
             else:
                 self.problem[str(item.row())] = ""
             if self.problem[str(item.row())] != "":
@@ -121,7 +108,7 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             if self.problem[str(item.row())] != "":
                 return self.problem[str(item.row())]
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
-            p = re.compile("(.*\()(.*)(\))")
+            p = re.compile(r"(.*\()(.*)(\))")
             try:
                 if p.search(value):
                     c = p.sub(r"\1", value)
@@ -131,11 +118,11 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
                     if c.strip("(") in ("PortalTo",):
                         ss = getHumanReadableFromId("views", int(s))
                     elif c.strip("(") in (
-                            "DroppedOn",
-                            "HideObject",
-                            "ShowObject",
-                            "AllowTake",
-                            "DisallowTake",
+                        "DroppedOn",
+                        "HideObject",
+                        "ShowObject",
+                        "AllowTake",
+                        "DisallowTake",
                     ):
                         ss = getHumanReadableFromId("objects", int(s))
                     else:
@@ -197,9 +184,7 @@ class ActionList:
         if not self.model.lastError().isValid():
             self.connectVALModelToTableView(self.model, self.tableView)
         else:
-            log.error(
-                f"Problem in filterActions({self.parent_id}): {self.model.lastError().text()}"
-            )
+            log.error(f"Problem in filterActions({self.parent_id}): {self.model.lastError().text()}")
         self.tableView.hideColumn(0)  # id
         self.tableView.hideColumn(1)  # ContextType
         self.tableView.hideColumn(2)  # ContextId
@@ -246,17 +231,14 @@ class ActionList:
 
         self.add_del_busy = True
         try:
-
             if self.current_id is not None:
                 # Make sure first
-                ret = CustomMessageBox.question(
+                ret = QMessageBox.question(
                     None,
                     f"Really Delete Action #{self.current_id}",
                     "Really delete this action?",
-                    font=dialog_font,
-                    buttons=QtWidgets.QMessageBox.StandardButton.Cancel
-                            | QtWidgets.QMessageBox.StandardButton.Ok,
-                    default_button=QtWidgets.QMessageBox.StandardButton.Cancel,
+                    QtWidgets.QMessageBox.StandardButton.Cancel | QtWidgets.QMessageBox.StandardButton.Ok,
+                    QtWidgets.QMessageBox.StandardButton.Cancel,
                 )
 
                 if ret == QtWidgets.QMessageBox.StandardButton.Ok:
@@ -266,9 +248,7 @@ class ActionList:
                     query1.bindValue(":id", self.current_id)
                     query1.exec()
                     if query1.lastError().isValid():
-                        log.error(
-                            f"Problem in handleActionDel(): {query1.lastError().text()}"
-                        )
+                        log.error(f"Problem in handleActionDel(): {query1.lastError().text()}")
                     # clear current_id
                     self.current_id = None
                     # reset actionview
@@ -320,9 +300,7 @@ class ActionList:
         # Update database
         if field_name in ("Condition", "Trigger", "Action", "Enabled"):
             query = QtSql.QSqlQuery()
-            query.prepare(
-                "UPDATE actions SET " + field_name + " = :value WHERE Id = :id"
-            )
+            query.prepare("UPDATE actions SET " + field_name + " = :value WHERE Id = :id")
             if type(value) is int:
                 query.bindValue(":value", value)
             # todo: temporarily removing escape stuff...I need to see if it's EVER ok to enter html code.
@@ -344,9 +322,7 @@ class ActionList:
             query.bindValue(":id", recordId)
             query.exec()
             if query.lastError().isValid():
-                log.error(
-                    f"Problem in signalActionUpdate() update query failed: {query.lastError().text()}"
-                )
+                log.error(f"Problem in signalActionUpdate() update query failed: {query.lastError().text()}")
 
         # Refresh Table View
         if self.parent_id is not None:
@@ -363,24 +339,16 @@ class ActionList:
         delegate = generic_col_delegates.GenericDelegate()
         delegate.insertColumnDelegate(
             3,
-            generic_col_delegates.ActionColumnDelegate(
-                "Condition", self.actionType, self.media_path
-            ),
+            generic_col_delegates.ActionColumnDelegate("Condition", self.actionType, self.media_path),
         )  # 3
         delegate.insertColumnDelegate(
             4,
-            generic_col_delegates.ActionColumnDelegate(
-                "Trigger", self.actionType, self.media_path
-            ),
+            generic_col_delegates.ActionColumnDelegate("Trigger", self.actionType, self.media_path),
         )  # 4
         delegate.insertColumnDelegate(
             5,
-            generic_col_delegates.ActionColumnDelegate(
-                "Action", self.actionType, self.media_path
-            ),
+            generic_col_delegates.ActionColumnDelegate("Action", self.actionType, self.media_path),
         )  # 5
-        delegate.insertColumnDelegate(
-            6, generic_col_delegates.IntegerColumnDelegate(0, 1)
-        )  # 6
+        delegate.insertColumnDelegate(6, generic_col_delegates.IntegerColumnDelegate(0, 1))  # 6
         # delegate.insertColumnDelegate(6, genericcoldelegates.TFComboColumnDelegate())  # 6
         self.tableView.setItemDelegate(delegate)

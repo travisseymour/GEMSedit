@@ -52,18 +52,18 @@ def main():
     QCoreApplication.setOrganizationDomain("travisseymour.com")
     QCoreApplication.setApplicationName("GEMSedit")
 
-    gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), 'GEMS')
+    gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), "GEMS")
     gemsedit.CONFIG_PATH.mkdir(exist_ok=True)
-    gemsedit.LOG_PATH = Path(gemsedit.CONFIG_PATH, 'gems_edit_log.txt')
-    gemsedit.LOG_PATH.write_text('')
+    gemsedit.LOG_PATH = Path(gemsedit.CONFIG_PATH, "gems_edit_log.txt")
+    gemsedit.LOG_PATH.write_text("")
     gemsedit.log.add(str(gemsedit.LOG_PATH))
 
     if frozen():
         log.level("INFO")
 
     try:
-        gemsedit.log.info(f'\n---------------{datetime.datetime.now().ctime()}---------------')
-        gemsedit.log.info(f'GEMSedit app logging enabled at {gemsedit.LOG_PATH}')
+        gemsedit.log.info(f"\n---------------{datetime.datetime.now().ctime()}---------------")
+        gemsedit.log.info(f"GEMSedit app logging enabled at {gemsedit.LOG_PATH}")
     except Exception as e:
         gemsedit.log.warning(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
 

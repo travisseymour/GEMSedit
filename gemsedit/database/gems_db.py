@@ -34,7 +34,7 @@ def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
             "Overwrite Existing Environment File?",
             f"The GEMS environment file {str(yaml_db_file)} already exists. Overwrite it with a new empty environment?",
             QMessageBox.StandardButton.Yes,
-            QMessageBox.StandardButton.No
+            QMessageBox.StandardButton.No,
         )
         if answer == QMessageBox.StandardButton.No:
             return tuple(errors)
@@ -43,9 +43,7 @@ def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
 
         try:
             old_yaml_text = yaml_db_file.read_text()
-            Path(yaml_db_file.parent, yaml_db_file.name + ".bak").write_text(
-                old_yaml_text
-            )
+            Path(yaml_db_file.parent, yaml_db_file.name + ".bak").write_text(old_yaml_text)
         except Exception:
             ...
 
@@ -59,9 +57,7 @@ def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
 
     yaml_text = Path(get_resource("DefaultEnv.yaml")).read_text()
     yaml_text = yaml_text.replace("Version: TEMP_VERSION", f"Version: {__version__}")
-    yaml_text = yaml_text.replace(
-        "Name: TEMP_NAME", f'Name: {yaml_db_file.stem.replace(" ", "_")}'
-    )
+    yaml_text = yaml_text.replace("Name: TEMP_NAME", f"Name: {yaml_db_file.stem.replace(' ', '_')}")
 
     start = get_resource("images", "default_env", "DefaultStart.jpg")
     end = get_resource("images", "default_env", "DefaultEnd.jpg")
@@ -71,15 +67,11 @@ def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
         try:
             shutil.copy2(image, media_folder)
         except Exception as e:
-            errors.append(
-                f"Error copying {Path(image).name} to {media_folder.name} ('{e}')."
-            )
+            errors.append(f"Error copying {Path(image).name} to {media_folder.name} ('{e}').")
 
     try:
         yaml_db_file.write_text(yaml_text)
     except Exception as e:
-        errors.append(
-            f"Error trying to write new GEMS environment to {str(yaml_db_file)} ('{e}')."
-        )
+        errors.append(f"Error trying to write new GEMS environment to {str(yaml_db_file)} ('{e}').")
 
     return tuple(errors)
