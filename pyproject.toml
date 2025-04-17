@@ -27,7 +27,8 @@ classifiers = [
 ]
 dependencies = [
     "loguru",
-    "PySide6>=6.4.0,<7.0.0",
+    # "PySide6>=6.4.0,<7.0.0",
+    "PySide6",
     "pyyaml",
     "sqlite-utils",
     "matplotlib",
