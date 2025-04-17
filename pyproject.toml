@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "GEMSedit"
 description = "Enviroment Editor for GEMS (Graphical Environment Management System)"
-version = "2025.4.15.1"
+version = "2025.4.17.1"
 authors = [{name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu"}]
 license = {text = "GPLv3"}
 readme = "ReadMe.md"
@@ -65,8 +65,7 @@ GEMSedit = "gemsedit.main:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["gemsedit"]  # Include only the 'gemsedit' package
-namespaces = false
+include = ["gemsedit*"]
 
 # pull in any files in the resources folder for use with importlib.resources
 [tool.setuptools]
