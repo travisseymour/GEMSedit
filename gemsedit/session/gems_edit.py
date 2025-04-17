@@ -125,8 +125,8 @@ class GemsViews:
         # self.ui.actionLocate_GEMSrun.triggered.connect(self.locate_gemsrun)
 
         self.ui.actionSaveEnv.triggered.connect(self.handle_save_db)
-        # FIXME: Eventually move this to somewhere stable!!!
-        help_url = "https://www.dropbox.com/s/eb772nead9qkzja/GEMSOverview.pdf"
+        help_path = get_resource('docs', 'gems_overview.pdf').resolve()
+        help_url = help_path.as_uri()
         self.ui.actionDocumentation.triggered.connect(partial(webbrowser.open, help_url))
 
         self.MainWindow.closeEvent = self.main_window_close

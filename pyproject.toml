@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "GEMSedit"
 description = "Enviroment Editor for GEMS (Graphical Environment Management System)"
-version = "2025.4.17.1"
+version = "2025.4.17.2"
 authors = [{name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu"}]
 license = {text = "GPLv3"}
 readme = "ReadMe.md"
@@ -46,8 +46,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/travisseymour/gemsedit/issues"
-"Documentation" = "https://github.com/travisseymour/gemsedit#readme"
+"Bug Tracker" = "https://github.com/travisseymour/GEMSedit/issues"
+"Documentation" = "https://github.com/travisseymour/GEMSedit#readme"
 
 [project.optional-dependencies]
 dev = [
