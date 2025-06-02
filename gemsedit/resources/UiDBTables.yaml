@@ -1,4 +1,4 @@
-action_lst:
+maction_lst:
   '0':
     Id: 0
     Labels: '[]'
@@ -143,6 +143,18 @@ action_lst:
     Name: InputDialog
     Restrictions: viewobjectglobalpocket
     Template: '["value","varname"]'
+  '24':
+    Id: 24
+    Labels: '["SoundFile"]'
+    Name: StopSound
+    Restrictions: viewobjectglobalpocket
+    Template: '["sndfile"]'
+  '25':
+    Id: 25
+    Labels: '[]'
+    Name: StopAllSounds
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
 condition_lst:
   '0':
     Id: 0

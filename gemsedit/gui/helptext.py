@@ -73,6 +73,8 @@ action_desc = {
     "ShowMouse": "<b>ShowMouse</b>() : This action unhides the mouse cursor.",
     "HidePockets": "<b>HidePockets</b>() : This action hides all active pockets.",
     "ShowPockets": "<b>ShowPockets</b>() : This action unhides all active pockets.",
+    "StopSound": "<b>StopSound</b>() : This action stops playing audio based on <b><i>SoundFile</i></b>, assuming it is currently playing. Currently on MacOS only.",
+    "StopAllSounds": "<b>StopAllSounds</b>() : This action stops playing all currently playing audio. It is currently available on MacOS only."
 }
 
 # (Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,
