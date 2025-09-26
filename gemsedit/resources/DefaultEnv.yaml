@@ -1,0 +1,80 @@
+Global:
+  GlobalActions: {}
+  Options:
+    DisplayType: Windowed
+    Globaloverlay: ''
+    Id: 0
+    ObjectHover: ChangeCursor
+    Pocketcount: 4
+    Preloadresources: 0
+    Roomtransition: Fade
+    StageColor: '[''Dark Slate Gray'',47,79,79,255]'
+    Startview: 0
+    Version: 1.0.6
+    Volume: 0.5
+  PocketActions: {}
+Id: 0
+Name: freshenv
+Views:
+  '0':
+    Actions: {}
+    Background: DefaultStart.jpg
+    Foreground: DefaultStart.jpg
+    Id: 0
+    Name: StartRoom
+    Objects:
+      '1':
+        Actions:
+          '1':
+            Action: PortalTo(1)
+            Condition: ''
+            ContextId: 1
+            ContextType: object
+            Enabled: 1
+            Id: 1
+            RowOrder: 1
+            Trigger: MouseClick()
+        Draggable: 0
+        Height: 108
+        Id: 1
+        Left: 536
+        Name: HEREword
+        Parent: 0
+        RowOrder: 1
+        Takeable: 0
+        Top: 143
+        Visible: 1
+        Width: 208
+    Overlay: DefaultOverview.jpg
+    RowOrder: 0
+  '1':
+    Actions: {}
+    Background: DefaultEnd.jpg
+    Foreground: DefaultEnd.jpg
+    Id: 1
+    Name: EndRoom
+    Objects:
+      '2':
+        Actions:
+          '2':
+            Action: Quit()
+            Condition: ''
+            ContextId: 2
+            ContextType: object
+            Enabled: 1
+            Id: 2
+            RowOrder: 2
+            Trigger: MouseClick()
+        Draggable: 0
+        Height: 374
+        Id: 2
+        Left: 390
+        Name: WavePicture
+        Parent: 1
+        RowOrder: 2
+        Takeable: 0
+        Top: 239
+        Visible: 1
+        Width: 240
+    Overlay: ''
+    RowOrder: 1
