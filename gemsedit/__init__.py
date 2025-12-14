@@ -26,8 +26,8 @@ app_font_bold.setBold(True)
 
 dialog_font = QFont("Arial", 12)
 
-app_short_name = "GEMSrun"
-app_long_name = "GEMS Runner"
+app_short_name = "GEMSedit"
+app_long_name = "GEMS Editor"
 
 
 def set_app_font(font: QFont):
