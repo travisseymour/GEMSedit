@@ -156,7 +156,7 @@ action_lst:
     Restrictions: viewobjectglobalpocket
     Template: '[]'
   '26':
-    Id: 4
+    Id: 26
     Labels: '["ImageFile","Left","Top","Duration","Clickthrough", "WithinObject", "HideTarget", "Stretch"]'
     Name: ShowImageWithin
     Restrictions: viewobject
