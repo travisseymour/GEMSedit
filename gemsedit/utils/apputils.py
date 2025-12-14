@@ -66,16 +66,28 @@ def get_resource(*args: str, project: str = "gemsedit") -> Path:
         raise RuntimeError(f"Error accessing resource: {e}")
 
 
-def start_external_app(app_name: str, params: Optional[list[str]] = None, wait: bool = False) -> list:
+def start_external_app(app_name: str, params: Optional[list[str]] = None, wait: bool = False) -> list[str]:
+    """
+    Launch an external executable and optionally return its stdout output.
+
+    Args:
+        app_name: Name or path of the executable to launch.
+        params: Optional list of arguments.
+        wait: When True, wait for the process to finish and return its stdout lines as str.
+
+    Returns:
+        List of stdout lines (strings) if wait is True, otherwise an empty list.
+    """
     command = [app_name]
 
-    if params is not None and len(params):
+    if params:
         command += [str(param) for param in params]
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # text=True ensures we always get strings from stdout/stderr instead of bytes
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if wait:
         process.wait()
-        output = [aline for aline in process.stdout]
+        output = [aline.rstrip("\n") for aline in process.stdout]
     else:
         output = []
     return output
