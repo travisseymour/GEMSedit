@@ -1,0 +1,1 @@
+pandoc GEMSOverview.docx -t gfm --extract-media=./media -o gems_overview.md

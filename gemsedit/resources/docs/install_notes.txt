@@ -1,0 +1,14 @@
+# ##### Setup PDF Rendering ###########
+# --------------------------------
+# Linux FULL
+# sudo apt/dnf install texlive-xetex     # NOTE: this is 2-3 GB
+# sudo dnf install texlive-scheme-full   # NOTE: this is an additional 2-3 GB
+# --------------------------------
+# Linux PARTIAL
+# sudo apt/dnf install texlive-xetex
+# sudo dnf install texlive-unicode-math
+# sudo dnf install texlive-fontspec texlive-xetex
+# --------------------------------
+# macOS
+# brew install --cask mactex
+# --------------------------------
