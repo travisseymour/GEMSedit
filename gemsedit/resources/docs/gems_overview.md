@@ -1,9 +1,7 @@
-
 ---
-
-<!-- 
-    This section uses latex just because I wanted the title centered when
-    the doc is converted to PDF using pandoc. 
+<!--
+This section uses latex just because I wanted the title centered when
+the doc is converted to PDF using pandoc.
 -->
 
 \begin{center}
@@ -13,7 +11,6 @@
 
 Travis L. Seymour, PhD 2019
 \end{center}
-
 ---
 
 ### Goal
@@ -24,7 +21,7 @@ images and various interactions and dynamics.
 ### GEMSedit
 
 The editor allows one to create or edit GEMS environments. Environments
-are made of a ***views***, which is a viewpoint onto anything that can
+are made of a **_views_**, which is a viewpoint onto anything that can
 be depicted. E.g, a view might depict a doorway, or what it looks like
 inside a room. It might also depict a closeup of an object, or a
 depiction of what it’s like inside that object. It can literally be
@@ -33,7 +30,7 @@ you want – although that might not be too exciting. To define an
 environment, photograph, draw, or otherwise create or obtain an image
 that corresponds to all the views you want to exist within the
 environment and stitch them together using GEMSedit. Another
-important thing one does with GEMSedit is to define ***objects,***
+important thing one does with GEMSedit is to define **_objects,_**
 which are rectangular sub-regions of view images. Although typically,
 objects specify meaningful objects that are depicted in the view images
 (e.g., a book, a cup, or a door), objects may also define areas or
@@ -45,16 +42,16 @@ consequences of those actions or interactions.
 
 **Actions**. Actions are events that can occur in the environment as a
 result of some action and optionally if some condition is met. For
-example, you could specify that a sound effect (the ***action***) if the
-user left-clicks (the ***trigger***) the mouse on a previously defined
-object (the ***target object***). Some actions are environmental, e.g.,
+example, you could specify that a sound effect (the **_action_**) if the
+user left-clicks (the **_trigger_**) the mouse on a previously defined
+object (the **_target object_**). Some actions are environmental, e.g.,
 the passage of a certain amount of time, and others are based on user
 actions (keyboard presses or mouse actions). Although user actions are
 typically with regard to user-defined objects within some view, there
 are special navigational actions as well. For example, you can define
 what happens when the user clicks the left edge of the screen, e.g., you
 might be taken to a new view. Objects with actions that lead to a view
-change are called ***portals***, and are typically in regard to some
+change are called **_portals_**, and are typically in regard to some
 user defined objects. But the left and right side of the screen are
 special implicit objects one can design as triggers for some actions.
 Although they are customarily used to allow the users to turn left or
@@ -68,7 +65,7 @@ key object onto a locked door. This door could be specified to open or
 portal to another view if clicked on **<u>after</u>** it has had the key
 dropped onto it. Of course, this would require the environment to be
 able to keep track of such occurrences. This is one of the uses for
-***variables*** within GEMS. An interaction like dragging a key onto a
+**_variables_** within GEMS. An interaction like dragging a key onto a
 door might result in setting the value of a new variable called
 “door_unlocked” to True. Clicking the door could be set up to open (i.e,
 portal to another view) if and only if there exists a variable called
@@ -78,42 +75,42 @@ All actions have 3 required parts and 1 optional parts:
 
 - **Trigger**. These define the event (environmental or user-action)
   that is required before an action will fire. An example of one
-  environmental trigger is **TotalTimePassed**(*Seconds*) : This trigger
-  fires when at least \<*Seconds*> seconds has passed since the current
+  environmental trigger is **TotalTimePassed**(_Seconds_) : This trigger
+  fires when at least \<_Seconds_> seconds has passed since the current
   GEMS environment was started. An example of a user-action trigger is
   **MouseClick**() : This trigger fires whenever the mouse is
   left-clicked.
 
 - **Action**. These define the action that occurs when a trigger occurs.
   For example, a common action portals the user to another view:
-  **PortalTo**(*View*) : This action causes GEMS to load another view
-  with the view ID of \<*View*>. If there is a working internet
+  **PortalTo**(_View_) : This action causes GEMS to load another view
+  with the view ID of \<_View_>. If there is a working internet
   connection, you can cause text to be spoken with this action:
-  **SayText**(*Message*) : This action causes GEMS to speak the given
-  \<*Message*> using the Google’s text-to-speech API.
+  **SayText**(_Message_) : This action causes GEMS to speak the given
+  \<_Message_> using the Google’s text-to-speech API.
 
-- **Enabled**. This is either the value *True* or *False*. Setting this
-  to *False*, allows an action to stay defined but not activated.
+- **Enabled**. This is either the value _True_ or _False_. Setting this
+  to _False_, allows an action to stay defined but not activated.
 
 Actions can also have conditions, which are environmental states that
 must be met in order for the action to be considered. Conditions are
 optional, so if no condition is defined, then only the action’s trigger
 determines when it activates. One common condition is
-**ViewTimePassed**(*Seconds*) : This condition returns *True* if at
-least \<*Seconds*> seconds has passed since the current view was
-displayed. Another common condition is **VarValueIs**(*Variable*,
-*Value*) : This condition returns True if the user created token
-\<*Variable*> exists and currently has the value \<*Value*>.
+**ViewTimePassed**(_Seconds_) : This condition returns _True_ if at
+least \<_Seconds_> seconds has passed since the current view was
+displayed. Another common condition is **VarValueIs**(_Variable_,
+_Value_) : This condition returns True if the user created token
+\<_Variable_> exists and currently has the value \<_Value_>.
 
 GEMS actions and interactions can be specified at various levels.
 
 **Environment Actions**. Sometimes it is useful to specify some conditions,
 triggers, and actions at the environmental level. These are actions that
 occur no matter which view is currently active. There are only 2
-triggers at this level: **TotalTimePassed**(*Seconds*) : This condition
-returns True if at least \<*Seconds*> seconds has passed since the
+triggers at this level: **TotalTimePassed**(_Seconds_) : This condition
+returns True if at least \<_Seconds_> seconds has passed since the
 current GEMS environment was started, and **KeyPress**(Key) : This
-trigger fires when \<*Key*> is entered on the keyboard.
+trigger fires when \<_Key_> is entered on the keyboard.
 
 **View and Object Actions**. There are many actions that can be defined in
 GEMS. Technically, the only real view-only action is one that triggers
@@ -150,7 +147,7 @@ interaction. In addition, if an object defined this way is dragged with
 the mouse, it will appear as if it has been picked up and moved across
 the screen. This illusion is created because when the object is dragged,
 the location in which it was defined is quickly replaced with the same
-region from the background. Note that for an object to be “*takeable*”,
+region from the background. Note that for an object to be “_takeable_”,
 it has to be specifically specified as such in GEMSedit. Otherwise, users
 won’t be able to move it with the mouse. However, it could still be
 hidden or revealed. Another powerful that that results from using the
@@ -171,7 +168,6 @@ left corner of the display that look like denim jeans back pockets,
 e.g.:
 
 ![image3](./media/image3.png){ width=3.57156in height=0.88187in }
-
 
 If a takeable object is dragged to a pocket, it will appear as if it is
 dragged out of the environment and into the pocket:
@@ -199,7 +195,6 @@ box, e.g.:
 ![image5](./media/image5.png){ width=3.73632in height=1.43537in }
 ![image6](./media/image6.png){ width=3.73928in height=1.42889in }
 
-
 Automatically Portaling. Most often, moving from one view to another
 happens a result of some user-initiated action or interaction. However,
 portaling can also occur as a result of global timed events, or
@@ -220,7 +215,6 @@ from one point in a room to another. E.g.:
 
 ![image7](./media/image7.png){ width=7.5in height=3.77083in }
 
-
 Left-clicking on view #1 could automatically portal you through the
 subsequent views until you stopped at view 5. This is animated in a way
 that feels as if you are flying from the door, around the room, to the
@@ -228,12 +222,11 @@ table.
 
 ![image8](./media/image8.png){ width=2.88472in height=2.17083in }
 
-
 In the test environment depicted above, an interaction is defined in
 view 5. If the dvd cover (which is not takeable in this case – we forgot
 to take a picture without the dvd) is dragged onto the monitor, a little
 video plays. Note that although the dvd is not takeable it is still
-***draggable***. The downside of this arrangement is that the dvd will
+**_draggable_**. The downside of this arrangement is that the dvd will
 not look as if it is being dragged, but the interaction will still work.
 
 ### Using GEMSedit
@@ -254,7 +247,6 @@ Global Environment Settings. There are several global settings.
 
 ![image11](./media/image11.png){ width=3.98044in height=3.11027in }
 
-
 **ID**: Hmm…I don’t know what this is?!
 
 **Start View**: This defines the first view that will be loaded when the
@@ -274,7 +266,7 @@ the moment this is not practical and has been disabled no matter what is
 specified here.
 
 **Global Overlay**: If a picture is specified here, it will be overlayed
-onto the upper left corner of the environment for ***<u>every</u>***
+onto the upper left corner of the environment for **_<u>every</u>_**
 view. This cannot be changed while the environment is running and may
 have limited use cases. For a flexible overlay, you’ll notice that when
 designing view, you can specify a view-level overlap that can be
@@ -282,7 +274,6 @@ different from one view to the next. We’ve used this for a dynamically
 updating map of where one is in an environment. E.g.:
 
 ![image12](./media/image12.png){ width=1.78508in height=1.24415in }
-
 
 **Version:** This field will go away soon. Ignore it.
 
@@ -319,7 +310,6 @@ To run a loaded environment, just click on the run icon:
 
 ![image13](./media/image13.png){ width=4.52091in height=4.1337in }
 
-
 The **Environment Database File** is not editable and will be set to
 whatever environment is currently loaded into the editor. GEMS is
 designed to save data about everything that happens during a run, a user
@@ -334,7 +324,6 @@ defined environment variables. E.g.:
 ![image14](./media/image14.png){ width=2.54696in height=1.6453in }
 
 ![image15](./media/image15.png){ width=2.45558in height=1.65297in }
-
 
 This information floats in the upper left hand corner when Debug Mode is
 enabled.
@@ -395,7 +384,6 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 
 ![image17](./media/image17.png){ width=7.5in height=4.60625in }
 
-
 1. These icons allow you to create a new empty view, or delete the
    currently selected view in the list, respectively. Be careful with
    deleting views – this cannot be undone. Also make sure you have
@@ -442,7 +430,6 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    ![image18](./media/image18.png){ width=3.30183in height=3.08262in }
    ![image19](./media/image19.png){ width=3.29191in height=3.0883in }
    ![image20](./media/image20.png){ width=3.30202in height=3.08739in }
-
 
 8. This button is used to open a new screen that allows the design and
    specification of objects for this view. Make sure you have specified
@@ -594,6 +581,8 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
   changed. If `Clickthrough` is "True" [default = "False"], clickable
   objects \<em>under\</em> the image will continue to fire associated
   actions. Note: ShowImage <u>can play animated gif images</u>!
+
+- **ShowImageWithin**(`ImageFile`,`Left`,`Top`,`Duration`,`Clickthrough`,`WithinObject`,`HideTarget`,`Stretch`) : This action loads and displays `ImageFile`. If `WithinObject` matches a valid object, the image is scaled to that object’s bounds (aspect preserved by default; centered when `Stretch` is "True") and positioned over it; otherwise it is placed at (`Left`,`Top`). The image is removed when the view is changed. If `HideTarget` is "True" [default = "False"], the target object is hidden while the image is shown (restored after `Duration` if provided). If `Clickthrough` is "True" [default = "False"], clickable objects under the image will continue to fire associated actions. Note: ShowImageWithin can play animated gif images.
 
 - **RunProgram**(`Application`,`Parameters`) : This action caused GEMS
   execute Application with the optional Parameters.

@@ -155,6 +155,12 @@ action_lst:
     Name: StopAllSounds
     Restrictions: viewobjectglobalpocket
     Template: '[]'
+  '26':
+    Id: 4
+    Labels: '["ImageFile","Left","Top","Duration","Clickthrough", "WithinObject", "HideTarget", "Stretch"]'
+    Name: ShowImageWithin
+    Restrictions: viewobject
+    Template: '["picfile","number","number","float","bool","number","bool","bool"]'
 condition_lst:
   '0':
     Id: 0
