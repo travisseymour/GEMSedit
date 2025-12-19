@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from collections.abc import Callable
-from typing import Optional
 
 from PySide6 import QtCore, QtSql, QtWidgets
 from PySide6.QtCore import QModelIndex, Qt
@@ -45,7 +44,7 @@ class CustomSqlModel(QtSql.QSqlQueryModel):
 
 class ParamListModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None):
-        super(ParamListModel, self).__init__(parent)
+        super().__init__(parent)
         self._param_dict: dict | None = None
         self._param_key: str = ""
         self._signal_update: Callable | None = None
@@ -63,7 +62,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
         except:
             return 0
 
-    def columnCount(self, index=QtCore.QModelIndex()):
+    def columnCount(self, index: QtCore.QModelIndex):
         return 1
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):

@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Union
 
 from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox

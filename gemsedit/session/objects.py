@@ -28,7 +28,7 @@ from gemsedit.database.connection import mark_db_as_changed
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
-from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
+from gemsedit.gui import action_list, object_select_widget as objselect
 import gemsedit.gui.objects_window as win
 
 
@@ -596,14 +596,14 @@ class Objects:
             self.ui.takeable_checkBox.setChecked(self.model.record(0).value("Takeable"))
             self.ui.draggable_checkBox.setChecked(self.model.record(0).value("Draggable"))
             # load any corresponding actions
-            self.actionlist = ACTIONLIST.ActionList(id, self.ui.OAL_tableView, "object", media_path=self.mediapath)
+            self.actionlist = action_list.ActionList(id, self.ui.OAL_tableView, "object", media_path=self.mediapath)
             self.actionlist.parent_id = id
             self.actionlist.filterActions()
             # handle pic fields
             self.loadPicFields()
         # This clause just added to fix problem loading objects win when there are no objects
         else:
-            self.actionlist = ACTIONLIST.ActionList(None, self.ui.OAL_tableView, "object", media_path=self.mediapath)
+            self.actionlist = action_list.ActionList(None, self.ui.OAL_tableView, "object", media_path=self.mediapath)
             self.actionlist.parent_id = None
 
         # setup selection model handler (mouse or keyboard)...have to do *after* table is filled: http://goo.gl/KPaajQ

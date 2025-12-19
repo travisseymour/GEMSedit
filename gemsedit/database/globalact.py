@@ -44,9 +44,10 @@ class MagicModel(QtCore.QAbstractTableModel):
             return 0
 
     def columnCount(self, index=QtCore.QModelIndex()):
+        # was (self, index=QtCore.QModelIndex())
         return 1
 
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):  # was role: int = ...
         if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if orientation == QtCore.Qt.Orientation.Vertical:
                 return int(QtCore.Qt.AlignmentFlag.AlignRight)
@@ -97,21 +98,21 @@ class MagicModel(QtCore.QAbstractTableModel):
 
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
             try:
-                dispvalue = self._settings_list[index.row()][2]
+                display_value = self._settings_list[index.row()][2]
                 if index.row() == 0:  # >>>>>> start view
                     try:
-                        dispvalue = f"{dispvalue}:{self._view_dict[str(dispvalue)]}"
+                        display_value = f"{display_value}:{self._view_dict[str(display_value)]}"
                     except:
                         pass
                 elif index.row() == 3:  # >>>>>> preload resources
                     try:
-                        if int(dispvalue) == 0:
-                            dispvalue = "False"
-                        elif int(dispvalue) == 1:
-                            dispvalue = "True"
+                        if int(display_value) == 0:
+                            display_value = "False"
+                        elif int(display_value) == 1:
+                            display_value = "True"
                     except:
                         pass
-                return dispvalue  # Settings Value
+                return display_value  # Settings Value
             except:
                 return None
         return None
@@ -127,8 +128,8 @@ class GlobalAct:
 
         self.ui.GAL_tableView.setModel(None)
         self.ui.PAL_tableView.setModel(None)
-        self.action_list_ga = ACTIONLIST.ActionList(0, self.ui.GAL_tableView, "global", media_path=self.media_path)
-        self.action_list_pa = ACTIONLIST.ActionList(0, self.ui.PAL_tableView, "pocket", media_path=self.media_path)
+        self.action_list_ga = action_list.ActionList(0, self.ui.GAL_tableView, "global", media_path=self.media_path)
+        self.action_list_pa = action_list.ActionList(0, self.ui.PAL_tableView, "pocket", media_path=self.media_path)
 
         self.initializeViews()
 

@@ -31,7 +31,7 @@ from PySide6.QtWidgets import QMessageBox
 from gemsedit import LOG_PATH, app_long_name, log
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.database.sqltools import get_next_value
-from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
+from gemsedit.gui import action_list, object_select_widget as objselect
 import gemsedit.gui.gems_window as win
 from gemsedit.session import objects, settings
 from gemsedit.session.networkgraph import show_gems_network_graph
@@ -831,7 +831,7 @@ class GemsViews:
             self.ui.view_tableView.selectRow(0)
             self.current_row = 0
             # load any corresponding actions
-            self.action_list = ACTIONLIST.ActionList(_id, self.ui.VAL_tableView, "view", media_path=self.media_path)
+            self.action_list = action_list.ActionList(_id, self.ui.VAL_tableView, "view", media_path=self.media_path)
             self.action_list.parent_id = _id
             self.action_list.filterActions()
             # setup action_list buttons
@@ -848,7 +848,7 @@ class GemsViews:
 
             # This clause just added to fix problem loading objects win when there are no objects
         else:
-            self.action_list = ACTIONLIST.ActionList(None, self.ui.view_tableView, "view", media_path=self.media_path)
+            self.action_list = action_list.ActionList(None, self.ui.view_tableView, "view", media_path=self.media_path)
             self.action_list.parent_id = None
             self.selection_model.selectionChanged.connect(self.handleSelectionChange)
 

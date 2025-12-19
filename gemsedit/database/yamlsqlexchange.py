@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from pathlib import Path
-from typing import Optional, Union
 
 import sqlite_utils
 from sqlite_utils import Database
@@ -178,8 +177,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     [<Table objects (Id, Parent, Name, Left, Top, Width, Height, Visible, Takeable, RowOrder)>,
      <Table actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder)>,
      <Table views (Id, Name, Foreground, Background, Overlay, RowOrder)>,
-     <Table options (Id, Startview, Pocketcount, Roomtransition, Preloadresources, Globaloverlay, Version, 
-                     StageColor, DisplayType, ObjectHover)>,
+     <Table options (Id, Startview, Pocketcount, Roomtransition, Preloadresources, Globaloverlay, Version, StageColor, DisplayType, ObjectHover>,
      <Table condition_lst (Id, Name, Template, Labels, Restrictions)>,
      <Table trigger_lst (Id, Name, Template, Labels, Restrictions)>,
      <Table action_lst (Id, Name, Template, Labels, Restrictions)>]
