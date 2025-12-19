@@ -45,6 +45,7 @@ class ObjectSelect(QtWidgets.QDialog):
         self.other_objects = []
         self.bgPic = None
         self._result: tuple = ()
+        self._keep_result = False
         self.msg = "Press ENTER to close this window."
         self.msg_position = QPoint(20, 20)
         # self.resize(640, 480)
@@ -126,6 +127,8 @@ class ObjectSelect(QtWidgets.QDialog):
         super().showEvent(event)
 
     def closeEvent(self, event):
+        if not self._keep_result:
+            self.x1 = self.y1 = self.x2 = self.y2 = None
         if self.x1 is None or self.x2 is None or self.y1 is None or self.y2 is None:
             self._result = ()
         else:
@@ -137,6 +140,7 @@ class ObjectSelect(QtWidgets.QDialog):
                 self.x2 - self.x1,
                 self.y2 - self.y1,
             )
+        self._keep_result = False
         super().closeEvent(event)
 
     def mouseReleaseEvent(self, event):
@@ -187,7 +191,18 @@ class ObjectSelect(QtWidgets.QDialog):
 
         if self.msg:
             painter.setFont(QtGui.QFont("Arial", 14))  # 'Decorative'
-            painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow))
+            font_metrics = painter.fontMetrics()
+            ascent = font_metrics.ascent()
+            descent = font_metrics.descent()
+            text_width = font_metrics.horizontalAdvance(self.msg)
+            padded_rect = QtCore.QRect(
+                self.msg_position.x() - 6,
+                self.msg_position.y() - ascent - 4,
+                text_width + 12,
+                ascent + descent + 8,
+            )
+            painter.fillRect(padded_rect, QtGui.QColor("yellow"))
+            painter.setPen(QtGui.QPen(QtGui.QColor("black")))
             painter.drawText(self.msg_position, self.msg)
 
         # draw other objects
@@ -255,11 +270,17 @@ class ObjectSelect(QtWidgets.QDialog):
         # b = (event.key())
         # c = (QtCore.QEvent.Type.KeyPress)
         # log.debug(f"{a=}, {b=}, {c=}")
-        if event.type() == QtCore.QEvent.Type.KeyPress and event.key() == 16777220:  # QtCore.Qt.Key_Enter):
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
             self.update()
+            self._keep_result = True
             self.close()
-            # return True
-        else:
-            QtWidgets.QWidget.keyPressEvent(self, event)
+            return
+        if event.key() == QtCore.Qt.Key_Escape:
+            # cancel selection and close without changes
+            self.x1 = self.y1 = self.x2 = self.y2 = None
+            self._result = ()
+            self._keep_result = False
+            self.close()
+            return
 
         super().keyPressEvent(event)
