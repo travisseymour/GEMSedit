@@ -684,7 +684,7 @@
   <customwidget>
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
-   <header>gemsedit.gui.CustomClickableLabel</header>
+   <header>gemsedit.gui.custom_clickable_label</header>
   </customwidget>
  </customwidgets>
  <resources>

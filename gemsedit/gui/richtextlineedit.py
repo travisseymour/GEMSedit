@@ -32,11 +32,11 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
     ) = range(10)
 
     def __init__(self, parent=None):
-        super(RichTextLineEdit, self).__init__(parent)
+        super().__init__(parent)
 
-        self.monofamily = "courier"
-        self.sansfamily = "helvetica"
-        self.seriffamily = "times"
+        self.mono_family = "courier"
+        self.sans_family = "helvetica"
+        self.serif_family = "times"
         self.setLineWrapMode(QtWidgets.QTextEdit.LineWrapMode.NoWrap)
         self.setTabChangesFocus(True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -146,19 +146,19 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                 "&Monospaced",
                 None,
                 RichTextLineEdit.Monospaced,
-                format.fontFamily() == self.monofamily,
+                format.font().family() == self.mono_family,
             ),
             (
                 "&Serifed",
                 None,
                 RichTextLineEdit.Serif,
-                format.fontFamily() == self.seriffamily,
+                format.font().family() == self.serif_family,
             ),
             (
                 "S&ans Serif",
                 None,
                 RichTextLineEdit.Sans,
-                format.fontFamily() == self.sansfamily,
+                format.font().family() == self.sans_family,
             ),
             (
                 "&No super or subscript",
@@ -203,11 +203,11 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                 return
             format = self.currentCharFormat()
             if what == RichTextLineEdit.Monospaced:
-                format.setFontFamily(self.monofamily)
+                format.setFontFamily(self.mono_family)
             elif what == RichTextLineEdit.Serif:
-                format.setFontFamily(self.seriffamily)
+                format.setFontFamily(self.serif_family)
             elif what == RichTextLineEdit.Sans:
-                format.setFontFamily(self.sansfamily)
+                format.setFontFamily(self.sans_family)
             if what == RichTextLineEdit.StrikeOut:
                 format.setFontStrikeOut(not format.fontStrikeOut())
             if what == RichTextLineEdit.NoSuperOrSubscript:
@@ -228,14 +228,11 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                 fragment = iterator.fragment()
                 if fragment.isValid():
                     format = fragment.charFormat()
-                    family = format.fontFamily()
+                    family = format.font().family()
                     color = format.foreground().color()
-                    # text = QtCore.Qt.escape(fragment.text()) # depreciated
-                    # text = QtCore.Qt.QString(fragment.text()).toHtmlEscaped()  # doesn't exist in pyside
-                    # TODO: Turned Them all off: DEBUG ONLY!
-                    import cgi
+                    from html import escape
 
-                    text = cgi.escape(fragment.text(), True)
+                    text = escape(fragment.text(), True)
                     if format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSubScript:
                         text = f"<sub>{text}</sub>"
                     elif format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSuperScript:
@@ -249,12 +246,12 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                     if format.fontStrikeOut():
                         text = f"<s>{text}</s>"
                     if color != black or family:
-                        attribs = ""
+                        attributes = ""
                         if color != black:
-                            attribs += f' color="{color.name()}"'
+                            attributes += f' color="{color.name()}"'
                         if family:
-                            attribs += f' face="{family}"'
-                        text = f"<font{attribs}>{text}</font>"
+                            attributes += f' face="{family}"'
+                        text = f"<font{attributes}>{text}</font>"
                     html += text
                 iterator += 1
             block = block.next()
@@ -263,12 +260,16 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    lineedit = RichTextLineEdit()
-    lineedit.show()
-    lineedit.setWindowTitle("RichTextEdit")
-    app.exec()
-    print(lineedit.toHtml())
-    print()
-    print(lineedit.toPlainText())
-    print()
-    print(lineedit.toSimpleHtml())
+    line_edit = RichTextLineEdit()
+    line_edit.setWindowTitle("RichTextEdit")
+    line_edit.show()
+
+    def test_my_functions():
+        print(line_edit.toHtml())
+        print("====================================")
+        print(line_edit.toPlainText())
+        print("====================================")
+        print(line_edit.toSimpleHtml())
+
+    app.aboutToQuit.connect(test_my_functions)
+    sys.exit(app.exec())

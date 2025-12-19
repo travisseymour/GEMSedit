@@ -1,17 +1,15 @@
 from pathlib import Path
-import sys
-from typing import Optional
 
+from loguru import logger as log
 from PySide6.QtCore import QSettings
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
 
-if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-    pathEX = Path(sys._MEIPASS)
-else:
-    pathEX = Path(__file__).parent
+# if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+#     pathEX = Path(sys._MEIPASS)
+# else:
+#     pathEX = Path(__file__).parent
 
-from loguru import logger as log
 
 CONFIG_PATH: Path | None = None
 LOG_PATH: Path | None = None

@@ -26,7 +26,7 @@ from gemsedit.gui import richtextlineedit
 
 class GenericDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(GenericDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.delegates = {}
 
     def insertColumnDelegate(self, column, delegate):
@@ -68,7 +68,7 @@ class GenericDelegate(QStyledItemDelegate):
 
 class IntegerColumnDelegate(QStyledItemDelegate):
     def __init__(self, minimum=0, maximum=100, parent=None):
-        super(IntegerColumnDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.minimum = minimum
         self.maximum = maximum
 
@@ -99,23 +99,23 @@ class IntegerColumnDelegate(QStyledItemDelegate):
 class DateColumnDelegate(QStyledItemDelegate):
     def __init__(
         self,
-        minimum=QDate(),
-        maximum=QDate.currentDate(),
+        minimum: QDate | None,
+        maximum: QDate | None,
         format="yyyy-MM-dd",
         parent=None,
     ):
-        super(DateColumnDelegate, self).__init__(parent)
-        self.minimum = minimum
-        self.maximum = maximum
+        super().__init__(parent)
+        self.minimum = QDate() if minimum is None else minimum
+        self.maximum = QDate.currentDate() if maximum is None else maximum
         self.format = format
 
     def createEditor(self, parent, option, index):
-        dateedit = QDateEdit(parent)
-        dateedit.setDateRange(self.minimum, self.maximum)
-        dateedit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        dateedit.setDisplayFormat(self.format)
-        dateedit.setCalendarPopup(True)
-        return dateedit
+        date_edit = QDateEdit(parent)
+        date_edit.setDateRange(self.minimum, self.maximum)
+        date_edit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        date_edit.setDisplayFormat(self.format)
+        date_edit.setCalendarPopup(True)
+        return date_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -127,11 +127,11 @@ class DateColumnDelegate(QStyledItemDelegate):
 
 class PlainTextColumnDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(PlainTextColumnDelegate, self).__init__(parent)
+        super().__init__(parent)
 
     def createEditor(self, parent, option, index):
-        lineedit = QLineEdit(parent)
-        return lineedit
+        line_edit = QLineEdit(parent)
+        return line_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -142,19 +142,19 @@ class PlainTextColumnDelegate(QStyledItemDelegate):
 
 
 class ActionColumnDelegate(QStyledItemDelegate):
-    def __init__(self, coltype, actiontype, mediapath, parent=None):
-        super(ActionColumnDelegate, self).__init__(parent)
-        self.coltype = coltype
-        self.actiontype = actiontype
-        self.paramselector = None
-        self.mediapath = mediapath
+    def __init__(self, col_type, action_type, media_path, parent=None):
+        super().__init__(parent)
+        self.coltype = col_type
+        self.action_type = action_type
+        self.param_selector = None
+        self.media_path = media_path
 
     def createEditor(self, parent, option, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        self.paramselector = param_select.ParamSelect(
-            self.coltype, value, self.actiontype, self.mediapath
+        self.param_selector = param_select.ParamSelect(
+            self.coltype, value, self.action_type, self.media_path
         )  # 'PortalTo("EndRoom")'
-        editor = self.paramselector.ParmSelectWindow
+        editor = self.param_selector.ParmSelectWindow
         editor.setMinimumHeight(591)
         editor.setMinimumWidth(631)
         # editor.setModal(True)
@@ -168,15 +168,13 @@ class ActionColumnDelegate(QStyledItemDelegate):
         pass
 
     def setModelData(self, editor, model, index):
-        # print("trying to set model data: %s" % self.paramselector.result)
-        if self.paramselector.result is not None:
-            model.setData(index, str(self.paramselector.result))
-            # print("reslting model data is: %s" % index.model().data(index, Qt.ItemDataRole.DisplayRole))
+        if self.param_selector.result is not None:
+            model.setData(index, str(self.param_selector.result))
 
 
 class RichTextColumnDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(RichTextColumnDelegate, self).__init__(parent)
+        super().__init__(parent)
 
     def paint(self, painter, option, index):
         text = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -191,7 +189,7 @@ class RichTextColumnDelegate(QStyledItemDelegate):
         color = (
             palette.highlight().color()
             if option.state & QStyle.StateFlag.State_Selected
-            else QColor(index.model().data(index, Qt.ItemDataRole.BackgroundColorRole))
+            else QColor(index.model().data(index, Qt.ItemDataRole.BackgroundRole))
         )
         painter.fillRect(option.rect, color)
         painter.translate(option.rect.x(), option.rect.y())
@@ -203,11 +201,11 @@ class RichTextColumnDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         document.setHtml(text)
-        return QSize(document.idealWidth() + 5, option.fontMetrics.height())
+        return QSize(int(document.idealWidth()) + 5, option.fontMetrics.height())
 
     def createEditor(self, parent, option, index):
-        lineedit = richtextlineedit.RichTextLineEdit(parent)
-        return lineedit
+        line_edit = richtextlineedit.RichTextLineEdit(parent)
+        return line_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)

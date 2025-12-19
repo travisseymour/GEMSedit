@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gemsedit.gui.CustomClickableLabel import ClickableLabel
+from gemsedit.gui.custom_clickable_label import ClickableLabel
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 

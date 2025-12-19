@@ -34,7 +34,7 @@ class ObjectSelect(QtWidgets.QDialog):
         view_pic="Foreground",
         media_path=None,
     ):
-        super(ObjectSelect, self).__init__(parent)
+        super().__init__(parent)
         self.x1 = self.y1 = self.x2 = self.y2 = 0
         self.current_view = current_view
         self.current_obj = current_obj
@@ -92,38 +92,38 @@ class ObjectSelect(QtWidgets.QDialog):
         if query.isActive():
             try:
                 while next(query):
-                    Id = query.value(0)
-                    Parent = query.value(1)
-                    Name = query.value(2)
-                    Left = query.value(3)
-                    Top = query.value(4)
-                    Width = query.value(5)
-                    Height = query.value(6)
-                    Visible = query.value(7)
-                    Takeable = query.value(8)
-                    Draggable = query.value(9)
-                    if Id == self.current_obj:
-                        self.x1 = Left
-                        self.y1 = Top
-                        self.x2 = Left + Width
-                        self.y2 = Top + Height
+                    _id = query.value(0)
+                    parent = query.value(1)
+                    name = query.value(2)
+                    left = query.value(3)
+                    top = query.value(4)
+                    width = query.value(5)
+                    height = query.value(6)
+                    visible = query.value(7)
+                    takeable = query.value(8)
+                    draggable = query.value(9)
+                    if _id == self.current_obj:
+                        self.x1 = left
+                        self.y1 = top
+                        self.x2 = left + width
+                        self.y2 = top + height
                     else:
                         self.other_objects.append(
                             (
-                                Name,
-                                Left,
-                                Top,
-                                Width,
-                                Height,
-                                Visible,
-                                Takeable,
-                                Draggable,
+                                name,
+                                left,
+                                top,
+                                width,
+                                height,
+                                visible,
+                                takeable,
+                                draggable,
                             )
                         )
             except:
                 pass
 
-        super(ObjectSelect, self).showEvent(event)
+        super().showEvent(event)
 
     def closeEvent(self, event):
         if self.x1 is None or self.x2 is None or self.y1 is None or self.y2 is None:
@@ -137,7 +137,7 @@ class ObjectSelect(QtWidgets.QDialog):
                 self.x2 - self.x1,
                 self.y2 - self.y1,
             )
-        super(ObjectSelect, self).closeEvent(event)
+        super().closeEvent(event)
 
     def mouseReleaseEvent(self, event):
         if self.allow_selection and self.clicks_allowed:
@@ -154,7 +154,7 @@ class ObjectSelect(QtWidgets.QDialog):
                 self.msg = "Single Click to begin object selection. Press ENTER to submit."
             self.update()
 
-        super(ObjectSelect, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         # handle obj selection
@@ -174,18 +174,15 @@ class ObjectSelect(QtWidgets.QDialog):
                 self.y1 = b
             self.update()
 
-        super(ObjectSelect, self).mouseMoveEvent(event)
+        super().mouseMoveEvent(event)
 
     def paintEvent(self, event):
-        # http://zetcode.com/gui/pysidetutorial/drawing/
-
         # setup painter
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
 
         # draw image
         if self.bgPic:
-            # http://goo.gl/bbBNQ6
             painter.drawPixmap(0, 0, QtGui.QPixmap(self.bgPic))  # for scaled: QPixmap(blah).scaled(size())
 
         if self.msg:
@@ -196,19 +193,19 @@ class ObjectSelect(QtWidgets.QDialog):
         # draw other objects
         if len(self.other_objects):
             line_width = 3
-            fontsize = 12
+            font_size = 12
             for param_list in self.other_objects:
-                Name, Left, Top, Width, Height, Visible, Takeable, Draggable = param_list
+                name, left, top, width, height, visible, takeable, draggable = param_list
 
                 # Draw box
-                if Takeable:
+                if takeable:
                     line_color = QtGui.QColor("green")
                 else:
                     line_color = QtGui.QColor("red")
 
                 line_color.setAlpha(128)
 
-                if Visible:
+                if visible:
                     line_type = QtCore.Qt.PenStyle.SolidLine
                 else:
                     line_type = QtCore.Qt.PenStyle.DotLine
@@ -218,19 +215,19 @@ class ObjectSelect(QtWidgets.QDialog):
                 # not available in PySide6!? trying the setAlpha method above ^^^
                 # painter.setBackgroundMode(QtCore.Qt.MaskMode.TransparentMode)
 
-                painter.setFont(QtGui.QFont("Arial", fontsize))  # 'Decorative'
+                painter.setFont(QtGui.QFont("Arial", font_size))  # 'Decorative'
 
                 rect = QtCore.QRect()
-                rect.setRect(Left, Top, Width, Height)
+                rect.setRect(left, top, width, height)
 
                 painter.drawRect(rect)
 
                 # Draw Text
                 painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.white, line_width))
                 # painter.drawText(rect, QtCore.Qt.AlignmentFlag.AlignLeft,Name)
-                tp = Top - line_width
-                if tp < fontsize:
-                    tp = Top + Height + (line_width * 2)
+                tp = top - line_width
+                if tp < font_size:
+                    tp = top + height + (line_width * 2)
 
                 painter.setPen(QtCore.Qt.GlobalColor.black)
                 painter.setBackground(QtGui.QBrush(QtCore.Qt.GlobalColor.white))
@@ -239,9 +236,9 @@ class ObjectSelect(QtWidgets.QDialog):
                 # painter.setBackgroundMode(QtCore.Qt.MaskMode.OpaqueMode)
                 line_color.setAlpha(255)
 
-                painter.drawText(Left + line_width, tp, Name)
+                painter.drawText(left + line_width, tp, name)
 
-        super(ObjectSelect, self).paintEvent(event)
+        super().paintEvent(event)
 
         # handle selection
         if self.x1 and self.y1 and self.x2 and self.y2:
@@ -265,4 +262,4 @@ class ObjectSelect(QtWidgets.QDialog):
         else:
             QtWidgets.QWidget.keyPressEvent(self, event)
 
-        super(ObjectSelect, self).keyPressEvent(event)
+        super().keyPressEvent(event)

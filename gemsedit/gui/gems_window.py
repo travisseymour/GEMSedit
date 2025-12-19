@@ -29,7 +29,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gemsedit.gui.CustomClickableLabel import ClickableLabel
+from gemsedit.gui.custom_clickable_label import ClickableLabel
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
@@ -49,7 +49,7 @@ class Ui_ViewsWindow:
         font.setFamilies(["Verdana"])
         font.setPointSize(12)
         ViewsWindow.setFont(font)
-        ViewsWindow.setTabShape(QTabWidget.Rounded)
+        ViewsWindow.setTabShape(QTabWidget.TabShape.Rounded)
         self.actionOpen = QAction(ViewsWindow)
         self.actionOpen.setObjectName("actionOpen")
         icon = QIcon()

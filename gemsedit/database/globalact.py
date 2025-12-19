@@ -21,13 +21,13 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMainWindow
 
-from gemsedit.gui import ACTIONLIST
+from gemsedit.gui import action_list
 import gemsedit.gui.globalact_window as win
 
 
 class MagicModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None):
-        super(MagicModel, self).__init__(parent)
+        super().__init__(parent)
         self._settings_list = None
         self._view_dict: dict = {}
 
@@ -127,8 +127,8 @@ class GlobalAct:
 
         self.ui.GAL_tableView.setModel(None)
         self.ui.PAL_tableView.setModel(None)
-        self.action_list_ga = ACTIONLIST.ActionList(0, self.ui.GAL_tableView, "global", mediapath=self.media_path)
-        self.action_list_pa = ACTIONLIST.ActionList(0, self.ui.PAL_tableView, "pocket", mediapath=self.media_path)
+        self.action_list_ga = ACTIONLIST.ActionList(0, self.ui.GAL_tableView, "global", media_path=self.media_path)
+        self.action_list_pa = ACTIONLIST.ActionList(0, self.ui.PAL_tableView, "pocket", media_path=self.media_path)
 
         self.initializeViews()
 

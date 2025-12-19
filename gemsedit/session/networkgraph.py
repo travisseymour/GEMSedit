@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
 import re
-from typing import Union
 import webbrowser
 
 from munch import Munch
@@ -51,9 +50,9 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
     # net.add_edge('B', 'E', weight=.87, color='#000000')
 
     # add views
-    for Id, view in db.Views.items():
+    for _id, view in db.Views.items():
         net.add_node(
-            Id,
+            _id,
             label=view.Name,
             shape="image",
             # vvv direct web ref works!
@@ -62,7 +61,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
             # image=str(Path(media_path, view.Foreground)),
             image=str(Path(media_path, view.Foreground).as_uri()),
             # image="https://13thdimension.com/wp-content/uploads/2016/07/xfrtoc70fgzg49ubheth.jpg",
-            title=f"View {Id}: {view.Name}",
+            title=f"View {_id}: {view.Name}",
         )
 
     def trigger_color(trigger: str) -> str:
@@ -75,7 +74,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
 
     # add edges
     for (
-        Id,
+        _id,
         view,
     ) in db.Views.items():
         # check for view actions
@@ -86,7 +85,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
                     destination = portal_room.findall(action.Action)
                     if destination:
                         net.add_edge(
-                            Id,
+                            _id,
                             destination[0],
                             weight=1.0,
                             color=trigger_color(action.Trigger),
@@ -107,7 +106,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
                                 else:
                                     trigger = action.Trigger
                                 net.add_edge(
-                                    Id,
+                                    _id,
                                     destination[0],
                                     weight=1.5,
                                     color=trigger_color(action.Trigger),
@@ -167,8 +166,8 @@ def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Path 
     except Exception as e:
         log.debug(f'Unable to copy js and css files from {str(get_resource("local_cdn"))} to {str(media_path)}: "{e}"')
 
-    URL = Path(media_path, "env_graph.html")
-    log.debug(f"URL for network graph will be {str(URL)}")
+    _url = Path(media_path, "env_graph.html")
+    log.debug(f"URL for network graph will be {str(_url)}")
 
     try:
         # FIXME: Uuugghhh!! This works, but won't show the pictures, no matter
@@ -182,8 +181,8 @@ def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Path 
         # parent.network_window.show()
 
         # FIXME: this alternative just opens network graph html file in the default browser
-        log.debug(f"about to show network graph from {str(URL.absolute().as_uri())}")
-        webbrowser.open(str(URL.absolute().as_uri()), autoraise=True)
+        log.debug(f"about to show network graph from {str(_url.absolute().as_uri())}")
+        webbrowser.open(str(_url.absolute().as_uri()), autoraise=True)
         # webbrowser.open_new(str(URL.absolute()))
     except Exception as e:
-        log.warning(f'Unable to open network graph html file @ "{URL=}":\n{e}')
+        log.warning(f'Unable to open network graph html file @ "{_url=}":\n{e}')

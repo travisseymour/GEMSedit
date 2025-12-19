@@ -32,7 +32,7 @@ from gemsedit.gui import richtextlineedit
 
 class GenericRowDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(GenericRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.delegates = {}
 
     def insertRowDelegate(self, row, delegate):
@@ -74,7 +74,7 @@ class GenericRowDelegate(QStyledItemDelegate):
 
 class IntegerRowDelegate(QStyledItemDelegate):
     def __init__(self, minimum=0, maximum=100, parent=None):
-        super(IntegerRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.minimum = minimum
         self.maximum = maximum
 
@@ -101,7 +101,7 @@ class IntegerRowDelegate(QStyledItemDelegate):
 
 class FloatRowDelegate(QStyledItemDelegate):
     def __init__(self, minimum=0.0, maximum=1.0, parent=None):
-        super(FloatRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.minimum = minimum
         self.maximum = maximum
 
@@ -124,7 +124,7 @@ class FloatRowDelegate(QStyledItemDelegate):
 
 class ListRowDelegate(QStyledItemDelegate):
     def __init__(self, listitems=None, parent=None):
-        super(ListRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.listitems = listitems
 
     def createEditor(self, parent, option, index):
@@ -143,7 +143,7 @@ class ListRowDelegate(QStyledItemDelegate):
 
 class ComboRowDelegate(QStyledItemDelegate):
     def __init__(self, listitems=None, parent=None):
-        super(ComboRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.listitems = listitems
 
     def createEditor(self, parent, option, index):
@@ -162,7 +162,7 @@ class ComboRowDelegate(QStyledItemDelegate):
 
 class ComboRowColoredDelegate(QStyledItemDelegate):
     def __init__(self, listitems=None, parent=None):
-        super(ComboRowColoredDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.listitems = listitems  # list of these: "[NAME,R,G,B,A]"
 
     def createEditor(self, parent, option, index):
@@ -218,7 +218,7 @@ class DirectoryRowDelegate(QStyledItemDelegate):
 
 class FileRowDelegate(QStyledItemDelegate):
     def __init__(self, mediapath, filterstr="All Files (*.*)", parent=None):
-        super(FileRowDelegate, self).__init__(parent)
+        super().__init__(parent)
         self.filterstr = filterstr
         self.mediapath = mediapath
         self.oldwd = "./"
@@ -261,23 +261,23 @@ class FileRowDelegate(QStyledItemDelegate):
 class DateRowDelegate(QStyledItemDelegate):
     def __init__(
         self,
-        minimum=QDate(),
-        maximum=QDate.currentDate(),
+        minimum: QDate | None,
+        maximum: QDate | None,
         format="yyyy-MM-dd",
         parent=None,
     ):
-        super(DateRowDelegate, self).__init__(parent)
-        self.minimum = minimum
-        self.maximum = maximum
+        super().__init__(parent)
+        self.minimum = QDate() if minimum is None else minimum
+        self.maximum = QDate.currentDate() if maximum is None else maximum
         self.format = format
 
     def createEditor(self, parent, option, index):
-        dateedit = QDateEdit(parent)
-        dateedit.setDateRange(self.minimum, self.maximum)
-        dateedit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        dateedit.setDisplayFormat(self.format)
-        dateedit.setCalendarPopup(True)
-        return dateedit
+        date_edit = QDateEdit(parent)
+        date_edit.setDateRange(self.minimum, self.maximum)
+        date_edit.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        date_edit.setDisplayFormat(self.format)
+        date_edit.setCalendarPopup(True)
+        return date_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -289,11 +289,11 @@ class DateRowDelegate(QStyledItemDelegate):
 
 class PlainTextRowDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(PlainTextRowDelegate, self).__init__(parent)
+        super().__init__(parent)
 
     def createEditor(self, parent, option, index):
-        lineedit = QLineEdit(parent)
-        return lineedit
+        line_edit = QLineEdit(parent)
+        return line_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -305,7 +305,7 @@ class PlainTextRowDelegate(QStyledItemDelegate):
 
 class RichTextRowDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(RichTextRowDelegate, self).__init__(parent)
+        super().__init__(parent)
 
     def paint(self, painter, option, index):
         text = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -320,7 +320,7 @@ class RichTextRowDelegate(QStyledItemDelegate):
         color = (
             palette.highlight().color()
             if option.state & QStyle.StateFlag.State_Selected
-            else QColor(index.model().data(index, Qt.ItemDataRole.BackgroundColorRole))
+            else QColor(index.model().data(index, Qt.ItemDataRole.BackgroundRole))
         )
         painter.fillRect(option.rect, color)
         painter.translate(option.rect.x(), option.rect.y())
@@ -332,11 +332,11 @@ class RichTextRowDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         document.setHtml(text)
-        return QSize(document.idealWidth() + 5, option.fontMetrics.height())
+        return QSize(int(document.idealWidth()) + 5, option.fontMetrics.height())
 
     def createEditor(self, parent, option, index):
-        lineedit = richtextlineedit.RichTextLineEdit(parent)
-        return lineedit
+        line_edit = richtextlineedit.RichTextLineEdit(parent)
+        return line_edit
 
     def setEditorData(self, editor, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)

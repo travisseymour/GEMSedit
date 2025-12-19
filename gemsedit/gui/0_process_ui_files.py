@@ -16,42 +16,47 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import importlib
+from importlib import util
 from pathlib import Path
-from typing import List
+from shutil import which
+import subprocess
 
-from plumbum import local
-from plumbum.colors import bold, cyan, green, red, yellow
+from rich import print
 
 """
-This converts .ui files to .py files for PyQt6, but to keep GIT history accurate, 
+This converts .ui files to .py files for PyQt6, but to keep GIT history accurate,
 I only want to process ui files that actually changed.
 
-After running this, files that try to import the _rc file may need this line added:
-
-import gemsedit.gui.gemsedit_rc  # noqa: F401
-
-the comment prevents black and ruff from deleting it!
 """
 
-try:
-    qt_type = "pyside6"
-except:
-    qt_type = ""
+def detect_qt_binding() -> tuple[str, str]:
+    """Return (binding label, uic command) for an available Qt binding."""
+    candidates = [
+        ("PySide6", "pyside6-uic", "pyside6"),
+        ("PyQt6", "pyuic6", "pyqt6"),
+    ]
+    for module_name, cli, label in candidates:
+        if util.find_spec(module_name) is None:
+            continue
+        if which(cli) is None:
+            continue
+        try:
+            importlib.import_module(module_name)
+        except Exception:
+            continue
+        return label, cli
+    raise RuntimeError("Expecting to find either PySide6 or PyQt6 (and matching *uic tool) on PATH.")
 
-if not qt_type:
-    try:
-        qt_type = "pyqt6"
-    except:
-        qt_type = "???"
-        raise ValueError("Expecting To Find Either PySide6 or PyQt6!")
-
+qt_type, uic_cmd = detect_qt_binding()
 
 ui_files: list[Path] = list(Path().glob("*.ui"))
 
 if not ui_files:
-    print("No ui files found...nothing to do." | yellow & bold)
+    print("[bold yellow]No ui files found...nothing to do.[/]")
+    raise SystemExit(0)
 
-print(f"Checking {len(ui_files)} ui files for potential changes..." | yellow & bold)
+print(f"[bold yellow]Checking {len(ui_files)} ui files for potential changes...[/]")
 
 found_anything = False
 
@@ -59,14 +64,14 @@ for ui in ui_files:
     py = ui.with_suffix(".py")
     if not py.is_file() or ui.stat().st_mtime > py.stat().st_mtime:
         found_anything = True
-        print(f"Converting {ui.name} to {py.name}" | cyan)
+        print(f"[cyan]Converting {ui.name} to {py.name}[/]")
         try:
-            local["pyuic6" if qt_type == "pyqt6" else "pyside6-uic"]([str(ui.resolve()), "-o", str(py.resolve())])
-            print("\tSuccess!" | green)
+            subprocess.run([uic_cmd, str(ui.resolve()), "-o", str(py.resolve())], check=True)
+            print("\t[green]Success![/]")
         except Exception as e:
-            print(f"\tERROR: {e}" | red & bold)
+            print(f"\t[bold red]ERROR:[/] {e}")
 
 if not found_anything:
-    print("All files up to date. Nothing done." | yellow & bold)
+    print("[bold yellow]All files up to date. Nothing done.[/]")
 
-print("Finished." | yellow & bold)
+print("[bold yellow]Finished.[/]")

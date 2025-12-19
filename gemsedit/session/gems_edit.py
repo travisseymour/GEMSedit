@@ -391,7 +391,7 @@ class GemsViews:
         except:
             pass
         if self.current_row is not None:
-            Id = self.model.record(self.current_row).value("Id")
+            _id = self.model.record(self.current_row).value("Id")
             # pname = self.model.record(self.current_row).value("Name")
             fg_pic = self.model.record(self.current_row).value("Foreground")
             # bgpic = self.model.record(self.current_row).value("Background")
@@ -403,7 +403,7 @@ class GemsViews:
                     QMessageBox.StandardButton.Ok,
                 )
             else:
-                self.object_win = objects.Objects(parentid=Id, mediapath=self.media_path, parent_win=self.MainWindow)
+                self.object_win = objects.Objects(parentid=_id, mediapath=self.media_path, parent_win=self.MainWindow)
                 self.object_win.MainWindow.setModal(False)
                 self.MainWindow.move(self.MainWindow.pos().x(), self.MainWindow.pos().y())
                 self.MainWindow.hide()
@@ -480,11 +480,11 @@ class GemsViews:
         else:
             return
 
-        Id = self.model.record(self.current_row).value("Id")
+        _id = self.model.record(self.current_row).value("Id")
         query = QtSql.QSqlQuery()
         query.prepare(f"UPDATE {self.base_table_name} SET {field_name} = :newvalue WHERE Id = :id")
         query.bindValue(":newvalue", new_value)
-        query.bindValue(":id", Id)
+        query.bindValue(":id", _id)
         query.exec()
         if query.lastError().isValid():
             log.error(f"Problem in handlePicEdit() update query: {query.lastError().text()}")
@@ -552,11 +552,11 @@ class GemsViews:
             # get some required info
             selection = QtCore.QItemSelection(selected).indexes()[0]
             row = selection.row()
-            Id = self.model.record(row).value("Id")
+            _id = self.model.record(row).value("Id")
 
             # reflect change in ui
             self.current_row = row
-            self.action_list.parent_id = Id
+            self.action_list.parent_id = _id
 
             self.action_list.filterActions()
             self.loadPicFields(False)
@@ -650,7 +650,7 @@ class GemsViews:
     def handleBaseDel(self):
         bn = self.basename.title()
         if self.current_row is not None:
-            Id = self.model.record(self.current_row).value("Id")
+            _id = self.model.record(self.current_row).value("Id")
             name = self.model.record(self.current_row).value("Name")
             # Make sure first
 
@@ -667,7 +667,7 @@ class GemsViews:
                 # delete base (view)
                 query1 = QtSql.QSqlQuery()
                 query1.prepare("DELETE FROM " + self.base_table_name + " where Id = :id")
-                query1.bindValue(":id", Id)
+                query1.bindValue(":id", _id)
                 query1.exec()
                 if query1.lastError().isValid():
                     log.error(f"Problem in handleBaseDel() deleting base: {query1.lastError().text()}")
@@ -676,7 +676,7 @@ class GemsViews:
                 query2 = QtSql.QSqlQuery()
                 query2.prepare("DELETE FROM actions where ContextType = :actiontype and ContextId = :id")
                 query2.bindValue(":actiontype", self.basename.lower())
-                query2.bindValue(":id", Id)
+                query2.bindValue(":id", _id)
                 query2.exec()
                 if query2.lastError().isValid():
                     log.error(f"Problem in handleBaseDel() deleting associated actions: {query2.lastError().text()}")
@@ -685,23 +685,23 @@ class GemsViews:
                 # first get list of associated objects mama
                 query3 = QtSql.QSqlQuery()
                 query3.prepare("SELECT Id FROM objects WHERE Parent = :id")
-                query3.bindValue(":id", Id)
+                query3.bindValue(":id", _id)
                 query3.exec()
                 if query3.lastError().isValid():
                     log.error(f"Problem in handleBaseDel(): listing associated objects {query3.lastError().text()}")
                     error_list.append(3)
                 else:
-                    IdList = []
+                    id_list = []
                     if query3.isActive():
                         while query3.next():
-                            IdList.append(query3.value(0))
-                    if IdList:
-                        id_str_list = ",".join([str(n) for n in IdList])
+                            id_list.append(query3.value(0))
+                    if id_list:
+                        id_str_list = ",".join([str(n) for n in id_list])
                         id_str_list = "(" + id_str_list + ")"
                         # delete associated actions for base
                         query3 = QtSql.QSqlQuery()
                         query3.prepare(
-                            "DELETE FROM actions where ContextType = 'object' and ContextId in %s" % id_str_list
+                            f"DELETE FROM actions where ContextType = 'object' and ContextId in {id_str_list}"
                         )
                         query3.exec()
                         if query3.lastError().isValid():
@@ -713,7 +713,7 @@ class GemsViews:
                 # delete associated objects for base
                 query4 = QtSql.QSqlQuery()
                 query4.prepare("DELETE FROM objects where Parent = :id")
-                query4.bindValue(":id", Id)
+                query4.bindValue(":id", _id)
                 query4.exec()
                 if query4.lastError().isValid():
                     log.error(f"Problem in handleBaseDel(): deleting associated objects {query4.lastError().text()}")
@@ -725,8 +725,8 @@ class GemsViews:
                         self.current_row = self.model.rowCount() - 1
                         self.ui.view_tableView.selectRow(self.current_row)
                         self.ui.view_tableView.scrollToBottom()
-                        Id = self.model.record(self.current_row).value("Id")
-                        self.action_list.parent_id = Id
+                        _id = self.model.record(self.current_row).value("Id")
+                        self.action_list.parent_id = _id
 
                         # setup selection model handler (mouse or keyboard)...
                         # have to do *after* table is filled: http://goo.gl/KPaajQ
@@ -748,7 +748,7 @@ class GemsViews:
 
                 connection.mark_db_as_changed()
 
-    def editBaseName(self, Id, name):
+    def editBaseName(self, _id, name):
         bn = self.basename.title()
         # get list of old names
         name_list = []
@@ -788,7 +788,7 @@ class GemsViews:
             if new_name != name:
                 query = QtSql.QSqlQuery()
                 query.prepare("UPDATE " + self.base_table_name + " SET Name = :name WHERE Id = :id")
-                query.bindValue(":id", Id)
+                query.bindValue(":id", _id)
                 query.bindValue(":name", new_name)
                 query.exec()
                 if query.lastError().isValid():
@@ -826,13 +826,13 @@ class GemsViews:
     def initializeViews(self):
         # if there is anything in the base list, select the first one
         if self.model.rowCount() > 0:
-            Id = self.model.record(0).value("Id")
+            _id = self.model.record(0).value("Id")
             # select first row
             self.ui.view_tableView.selectRow(0)
             self.current_row = 0
             # load any corresponding actions
-            self.action_list = ACTIONLIST.ActionList(Id, self.ui.VAL_tableView, "view", mediapath=self.media_path)
-            self.action_list.parent_id = Id
+            self.action_list = ACTIONLIST.ActionList(_id, self.ui.VAL_tableView, "view", media_path=self.media_path)
+            self.action_list.parent_id = _id
             self.action_list.filterActions()
             # setup action_list buttons
             self.ui.actionAdd_toolButton.pressed.connect(self.action_list.handleActionAdd)
@@ -848,7 +848,7 @@ class GemsViews:
 
             # This clause just added to fix problem loading objects win when there are no objects
         else:
-            self.action_list = ACTIONLIST.ActionList(None, self.ui.view_tableView, "view", mediapath=self.media_path)
+            self.action_list = ACTIONLIST.ActionList(None, self.ui.view_tableView, "view", media_path=self.media_path)
             self.action_list.parent_id = None
             self.selection_model.selectionChanged.connect(self.handleSelectionChange)
 
@@ -1009,9 +1009,9 @@ class GemsViews:
     def showBigPic(self, view_pic_name: str):
         if self.db_filename == "" or self.current_row is None:
             return
-        Id = self.model.record(self.current_row).value("Id")
+        _id = self.model.record(self.current_row).value("Id")
         obj_selector = objselect.ObjectSelect(
-            current_view=Id,
+            current_view=_id,
             current_obj=None,
             allow_selection=False,
             view_pic=view_pic_name,

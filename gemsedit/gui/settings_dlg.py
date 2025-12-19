@@ -1,4 +1,3 @@
-
 ################################################################################
 ## Form generated from reading UI file 'settings_dlg.ui'
 ##
@@ -141,7 +140,7 @@ class Ui_SettingsDialog:
 
     # setupUi
 
-    def retranslateUi(self, SettingsDialog):
+    def retranslateUi(self, SettingsDialog):  # noqa: N803
         SettingsDialog.setWindowTitle(QCoreApplication.translate("SettingsDialog", "Dialog", None))
         self.Label9.setText(QCoreApplication.translate("SettingsDialog", "Description:", None))
         self.xxHelpLabel.setText(QCoreApplication.translate("SettingsDialog", "...", None))

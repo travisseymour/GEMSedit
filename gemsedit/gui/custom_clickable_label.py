@@ -1,5 +1,3 @@
-# http://pastebin.com/Vaxg99P1
-
 import sys
 
 from PySide6.QtCore import QObject, Signal
@@ -14,8 +12,6 @@ class ClickableLabel(QLabel):
 
     signal_clicked = Signal()  # emitted whenever this label is left-clicked
 
-    # def __init__(self, text, parent=None):
-    #     super(ClickableLabel, self).__init__(text, parent)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet(
@@ -31,13 +27,13 @@ class ClickableLabel(QLabel):
             self.signal_clicked.emit()
 
 
-class ClickableLabel_Orig(QLabel):
+class ClickableLabelOrig(QLabel):
     """Normal label, but emits an event if the label is left-clicked"""
 
     signal_clicked = Signal()  # emitted whenever this label is left-clicked
 
     def __init__(self, parent=None):
-        super(ClickableLabel_Orig, self).__init__(parent)
+        super().__init__(parent)
         self.setStyleSheet(
             """
         QLabel {text-decoration:none}
@@ -65,14 +61,14 @@ class HtmlLabel(QLabel):
     def getHtml(self, text):
         """Return text embedded in a html link tag"""
 
-        return """<a style = "text-decoration:none" href="asdf">%s</a>""" % text
+        return f"""<a style = "text-decoration:none" href="asdf">{text}</a>"""
 
 
 class View(QWidget):
     """Demonstration GUI to show use of ClickableLabel and HtmlLabel"""
 
     def __init__(self):
-        super(View, self).__init__()
+        super().__init__()
         self.setupUi()
 
     def setupUi(self):
@@ -86,8 +82,8 @@ class View(QWidget):
         self.layoutDisplay = QVBoxLayout()
         self.layoutGeneral.addLayout(self.layoutDisplay)
 
-        self.labelDate = ClickableLabel_Orig("Date")
-        self.labelName = ClickableLabel_Orig("Name")
+        self.labelDate = ClickableLabelOrig("Date")
+        self.labelName = ClickableLabelOrig("Name")
         self.labelAuthorHtml = HtmlLabel("Author")
 
         self.labelDisplay = QLabel("Click on the labels on the left")
@@ -103,7 +99,7 @@ class Controller(QObject):
     """Controls interaction between model and view"""
 
     def __init__(self):
-        super(Controller, self).__init__()
+        super().__init__()
         self.view = View()
         self.connectSignals()
 
@@ -121,8 +117,10 @@ class Controller(QObject):
 
     def onClickableLabel(self):
         """A label was clicked, show the text of the label in the display"""
+        sender = self.sender()
+        text = sender.text() if sender and callable(getattr(sender, "text", None)) else ""
 
-        self.view.labelDisplay.setText("The label with the following text was clicked:\n" + self.sender().text())
+        self.view.labelDisplay.setText("The label with the following text was clicked:\n" + text)
 
 
 def main():

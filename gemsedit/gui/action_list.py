@@ -29,14 +29,14 @@ from gemsedit.database.sqltools import get_next_value
 import gemsedit.gui.genericcoldelegates as generic_col_delegates
 
 
-def getHumanReadableFromId(table, Id):
+def getHumanReadableFromId(table, _id):
     if table == "views":
         query = QtSql.QSqlQuery()
-        query.exec(f"select Name from views where Id = {Id}")
+        query.exec(f"select Name from views where Id = {_id}")
         if query.isActive():
             query.first()
             view_name = query.value(0)
-            return f'"{Id}:{view_name}"'
+            return f'"{_id}:{view_name}"'
     elif table == "objects":
         view_names = {}
         query = QtSql.QSqlQuery()
@@ -47,20 +47,20 @@ def getHumanReadableFromId(table, Id):
                 view_name = query.value(1)  # Name
                 view_names[str(view_id)] = str(view_name)
         query2 = QtSql.QSqlQuery()
-        query2.exec(f"select Parent, Name from objects where Id = {Id}")
+        query2.exec(f"select Parent, Name from objects where Id = {_id}")
         if query2.isActive():
             query2.first()
             parent_view_id = query2.value(0)
-            objname = query2.value(1)
+            object_name = query2.value(1)
             parent_view_name = view_names[str(parent_view_id)]
-            return f'"{Id}:{parent_view_name}:{objname}"'
+            return f'"{_id}:{parent_view_name}:{object_name}"'
     else:
         return None
 
 
-def actionComponentById(Component, Id):
+def actionComponentById(component, _id):
     query = QtSql.QSqlQuery()
-    query.exec(f"select {Component} from actions where Id = {Id}")
+    query.exec(f"select {component} from actions where Id = {_id}")
     if not query.lastError().isValid():
         query.first()
         return query.value(0)
@@ -70,16 +70,16 @@ def actionComponentById(Component, Id):
 
 class CustomSqlModel2(QtSql.QSqlQueryModel):
     def __init__(self, parent=None):
-        super(CustomSqlModel2, self).__init__(parent)
+        super().__init__(parent)
         self._signal_update = None
         self.problem = {}
 
-    def initSignal(self, signalupdate=None):
-        if signalupdate is not None:
-            self._signal_update = signalupdate
+    def initSignal(self, signal_update=None):
+        if signal_update is not None:
+            self._signal_update = signal_update
 
-    def data(self, item: QtCore.QModelIndex, role: int = ...):
-        value = super(CustomSqlModel2, self).data(item, role)
+    def data(self, item: QtCore.QModelIndex, role: int = QtCore.Qt.ItemDataRole.DisplayRole):  # was role: int = ...
+        value = super().data(item, role)
         # if role == QtCore.Qt.ItemDataRole.TextColorRole and index.column() == 0:
         #     return QtGui.QColor(QtCore.Qt.GlobalColor.blue)
         if role == QtCore.Qt.ItemDataRole.BackgroundRole:
@@ -128,7 +128,7 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
                     else:
                         return value
 
-                    return p.sub(r"\1XXX\3", value).replace("XXX", ss)
+                    return p.sub(r"\1XXX\3", value).replace("XXX", str(ss))
             except:
                 pass
 
@@ -153,21 +153,21 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             self.dataChanged.emit(index, index)
             if self._signal_update is not None:
                 pri_key = self.index(index.row(), 0)
-                Id = self.data(pri_key, QtCore.Qt.ItemDataRole.DisplayRole)
-                self._signal_update(index, Id, value)
+                _id = self.data(pri_key, QtCore.Qt.ItemDataRole.DisplayRole)
+                self._signal_update(index, _id, value)
             return True
         else:
             return False
 
 
 class ActionList:
-    def __init__(self, parent_id, tableView, actionType, mediapath):
+    def __init__(self, parent_id, table_view, action_type, media_path):
         self.model = None
         self.current_id = None
-        self.tableView = tableView
+        self.table_view = table_view
         self.parent_id = parent_id
-        self.actionType = actionType
-        self.media_path = mediapath
+        self.action_type = action_type
+        self.media_path = media_path
 
         self.add_del_busy: bool = False
 
@@ -177,21 +177,21 @@ class ActionList:
     def filterActions(self):
         # REMEMBER to set parent_id in your instance before calling this!
         sql = (
-            f"select * from actions where ContextType = '{self.actionType}' "
+            f"select * from actions where ContextType = '{self.action_type}' "
             f"and ContextId = '{self.parent_id}' order by RowOrder"
         )
         self.model.setQuery(sql)
         if not self.model.lastError().isValid():
-            self.connectVALModelToTableView(self.model, self.tableView)
+            self.connectVALModelToTableView(self.model, self.table_view)
         else:
             log.error(f"Problem in filterActions({self.parent_id}): {self.model.lastError().text()}")
-        self.tableView.hideColumn(0)  # id
-        self.tableView.hideColumn(1)  # ContextType
-        self.tableView.hideColumn(2)  # ContextId
+        self.table_view.hideColumn(0)  # id
+        self.table_view.hideColumn(1)  # ContextType
+        self.table_view.hideColumn(2)  # ContextId
         # self.tableView.hideColumn(3) #Condition
         # self.tableView.hideColumn(4) #Trigger
         # self.tableView.hideColumn(5) #Action
-        self.tableView.resizeColumnsToContents()
+        self.table_view.resizeColumnsToContents()
 
     def handleActionAdd(self):
         if self.add_del_busy:
@@ -210,7 +210,7 @@ class ActionList:
                     "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
                 )
                 query.bindValue(":id", new_id)
-                query.bindValue(":contexttype", self.actionType)
+                query.bindValue(":contexttype", self.action_type)
                 query.bindValue(":contextid", self.parent_id)
                 query.bindValue(":condition", "")
                 query.bindValue(":trigger", "")
@@ -221,7 +221,7 @@ class ActionList:
                 if query.lastError().isValid():
                     log.error(f"Problem in handleActionAdd(): {query.lastError().text()}")
                 self.filterActions()
-                self.tableView.scrollToBottom()
+                self.table_view.scrollToBottom()
         finally:
             self.add_del_busy = False
 
@@ -283,7 +283,7 @@ class ActionList:
         view.hideColumn(7)  # RowOrder
         view.resizeColumnsToContents()
 
-    def signalActionUpdate(self, index, recordId, value):
+    def signalActionUpdate(self, index, record_id, value):
         # http://goo.gl/3afhWi
         # http://goo.gl/7hQVmT
 
@@ -319,7 +319,7 @@ class ActionList:
                 query.bindValue(":value", f"{value[0]}{value[1:-1]}{value[-1]}")
             else:
                 query.bindValue(":value", value)
-            query.bindValue(":id", recordId)
+            query.bindValue(":id", record_id)
             query.exec()
             if query.lastError().isValid():
                 log.error(f"Problem in signalActionUpdate() update query failed: {query.lastError().text()}")
@@ -339,16 +339,16 @@ class ActionList:
         delegate = generic_col_delegates.GenericDelegate()
         delegate.insertColumnDelegate(
             3,
-            generic_col_delegates.ActionColumnDelegate("Condition", self.actionType, self.media_path),
+            generic_col_delegates.ActionColumnDelegate("Condition", self.action_type, self.media_path),
         )  # 3
         delegate.insertColumnDelegate(
             4,
-            generic_col_delegates.ActionColumnDelegate("Trigger", self.actionType, self.media_path),
+            generic_col_delegates.ActionColumnDelegate("Trigger", self.action_type, self.media_path),
         )  # 4
         delegate.insertColumnDelegate(
             5,
-            generic_col_delegates.ActionColumnDelegate("Action", self.actionType, self.media_path),
+            generic_col_delegates.ActionColumnDelegate("Action", self.action_type, self.media_path),
         )  # 5
         delegate.insertColumnDelegate(6, generic_col_delegates.IntegerColumnDelegate(0, 1))  # 6
         # delegate.insertColumnDelegate(6, genericcoldelegates.TFComboColumnDelegate())  # 6
-        self.tableView.setItemDelegate(delegate)
+        self.table_view.setItemDelegate(delegate)
