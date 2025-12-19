@@ -403,7 +403,7 @@ class GemsViews:
                     QMessageBox.StandardButton.Ok,
                 )
             else:
-                self.object_win = objects.objects(parentid=Id, mediapath=self.media_path, parent_win=self.MainWindow)
+                self.object_win = objects.Objects(parentid=Id, mediapath=self.media_path, parent_win=self.MainWindow)
                 self.object_win.MainWindow.setModal(False)
                 self.MainWindow.move(self.MainWindow.pos().x(), self.MainWindow.pos().y())
                 self.MainWindow.hide()

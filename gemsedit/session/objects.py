@@ -32,7 +32,7 @@ from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
 import gemsedit.gui.objects_window as win
 
 
-class objects:
+class Objects:
     def __init__(self, parentid, mediapath, parent_win):
         self.parentid = parentid
         self.mediapath = mediapath
