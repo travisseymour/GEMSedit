@@ -44,7 +44,7 @@ class ObjectSelect(QtWidgets.QDialog):
         self.clicks_allowed = False
         self.other_objects = []
         self.bgPic = None
-        self.result = None
+        self._result: tuple = ()
         self.msg = "Press ENTER to close this window."
         self.msg_position = QPoint(20, 20)
         # self.resize(640, 480)
@@ -127,9 +127,9 @@ class ObjectSelect(QtWidgets.QDialog):
 
     def closeEvent(self, event):
         if self.x1 is None or self.x2 is None or self.y1 is None or self.y2 is None:
-            self.result = None
+            self._result = ()
         else:
-            self.result = (
+            self._result = (
                 self.x1,
                 self.y1,
                 self.x2,

@@ -134,8 +134,8 @@ class Objects:
             obj_selector.showMaximized()
             obj_selector.exec()
             self.MainWindow.show()
-            if obj_selector.result is not None:
-                left, top, right, bottom, width, height = objSelector.result
+            if obj_selector._result:
+                left, top, right, bottom, width, height = obj_selector._result
                 query = QtSql.QSqlQuery()
                 sql = (
                     f"UPDATE {self.basetablename}"
