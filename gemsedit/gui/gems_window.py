@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'gems_window.ui'
@@ -23,18 +22,18 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QSplitter,
-    QTabWidget,
     QTableView,
+    QTabWidget,
     QToolBar,
     QToolButton,
     QWidget,
 )
-import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 from gemsedit.gui.CustomClickableLabel import ClickableLabel
+import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
-class Ui_ViewsWindow(object):
+class Ui_ViewsWindow:
     def setupUi(self, ViewsWindow):
         if not ViewsWindow.objectName():
             ViewsWindow.setObjectName("ViewsWindow")

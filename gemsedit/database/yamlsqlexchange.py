@@ -17,11 +17,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 
 import sqlite_utils
-import yaml
 from sqlite_utils import Database
+import yaml
 
 
 def un_string_lists(text: str) -> str:
@@ -49,7 +49,7 @@ def un_string_lists(text: str) -> str:
         return txt
 
 
-def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) -> dict:
+def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
     db = sqlite_utils.Database(db_file)
 
     # print(db.schema)
@@ -156,19 +156,19 @@ def sqlite_to_dict(db_file: Union[Path, str], env_name: Optional[str] = None) ->
     return dict_db
 
 
-def load_yaml_as_dict(yaml_file: Union[str, Path], extra_yaml: Optional[Union[str, Path]] = None) -> dict:
-    with open(yaml_file, "r") as infile:
+def load_yaml_as_dict(yaml_file: str | Path, extra_yaml: str | Path | None = None) -> dict:
+    with open(yaml_file) as infile:
         db_dict = yaml.safe_load(infile)
 
     if extra_yaml is not None:
-        with open(extra_yaml, "r") as infile:
+        with open(extra_yaml) as infile:
             extra_dict = yaml.safe_load(infile)
         db_dict = {**db_dict, **extra_dict}
 
     return db_dict
 
 
-def dict_to_sqlite_file(db: dict, db_file_name: Union[str, Path], overwrite: bool = False) -> Path:
+def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = False) -> Path:
     """Automatically saves to disk as sqlite db is constructed from the dict. Returns path of sqlite db."""
     db_path = Path(db_file_name)
     sql_db = Database(db_path, recreate=overwrite)

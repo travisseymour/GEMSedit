@@ -9,16 +9,15 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtCore import QDate
-from PySide6.QtGui import QTextDocument, QColor
+from PySide6.QtCore import QDate, QSize, Qt
+from PySide6.QtGui import QColor, QTextDocument
 from PySide6.QtWidgets import (
-    QStyledItemDelegate,
-    QSpinBox,
+    QApplication,
     QDateEdit,
     QLineEdit,
-    QApplication,
+    QSpinBox,
     QStyle,
+    QStyledItemDelegate,
 )
 
 from gemsedit.database import param_select
@@ -185,7 +184,7 @@ class RichTextColumnDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         if option.state & QStyle.StateFlag.State_Selected:
-            document.setHtml("<font color={}>{}</font>".format(palette.highlightedText().color().name(), text))
+            document.setHtml(f"<font color={palette.highlightedText().color().name()}>{text}</font>")
         else:
             document.setHtml(text)
         painter.save()

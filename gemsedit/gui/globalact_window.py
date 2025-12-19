@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'globalact_window.ui'
@@ -21,10 +20,11 @@ from PySide6.QtWidgets import (
     QTableView,
     QToolButton,
 )
+
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
-class Ui_GlobalActionsDialog(object):
+class Ui_GlobalActionsDialog:
     def setupUi(self, GlobalActionsDialog):
         if not GlobalActionsDialog.objectName():
             GlobalActionsDialog.setObjectName("GlobalActionsDialog")

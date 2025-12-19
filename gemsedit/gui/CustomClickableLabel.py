@@ -2,8 +2,8 @@
 
 import sys
 
-from PySide6.QtCore import Signal, QObject
-from PySide6.QtWidgets import QLabel, QWidget, QHBoxLayout, QVBoxLayout, QApplication
+from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 
 class ClickableLabel(QLabel):
@@ -12,12 +12,12 @@ class ClickableLabel(QLabel):
     and use setText() to set the text afterward.
     """
 
-    signalClicked = Signal()  # emitted whenever this label is left-clicked
+    singnal_clicked = Signal()  # emitted whenever this label is left-clicked
 
     # def __init__(self, text, parent=None):
     #     super(ClickableLabel, self).__init__(text, parent)
     def __init__(self, parent=None):
-        super(ClickableLabel, self).__init__(parent)
+        super().__init__(parent)
         self.setStyleSheet(
             """
         QLabel {text-decoration:none}
@@ -28,13 +28,13 @@ class ClickableLabel(QLabel):
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:
-            self.signalClicked.emit()
+            self.singnal_clicked.emit()
 
 
 class ClickableLabel_Orig(QLabel):
     """Normal label, but emits an event if the label is left-clicked"""
 
-    signalClicked = Signal()  # emitted whenever this label is left-clicked
+    singnal_clicked = Signal()  # emitted whenever this label is left-clicked
 
     def __init__(self, parent=None):
         super(ClickableLabel_Orig, self).__init__(parent)
@@ -48,7 +48,7 @@ class ClickableLabel_Orig(QLabel):
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:
-            self.signalClicked.emit()
+            self.singnal_clicked.emit()
 
 
 class HtmlLabel(QLabel):
@@ -58,7 +58,7 @@ class HtmlLabel(QLabel):
     """
 
     def __init__(self, text, parent=None):
-        super(HtmlLabel, self).__init__(self.getHtml(text), parent)
+        super().__init__(self.getHtml(text), parent)
         self.setStyleSheet("QLabel:hover {background:grey;}")
         self.setFixedSize(self.sizeHint())
 
@@ -115,8 +115,8 @@ class Controller(QObject):
     def connectSignals(self):
         """Connect the clickable labels with the corresponding slot"""
 
-        self.view.labelDate.signalClicked.connect(self.onClickableLabel)
-        self.view.labelName.signalClicked.connect(self.onClickableLabel)
+        self.view.labelDate.singnal_clicked.connect(self.onClickableLabel)
+        self.view.labelName.singnal_clicked.connect(self.onClickableLabel)
         self.view.labelAuthorHtml.linkActivated.connect(self.onClickableLabel)
 
     def onClickableLabel(self):

@@ -1,5 +1,5 @@
-import sys
 from pathlib import Path
+import sys
 from typing import Optional
 
 from PySide6.QtCore import QSettings
@@ -13,15 +13,14 @@ else:
 
 from loguru import logger as log
 
+CONFIG_PATH: Path | None = None
+LOG_PATH: Path | None = None
 
-CONFIG_PATH: Optional[Path] = None
-LOG_PATH: Optional[Path] = None
+APPLICATION: QApplication | None = None
+SETTINGS: QSettings | None = None
 
-APPLICATION: Optional[QApplication] = None
-SETTINGS: Optional[QSettings] = None
-
-app_font: Optional[QFont] = QFont("Arial", 12)
-app_font_bold: Optional[QFont] = QFont("Arial", 12)
+app_font: QFont | None = QFont("Arial", 12)
+app_font_bold: QFont | None = QFont("Arial", 12)
 app_font_bold.setBold(True)
 
 dialog_font = QFont("Arial", 12)

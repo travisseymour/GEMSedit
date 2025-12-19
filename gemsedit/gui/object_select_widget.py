@@ -16,10 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from PySide6 import QtCore, QtGui, QtWidgets, QtSql
 import os
 
+from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QPoint
+
 from gemsedit import log
 
 

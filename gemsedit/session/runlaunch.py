@@ -16,12 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os
+
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMessageBox
 
 import gemsedit.gui.run_launch_dlg as win
-from PySide6 import QtCore, QtWidgets
-import os
 
 
 class RunLaunch:
@@ -65,9 +66,7 @@ class RunLaunch:
         self.ui.dbfile_plainTextEdit.setPlainText(self.filename)
 
     def updateFN(self):
-        self.ui.filename_label.setText(
-            "Data Filename: gemsrun_%s.txt" % self.ui.user_plainTextEdit.toPlainText().strip()
-        )
+        self.ui.filename_label.setText(f"Data Filename: gemsrun_{self.ui.user_plainTextEdit.toPlainText().strip()}.txt")
         self.userid = self.ui.user_plainTextEdit.toPlainText().strip()
 
     def updateSAVE(self, b):

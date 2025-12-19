@@ -16,54 +16,56 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Optional, Callable
+from collections.abc import Callable
 
+from PySide6 import QtCore, QtSql, QtWidgets
 from PySide6.QtCore import (
-    Qt,
     QAbstractTableModel,
     QModelIndex,
     # QItemSelection,
     # QItemSelectionModel,
+    Qt,
 )
-from PySide6.QtGui import QMouseEvent, QGuiApplication
+from PySide6.QtGui import QGuiApplication, QMouseEvent
 from PySide6.QtWidgets import QMainWindow, QTableView
 
-import gemsedit.gui.settings_dlg as win
-from PySide6 import QtCore, QtWidgets, QtSql
 from gemsedit import log
-import gemsedit.gui.genericrowdelegates as generic_row_delegates
-from gemsedit.gui import helptext, mycolors
 from gemsedit.database.connection import mark_db_as_changed
+from gemsedit.gui import helptext, mycolors
+import gemsedit.gui.genericrowdelegates as generic_row_delegates
+import gemsedit.gui.settings_dlg as win
 
 
 class SettingsListModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None):
-        super(SettingsListModel, self).__init__(parent)
-        self._settings_list: Optional[list] = None
+        super().__init__(parent)
+        self._settings_list: list | None = None
         self._view_dict = {}
-        self._signal_update: Optional[Callable] = None
+        self._signal_update: Callable | None = None
 
     def initData(
         self,
         settings_list: list,
-        view_dict: Optional[dict] = None,
-        signal_update: Optional[Callable] = None,
+        view_dict: dict | None = None,
+        signal_update: Callable | None = None,
     ):
         self._settings_list = settings_list
         self._view_dict = view_dict
         if signal_update is not None:
             self._signal_update = signal_update
 
-    def rowCount(self, parent=QtCore.QModelIndex()):
+    def rowCount(self, parent=QtCore.QModelIndex()):  # noqa: B008
         try:
             return len(self._settings_list)
         except:
             return 0
 
-    def columnCount(self, index=QtCore.QModelIndex()):
+    def columnCount(self, index=QtCore.QModelIndex()):  # noqa: B008
         return 1
 
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
+    def headerData(
+        self, section: int, orientation: Qt.Orientation, role: int = Qt.ItemDataRole.DisplayRole
+    ):  # was role: int = ...
         if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if orientation == QtCore.Qt.Orientation.Vertical:
                 return int(QtCore.Qt.AlignmentFlag.AlignRight)
@@ -176,7 +178,7 @@ class Settings:
     def __init__(self, media_path: str, parent_win: QMainWindow):
         self.media_path = media_path
         self.parent_win = parent_win
-        self.model: Optional[SettingsListModel] = None
+        self.model: SettingsListModel | None = None
         self.selection_model = None
         self.settings_list = []
         self.help_dict = {}
@@ -424,8 +426,8 @@ class Settings:
     def handle_selection_change(self, selected, deselected):
         """Note: connected to listview *after* list is filled from db"""
         try:
-            Id = QtCore.QItemSelection(selected).indexes()[0].row()
-            self.current_id = Id
+            id = QtCore.QItemSelection(selected).indexes()[0].row()
+            self.current_id = id
             self.update_settings_info()
         except Exception as e:
             log.exception(e)

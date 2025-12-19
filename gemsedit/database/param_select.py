@@ -16,16 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Optional, Callable
+from collections.abc import Callable
+from typing import Optional
 
-from PySide6.QtGui import QColor
+from PySide6 import QtCore, QtSql, QtWidgets
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QCloseEvent, QGuiApplication
+from PySide6.QtGui import QCloseEvent, QColor, QGuiApplication
 
-import gemsedit.gui.param_select_dlg as win
-from PySide6 import QtCore, QtWidgets, QtSql
 from gemsedit import log
-from gemsedit.gui import helptext, mycolors, mycursors, mykeys, genericrowdelegates
+from gemsedit.gui import genericrowdelegates, helptext, mycolors, mycursors, mykeys
+import gemsedit.gui.param_select_dlg as win
 
 
 class CustomSqlModel(QtSql.QSqlQueryModel):
@@ -46,11 +46,11 @@ class CustomSqlModel(QtSql.QSqlQueryModel):
 class ParamListModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None):
         super(ParamListModel, self).__init__(parent)
-        self._param_dict: Optional[dict] = None
+        self._param_dict: dict | None = None
         self._param_key: str = ""
-        self._signal_update: Optional[Callable] = None
+        self._signal_update: Callable | None = None
 
-    def initData(self, param_dict: dict, param_key: str, signal_update: Optional[Callable] = None):
+    def initData(self, param_dict: dict, param_key: str, signal_update: Callable | None = None):
         # something like this: data=[['number', 'Seconds', '1000'],...]
         self._param_dict = param_dict
         self._param_key = param_key
@@ -109,8 +109,8 @@ class ParamListModel(QtCore.QAbstractTableModel):
 
 class ParamSelect:
     def __init__(self, param_type, param_string, action_type, media_path):
-        self.xx_model: Optional[CustomSqlModel] = None
-        self.xx_param_model: Optional[ParamListModel] = None
+        self.xx_model: CustomSqlModel | None = None
+        self.xx_param_model: ParamListModel | None = None
         self.current_xx_id = None
         self.param_type = str(param_type).title()
         self.param_string = param_string

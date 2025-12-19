@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'settings_dlg.ui'
@@ -21,10 +20,11 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QTableView,
 )
+
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
-class Ui_SettingsDialog(object):
+class Ui_SettingsDialog:
     def setupUi(self, SettingsDialog):
         if not SettingsDialog.objectName():
             SettingsDialog.setObjectName("SettingsDialog")

@@ -9,23 +9,23 @@
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 # the GNU General Public License for more details.
 
-from PySide6.QtCore import Qt, QDate, QSize
-from PySide6.QtGui import QIcon, QPixmap, QColor, QTextDocument
-from PySide6.QtWidgets import (
-    QStyledItemDelegate,
-    QSpinBox,
-    QDoubleSpinBox,
-    QListWidget,
-    QComboBox,
-    QFileDialog,
-    QDialog,
-    QDateEdit,
-    QLineEdit,
-    QApplication,
-    QStyle,
-)
-
 import os  # only needed for fileio delegates
+
+from PySide6.QtCore import QDate, QSize, Qt
+from PySide6.QtGui import QColor, QIcon, QPixmap, QTextDocument
+from PySide6.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QDateEdit,
+    QDialog,
+    QDoubleSpinBox,
+    QFileDialog,
+    QLineEdit,
+    QListWidget,
+    QSpinBox,
+    QStyle,
+    QStyledItemDelegate,
+)
 
 from gemsedit.gui import richtextlineedit
 
@@ -313,7 +313,7 @@ class RichTextRowDelegate(QStyledItemDelegate):
         document = QTextDocument()
         document.setDefaultFont(option.font)
         if option.state & QStyle.StateFlag.State_Selected:
-            document.setHtml("<font color={}>{}</font>".format(palette.highlightedText().color().name(), text))
+            document.setHtml(f"<font color={palette.highlightedText().color().name()}>{text}</font>")
         else:
             document.setHtml(text)
         painter.save()

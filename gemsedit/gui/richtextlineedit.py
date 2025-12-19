@@ -11,6 +11,7 @@
 
 import platform
 import sys
+
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFontMetrics, QTextCharFormat
@@ -236,24 +237,24 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
 
                     text = cgi.escape(fragment.text(), True)
                     if format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSubScript:
-                        text = "<sub>{}</sub>".format(text)
+                        text = f"<sub>{text}</sub>"
                     elif format.verticalAlignment() == QTextCharFormat.VerticalAlignment.AlignSuperScript:
-                        text = "<sup>{}</sup>".format(text)
+                        text = f"<sup>{text}</sup>"
                     if format.fontUnderline():
-                        text = "<u>{}</u>".format(text)
+                        text = f"<u>{text}</u>"
                     if format.fontItalic():
-                        text = "<i>{}</i>".format(text)
+                        text = f"<i>{text}</i>"
                     if format.fontWeight() > QtGui.QFont.Weight.Normal:
-                        text = "<b>{}</b>".format(text)
+                        text = f"<b>{text}</b>"
                     if format.fontStrikeOut():
-                        text = "<s>{}</s>".format(text)
+                        text = f"<s>{text}</s>"
                     if color != black or family:
                         attribs = ""
                         if color != black:
-                            attribs += ' color="{}"'.format(color.name())
+                            attribs += f' color="{color.name()}"'
                         if family:
-                            attribs += ' face="{}"'.format(family)
-                        text = "<font{}>{}</font>".format(attribs, text)
+                            attribs += f' face="{family}"'
+                        text = f"<font{attribs}>{text}</font>"
                     html += text
                 iterator += 1
             block = block.next()

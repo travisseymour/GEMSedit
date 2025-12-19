@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'run_launch_dlg.ui'
@@ -23,10 +22,11 @@ from PySide6.QtWidgets import (
     QToolButton,
     QVBoxLayout,
 )
+
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
-class Ui_GEMSRunDialog(object):
+class Ui_GEMSRunDialog:
     def setupUi(self, GEMSRunDialog):
         if not GEMSRunDialog.objectName():
             GEMSRunDialog.setObjectName("GEMSRunDialog")

@@ -20,16 +20,16 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union
 
-import yaml
 from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
+import yaml
 
-from gemsedit.session.version import __version__
 from gemsedit.database.yamlsqlexchange import (
-    load_yaml_as_dict,
     dict_to_sqlite_file,
+    load_yaml_as_dict,
     sqlite_to_dict,
 )
+from gemsedit.session.version import __version__
 
 # https://qt.gitorious.org/pyside/pyside-examples/source/060dca8e4b82f301dfb33a7182767eaf8ad3d024:examples/sql/connection.py
 # http://qt-project.org/doc/qt-5/qtsql-books-bookwindow-cpp.html <<- check if qsqlite driver exists
@@ -45,7 +45,7 @@ def mark_db_as_changed():
 
 class GemsDB:
     def __init__(self):
-        self.db: Optional[QSqlDatabase] = None
+        self.db: QSqlDatabase | None = None
         self.tmp_folder = TemporaryDirectory()
         self.tmp_file = None
         self.yaml_file_name = None
@@ -78,8 +78,8 @@ class GemsDB:
 
     def open_db(
         self,
-        db_yaml_file: Union[Path, str],
-        ui_list_yaml_file: Optional[Union[Path, str]] = None,
+        db_yaml_file: Path | str,
+        ui_list_yaml_file: Path | str | None = None,
     ) -> bool:
         global DB_CHANGED
         if self.db_opened():
@@ -102,7 +102,7 @@ class GemsDB:
             self.close_db(offer_to_save_changes=False)
             return False
 
-    def __save_db_to_yaml(self, sqlite_db_file: Union[Path, str], confirm: bool = True):
+    def __save_db_to_yaml(self, sqlite_db_file: Path | str, confirm: bool = True):
         global DB_CHANGED
 
         if sqlite_db_file is None or str(sqlite_db_file).strip() == "None":

@@ -16,33 +16,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import platform
-import webbrowser
 from functools import partial
+import os
+from pathlib import Path
+import platform
+import time
+import webbrowser
 
+from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
 from PySide6.QtWidgets import QMessageBox
 
-import gemsedit.gui.gems_window as win
-from PySide6 import QtCore, QtGui, QtWidgets, QtSql
+from gemsedit import LOG_PATH, app_long_name, log
 from gemsedit.database import connection, gems_db, globalact
+from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
+import gemsedit.gui.gems_window as win
+from gemsedit.session import objects, settings
+from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.session.version import __version__
-from gemsedit.session import objects
-from gemsedit.session import settings
-import os
-from pathlib import Path
-from gemsedit import log, LOG_PATH
-import time
-
-from gemsedit import app_long_name
 from gemsedit.utils.apputils import (
     get_resource,
     start_external_app,
 )
-from gemsedit.session.networkgraph import show_gems_network_graph
-from gemsedit.database.sqltools import get_next_value
 
 
 class GemsViews:
@@ -136,8 +133,8 @@ class GemsViews:
 
         self.MainWindow.closeEvent = self.main_window_close
 
-        self.ui.fgPic_label.signalClicked.connect(lambda: self.showBigPic("Foreground"))
-        self.ui.bgPic_label.signalClicked.connect(lambda: self.showBigPic("Background"))
+        self.ui.fgPic_label.singnal_clicked.connect(lambda: self.showBigPic("Foreground"))
+        self.ui.bgPic_label.singnal_clicked.connect(lambda: self.showBigPic("Background"))
 
         self.ui.tabWidget.currentChanged.connect(self.window_tab_changed)
 

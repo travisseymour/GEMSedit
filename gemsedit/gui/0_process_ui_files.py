@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from pathlib import Path
 from typing import List
 
-from plumbum.colors import cyan, yellow, red, green, bold
 from plumbum import local
+from plumbum.colors import bold, cyan, green, red, yellow
 
 """
 This converts .ui files to .py files for PyQt6, but to keep GIT history accurate, 
@@ -46,7 +46,7 @@ if not qt_type:
         raise ValueError("Expecting To Find Either PySide6 or PyQt6!")
 
 
-ui_files: List[Path] = list(Path().glob("*.ui"))
+ui_files: list[Path] = list(Path().glob("*.ui"))
 
 if not ui_files:
     print("No ui files found...nothing to do." | yellow & bold)

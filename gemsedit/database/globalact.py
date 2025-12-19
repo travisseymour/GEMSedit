@@ -16,13 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMainWindow
 
-import gemsedit.gui.globalact_window as win
-from PySide6 import QtCore, QtWidgets
 from gemsedit.gui import ACTIONLIST
+import gemsedit.gui.globalact_window as win
 
 
 class MagicModel(QtCore.QAbstractTableModel):

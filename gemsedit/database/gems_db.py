@@ -16,14 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import shutil
-
 from pathlib import Path
+import shutil
 
 from PySide6.QtWidgets import QMessageBox
 
-from gemsedit.utils.apputils import get_resource
 from gemsedit.session.version import __version__
+from gemsedit.utils.apputils import get_resource
 
 
 def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:

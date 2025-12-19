@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from typing import Optional, Union
 
 from PySide6 import QtSql
+
 from gemsedit import log
 
 
@@ -37,8 +38,8 @@ def get_last_value(column_name: str, table_name: str):
 
 
 def get_next_value(
-    column_name: str, table_name: str, default: Optional[Union[int, float]] = None
-) -> Optional[Union[int, float]]:
+    column_name: str, table_name: str, default: int | float | None = None
+) -> int | float | None:
     """next-value implies that the value is numeric!"""
     last_value = get_last_value(column_name, table_name)
     if isinstance(last_value, (int, float)):

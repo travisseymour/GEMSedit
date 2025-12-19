@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'param_select_dlg.ui'
@@ -21,10 +20,11 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QTableView,
 )
+
 import gemsedit.gui.gemsedit_rc  # noqa: F401
 
 
-class Ui_parameterSelectDialog(object):
+class Ui_parameterSelectDialog:
     def setupUi(self, parameterSelectDialog):
         if not parameterSelectDialog.objectName():
             parameterSelectDialog.setObjectName("parameterSelectDialog")

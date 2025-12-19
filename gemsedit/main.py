@@ -19,17 +19,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import os
 from pathlib import Path
+import platform
+import sys
 
 import appdirs
-from gemsedit import log
+from PySide6.QtCore import QCoreApplication, QSettings
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QCoreApplication, QSettings
-import sys
-import platform
 
 import gemsedit
-from gemsedit.utils.apputils import get_resource, frozen
+from gemsedit import log
+from gemsedit.utils.apputils import frozen, get_resource
 
 os.environ["OUTDATED_IGNORE"] = "1"
 

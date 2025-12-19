@@ -16,16 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from importlib.resources import as_file, files
+from pathlib import Path
+import platform
 import subprocess
 import sys
-from pathlib import Path
-from typing import Optional
-
-import platform
-
-
-from importlib.resources import files, as_file
-
 
 OS = platform.system()
 
@@ -61,12 +56,12 @@ def get_resource(*args: str, project: str = "gemsedit") -> Path:
         with as_file(resource_path) as resolved_path:
             return Path(resolved_path).resolve()  # Ensure the path is absolute
     except FileNotFoundError:
-        raise FileNotFoundError(f"Resource not found: {'/'.join(args)}")
+        raise FileNotFoundError(f"Resource not found: {'/'.join(args)}") from FileNotFoundError
     except Exception as e:
-        raise RuntimeError(f"Error accessing resource: {e}")
+        raise RuntimeError(f"Error accessing resource: {e}") from Exception
 
 
-def start_external_app(app_name: str, params: Optional[list[str]] = None, wait: bool = False) -> list[str]:
+def start_external_app(app_name: str, params: list[str] | None = None, wait: bool = False) -> list[str]:
     """
     Launch an external executable and optionally return its stdout output.
 

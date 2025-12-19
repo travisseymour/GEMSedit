@@ -16,21 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os
+import re
+
+from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMessageBox
 
-import gemsedit.gui.objects_window as win
-from PySide6 import QtCore, QtGui, QtWidgets, QtSql
-from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
-import os
-import re
+from gemsedit import dialog_font, log
 from gemsedit.database.connection import mark_db_as_changed
-from gemsedit import log
-
-from gemsedit import dialog_font
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
+from gemsedit.gui import ACTIONLIST, object_select_widget as objselect
+import gemsedit.gui.objects_window as win
 
 
 class objects:
@@ -39,7 +38,7 @@ class objects:
         self.mediapath = mediapath
         self.parent_win = parent_win
         self.parentname = None
-        self.parentfgpic = None
+        self.parent_fg_pic = None
 
         self.model = None
         self.currentrow = None
@@ -84,7 +83,7 @@ class objects:
         self.ui.delSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="delete"))
         self.ui.drawSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="select"))
 
-        self.ui.objectLocPic_label.signalClicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
+        self.ui.objectLocPic_label.singnal_clicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
 
         self.ui.closeButton.pressed.connect(self.closeTheWindow)
 
@@ -126,16 +125,16 @@ class objects:
                 return
             self.MainWindow.hide()
             id = self.model.record(self.currentrow).value("Id")
-            objSelector = objselect.ObjectSelect(
+            obj_selector = objselect.ObjectSelect(
                 current_view=self.parentid,
                 current_obj=id,
                 allow_selection=True,
                 media_path=self.mediapath,
             )
-            objSelector.showMaximized()
-            objSelector.exec()
+            obj_selector.showMaximized()
+            obj_selector.exec()
             self.MainWindow.show()
-            if objSelector.result is not None:
+            if obj_selector.result is not None:
                 left, top, right, bottom, width, height = objSelector.result
                 query = QtSql.QSqlQuery()
                 sql = (
@@ -157,15 +156,15 @@ class objects:
         elif mode == "viewonly":
             self.MainWindow.hide()
             id = self.model.record(self.currentrow).value("Id")
-            objSelector = objselect.ObjectSelect(
+            obj_selector = objselect.ObjectSelect(
                 current_view=self.parentid,
                 current_obj=id,
                 allow_selection=False,
                 view_pic="Foreground",
                 media_path=self.mediapath,
             )
-            objSelector.showMaximized()
-            objSelector.exec()
+            obj_selector.showMaximized()
+            obj_selector.exec()
             self.MainWindow.show()
         else:
             return
@@ -181,15 +180,15 @@ class objects:
             "blue": "rgb(0, 0, 255)",
             "yellow": "rgb(255, 255, 0)",
         }
-        selectBox = QtWidgets.QFrame(targetobject)
-        selectBox.setEnabled(True)
-        selectBox.setGeometry(QtCore.QRect(left, top, width, height))
-        selectBox.setStyleSheet(f"color: {colordict[str(colorname)]};")
-        selectBox.setFrameShape(QtWidgets.QFrame.Shape.Box)
-        selectBox.setFrameShadow(QtWidgets.QFrame.Shadow.Plain)
-        selectBox.setLineWidth(3)
-        selectBox.setObjectName(str(name))
-        return selectBox
+        select_box = QtWidgets.QFrame(targetobject)
+        select_box.setEnabled(True)
+        select_box.setGeometry(QtCore.QRect(left, top, width, height))
+        select_box.setStyleSheet(f"color: {colordict[str(colorname)]};")
+        select_box.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        select_box.setFrameShadow(QtWidgets.QFrame.Shadow.Plain)
+        select_box.setLineWidth(3)
+        select_box.setObjectName(str(name))
+        return select_box
 
     def clearPicFields(self):
         self.ui.objectLocPic_label.clear()  # .setPixmap(None)
@@ -203,41 +202,41 @@ class objects:
 
         # get object info
         id = self.model.record(self.currentrow).value("Id")
-        Name = self.model.record(self.currentrow).value("Name")
-        Parent = self.model.record(self.currentrow).value("Parent")
-        Left = self.model.record(self.currentrow).value("Left")
-        Top = self.model.record(self.currentrow).value("Top")
-        Width = self.model.record(self.currentrow).value("Width")
-        Height = self.model.record(self.currentrow).value("Height")
-        Visible = self.model.record(self.currentrow).value("Visible")
-        Takeable = self.model.record(self.currentrow).value("Takeable")
-        Draggable = self.model.record(self.currentrow).value("Draggable")
+        # Name = self.model.record(self.currentrow).value("Name")
+        # Parent = self.model.record(self.currentrow).value("Parent")
+        left = self.model.record(self.currentrow).value("Left")
+        top = self.model.record(self.currentrow).value("Top")
+        width = self.model.record(self.currentrow).value("Width")
+        height = self.model.record(self.currentrow).value("Height")
+        # Visible = self.model.record(self.currentrow).value("Visible")
+        # Takeable = self.model.record(self.currentrow).value("Takeable")
+        # Draggable = self.model.record(self.currentrow).value("Draggable")
 
         # show big overview image
-        if os.path.exists(self.parentfgpic):
-            fgpixmap = QtGui.QPixmap(self.parentfgpic)
-            self.ui.objectLocPic_label.setPixmap(fgpixmap)
+        if os.path.exists(self.parent_fg_pic):
+            fg_pixmap = QtGui.QPixmap(self.parent_fg_pic)
+            self.ui.objectLocPic_label.setPixmap(fg_pixmap)
             self.ui.objectLocPic_label.setScaledContents(True)
-            labelwidth = self.ui.objectLocPic_label.width()
-            labelheight = self.ui.objectLocPic_label.height()
-            xl = float(Left) / float(fgpixmap.width())
-            xt = float(Top) / float(fgpixmap.height())
-            xw = float(Width) / float(fgpixmap.width())
-            xh = float(Height) / float(fgpixmap.height())
+            label_width = self.ui.objectLocPic_label.width()
+            label_height = self.ui.objectLocPic_label.height()
+            xl = float(left) / float(fg_pixmap.width())
+            xt = float(top) / float(fg_pixmap.height())
+            xw = float(width) / float(fg_pixmap.width())
+            xh = float(height) / float(fg_pixmap.height())
             self.objbox.setGeometry(
-                int(xl * labelwidth),
-                int(xt * labelheight),
-                int(xw * labelwidth),
-                int(xh * labelheight),
+                int(xl * label_width),
+                int(xt * label_height),
+                int(xw * label_width),
+                int(xh * label_height),
             )
         else:
             self.ui.objectLocPic_label.clear()  # .setPixmap(None)
 
         # show object image
-        if os.path.exists(self.parentfgpic):
-            objPixmap = QtGui.QPixmap(self.parentfgpic).copy(Left, Top, Width, Height)
+        if os.path.exists(self.parent_fg_pic):
+            obj_pixmap = QtGui.QPixmap(self.parent_fg_pic).copy(left, top, width, height)
             self.ui.objectPic_label.clear()  # .setPixmap(None)
-            self.ui.objectPic_label.setPixmap(objPixmap)
+            self.ui.objectPic_label.setPixmap(obj_pixmap)
             self.ui.objectPic_label.setScaledContents(True)
         else:
             self.ui.objectPic_label.clear()  # .setPixmap(None)
@@ -553,20 +552,20 @@ class objects:
         if query.isActive():
             query.first()
             self.parentname = query.value(0)
-            self.parentfgpic = query.value(1)
-            if self.parentname is None or self.parentfgpic is None:
+            self.parent_fg_pic = query.value(1)
+            if self.parentname is None or self.parent_fg_pic is None:
                 log.error(
                     f"Problem in getParentInfo(): parent name ({self.parentname}) "
-                    f"or foregroundpic ({self.parentfgpic}) is type None"
+                    f"or foregroundpic ({self.parent_fg_pic}) is type None"
                 )
                 return  # was quit()...why?
-            elif not os.path.isfile(os.path.join(self.mediapath, self.parentfgpic)):
+            elif not os.path.isfile(os.path.join(self.mediapath, self.parent_fg_pic)):
                 log.error(
-                    f"Problem in getParentInfo(): parent foreground picture ({self.parentfgpic}) is inaccessible."
+                    f"Problem in getParentInfo(): parent foreground picture ({self.parent_fg_pic}) is inaccessible."
                 )
                 return  # was quit()...why?
             else:
-                self.parentfgpic = os.path.join(self.mediapath, self.parentfgpic)
+                self.parent_fg_pic = os.path.join(self.mediapath, self.parent_fg_pic)
         else:
             log.error(
                 f"Problem in getParentInfo(): unable to read parent information "

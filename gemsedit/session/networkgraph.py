@@ -16,24 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from pathlib import Path
 import re
+from typing import Union
 import webbrowser
 
-from typing import Union
-from pathlib import Path
-
+from munch import Munch
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QMainWindow
 
-from gemsedit.database.connection import GemsDB
-from gemsedit.utils.apputils import get_resource
-from munch import Munch
-
 # from gemsedit.pyvis.network import Network
 from pyvis.network import Network
-from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
 
 from gemsedit import log
+from gemsedit.database.connection import GemsDB
+from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
+from gemsedit.utils.apputils import get_resource
 
 
 def make_network(db: Munch, media_path: Path, directed: bool = True, layout: bool = False) -> Network:
@@ -119,7 +117,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
     return net
 
 
-def create_network_window(url: Union[str, Path]) -> QWebEngineView:
+def create_network_window(url: str | Path) -> QWebEngineView:
     view = QWebEngineView()
     # view.load(QUrl(str(url)))
 
@@ -129,7 +127,7 @@ def create_network_window(url: Union[str, Path]) -> QWebEngineView:
     return view
 
 
-def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Union[Path, str]):
+def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Path | str):
     graph_file = str(Path(conn.tmp_folder.name, "gems_network_graph.html"))
 
     db = load_yaml_as_dict(conn.yaml_file_name, extra_yaml=conn.ui_list_yaml_file)

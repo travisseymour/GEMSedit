@@ -16,17 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from PySide6 import QtCore, QtGui, QtWidgets, QtSql
+import re
+
+from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtWidgets import QMessageBox
 
-import gemsedit.gui.genericcoldelegates as generic_col_delegates
-import re
-from gemsedit.database.connection import mark_db_as_changed
 from gemsedit import log
-
+from gemsedit.database.connection import mark_db_as_changed
 
 # from html import escape
 from gemsedit.database.sqltools import get_next_value
+import gemsedit.gui.genericcoldelegates as generic_col_delegates
 
 
 def getHumanReadableFromId(table, Id):
