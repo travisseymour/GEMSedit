@@ -35,7 +35,10 @@ class ObjectSelect(QtWidgets.QDialog):
         media_path=None,
     ):
         super().__init__(parent)
-        self.x1 = self.y1 = self.x2 = self.y2 = 0
+        self.x1 = 0
+        self.y1 = 0
+        self.x2 = 0
+        self.y2 = 0
         self.current_view = current_view
         self.current_obj = current_obj
         self.allow_selection = allow_selection
@@ -46,13 +49,14 @@ class ObjectSelect(QtWidgets.QDialog):
         self.bgPic = None
         self._result: tuple = ()
         self._keep_result = False
+        self.is_dragging = False
         self.msg = "Press ENTER to close this window."
         self.msg_position = QPoint(20, 20)
         # self.resize(640, 480)
         # self.move(1000, 500)
 
         if self.allow_selection:
-            self.msg = "Single Click to begin object selection. Press ENTER to submit."
+            self.msg = "Drag to (re)select an object region. Press ENTER to submit."
         else:
             self.msg = "Press ENTER to close."
         # self.setStyleSheet("background-color: rgb(0, 0, 0);")
@@ -144,25 +148,36 @@ class ObjectSelect(QtWidgets.QDialog):
         super().closeEvent(event)
 
     def mouseReleaseEvent(self, event):
-        if self.allow_selection and self.clicks_allowed:
-            self.setMouseTracking(not self.hasMouseTracking())
-            if self.hasMouseTracking():
-                # selection started, save xy1
-                self.x1 = event.pos().x()
-                self.y1 = event.pos().y()
-                self.x2 = None
-                self.y2 = None
-                self.msg = "Mouse tracking is on. Move mouse to select object. Single click to end selection."
-            else:
-                # selection ended, show result
-                self.msg = "Single Click to begin object selection. Press ENTER to submit."
+        if self.allow_selection and self.is_dragging:
+            self.x2 = event.pos().x()
+            self.y2 = event.pos().y()
+            if self.x2 < self.x1:
+                self.x1, self.x2 = self.x2, self.x1
+            if self.y2 < self.y1:
+                self.y1, self.y2 = self.y2, self.y1
+            self.msg = "Drag to (re)select an object region. Press ENTER to submit."
+            self.is_dragging = False
+            self.setMouseTracking(False)
             self.update()
 
         super().mouseReleaseEvent(event)
 
+    def mousePressEvent(self, event):
+        if self.allow_selection and self.clicks_allowed:
+            self.is_dragging = True
+            self.setMouseTracking(True)
+            self.x1 = event.pos().x()
+            self.y1 = event.pos().y()
+            self.x2 = None
+            self.y2 = None
+            self.msg = "Drag to (re)select an object region. Release to finish."
+            self.update()
+
+        super().mousePressEvent(event)
+
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         # handle obj selection
-        if self.allow_selection:
+        if self.allow_selection and self.is_dragging:
             # selection being updated, save xy2
             self.x2 = event.pos().x()
             self.y2 = event.pos().y()
@@ -270,12 +285,12 @@ class ObjectSelect(QtWidgets.QDialog):
         # b = (event.key())
         # c = (QtCore.QEvent.Type.KeyPress)
         # log.debug(f"{a=}, {b=}, {c=}")
-        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+        if event.key() in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter):
             self.update()
             self._keep_result = True
             self.close()
             return
-        if event.key() == QtCore.Qt.Key_Escape:
+        if event.key() == QtCore.Qt.Key.Key_Escape:
             # cancel selection and close without changes
             self.x1 = self.y1 = self.x2 = self.y2 = None
             self._result = ()
