@@ -46,6 +46,8 @@ from gemsedit.database.sqltools import get_next_value
 
 
 class GemsViews:
+    MAX_RECENT_FILES = 10
+
     def __init__(self):
         self.connection = connection.GemsDB()
         self.model = None
@@ -56,6 +58,7 @@ class GemsViews:
         self.media_path = ""
         self.object_win = None
         self.selection_model = None
+        self.recent_menu = None
 
         self.MainWindow = QtWidgets.QMainWindow()
         self.MainWindow.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
@@ -66,6 +69,7 @@ class GemsViews:
         self.settings = QSettings()
         self.prev_db_filename = self.settings.value("prev_db_filename", type=str, defaultValue="")
         self.gems_runner_path = self.settings.value("gems_runner_path", type=str, defaultValue="")
+        self.recent_files = self.load_recent_files()
 
         log.info(f"GEMS_EDIT START v{__version__} ({time.strftime('%x')}-{time.strftime('%X')}).")
 
@@ -79,6 +83,7 @@ class GemsViews:
         self.disableButtons()
 
         self.center()
+        self.setup_recent_menu()
 
         self.MainWindow.setWindowTitle(f"{app_long_name} version {__version__}")
 
@@ -145,6 +150,7 @@ class GemsViews:
         # save any settings that changed
         self.settings.setValue("prev_db_filename", self.prev_db_filename)
         self.settings.setValue("gems_runner_path", self.gems_runner_path)
+        self.settings.setValue("recent_files", self.recent_files)
 
         # get out of here
         self.MainWindow.close()
@@ -907,6 +913,8 @@ class GemsViews:
             return
 
         if not Path(filename).is_file():
+            if file_name:
+                self.remove_recent_file(file_name)
             QMessageBox.critical(
                 self.MainWindow,
                 "Filename Error",
@@ -953,6 +961,7 @@ class GemsViews:
 
         if self.connection.open_db(db_yaml_file=filename, ui_list_yaml_file=ui_db_tables_file):
             self.db_filename = filename
+            self.add_recent_file(filename)
             self.initializeDatabases()
             self.initializeViews()
             self.ui.dbfilename_Label.setText(os.path.basename(filename))
@@ -1071,3 +1080,71 @@ class GemsViews:
             return True
         else:
             return False
+
+    def load_recent_files(self) -> list[str]:
+        files = self.settings.value("recent_files", defaultValue=[], type=list)
+        if not isinstance(files, list):
+            return []
+        return [str(Path(f)) for f in files if f]
+
+    def setup_recent_menu(self) -> None:
+        self.recent_menu = QtWidgets.QMenu("Open Recent", self.MainWindow)
+        self.ui.menuFile.insertMenu(self.ui.actionClose, self.recent_menu)
+        self.recent_menu.aboutToShow.connect(self.update_recent_menu)
+        self.update_recent_menu()
+
+    def update_recent_menu(self) -> None:
+        if not self.recent_menu:
+            return
+
+        self.recent_menu.clear()
+        self.recent_files = [p for p in self.recent_files if Path(p).is_file()]
+        self.settings.setValue("recent_files", self.recent_files)
+
+        if not self.recent_files:
+            action = self.recent_menu.addAction("No recent files")
+            action.setEnabled(False)
+            return
+
+        for path in self.recent_files[: self.MAX_RECENT_FILES]:
+            label = self.format_recent_label(path)
+            action = self.recent_menu.addAction(label)
+            action.triggered.connect(partial(self.open_environment, path))
+
+        self.recent_menu.addSeparator()
+        clear_action = self.recent_menu.addAction("Clear Items")
+        clear_action.triggered.connect(self.clear_recent_files)
+
+    def add_recent_file(self, filename: str) -> None:
+        normalized = str(Path(filename).resolve())
+
+        if normalized in self.recent_files:
+            self.recent_files.remove(normalized)
+
+        self.recent_files.insert(0, normalized)
+        self.recent_files = self.recent_files[: self.MAX_RECENT_FILES]
+
+        self.settings.setValue("recent_files", self.recent_files)
+        self.update_recent_menu()
+
+    def clear_recent_files(self) -> None:
+        self.recent_files = []
+        self.settings.setValue("recent_files", self.recent_files)
+        self.update_recent_menu()
+
+    def remove_recent_file(self, filename: str) -> None:
+        normalized = str(Path(filename).resolve())
+        if normalized in self.recent_files:
+            self.recent_files.remove(normalized)
+            self.settings.setValue("recent_files", self.recent_files)
+            self.update_recent_menu()
+
+    def format_recent_label(self, path: str) -> str:
+        try:
+            expanded = str(Path(path).resolve())
+            home = str(Path.home())
+            if expanded.startswith(home):
+                return expanded.replace(home, "~", 1)
+            return expanded
+        except Exception:
+            return path
