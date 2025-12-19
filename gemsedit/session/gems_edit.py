@@ -133,8 +133,8 @@ class GemsViews:
 
         self.MainWindow.closeEvent = self.main_window_close
 
-        self.ui.fgPic_label.singnal_clicked.connect(lambda: self.showBigPic("Foreground"))
-        self.ui.bgPic_label.singnal_clicked.connect(lambda: self.showBigPic("Background"))
+        self.ui.fgPic_label.signal_clicked.connect(lambda: self.showBigPic("Foreground"))
+        self.ui.bgPic_label.signal_clicked.connect(lambda: self.showBigPic("Background"))
 
         self.ui.tabWidget.currentChanged.connect(self.window_tab_changed)
 

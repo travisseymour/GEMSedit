@@ -83,7 +83,7 @@ class objects:
         self.ui.delSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="delete"))
         self.ui.drawSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="select"))
 
-        self.ui.objectLocPic_label.singnal_clicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
+        self.ui.objectLocPic_label.signal_clicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
 
         self.ui.closeButton.pressed.connect(self.closeTheWindow)
 

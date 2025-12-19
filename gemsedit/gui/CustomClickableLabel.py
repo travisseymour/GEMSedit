@@ -12,7 +12,7 @@ class ClickableLabel(QLabel):
     and use setText() to set the text afterward.
     """
 
-    singnal_clicked = Signal()  # emitted whenever this label is left-clicked
+    signal_clicked = Signal()  # emitted whenever this label is left-clicked
 
     # def __init__(self, text, parent=None):
     #     super(ClickableLabel, self).__init__(text, parent)
@@ -28,13 +28,13 @@ class ClickableLabel(QLabel):
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:
-            self.singnal_clicked.emit()
+            self.signal_clicked.emit()
 
 
 class ClickableLabel_Orig(QLabel):
     """Normal label, but emits an event if the label is left-clicked"""
 
-    singnal_clicked = Signal()  # emitted whenever this label is left-clicked
+    signal_clicked = Signal()  # emitted whenever this label is left-clicked
 
     def __init__(self, parent=None):
         super(ClickableLabel_Orig, self).__init__(parent)
@@ -48,7 +48,7 @@ class ClickableLabel_Orig(QLabel):
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:
-            self.singnal_clicked.emit()
+            self.signal_clicked.emit()
 
 
 class HtmlLabel(QLabel):
@@ -115,8 +115,8 @@ class Controller(QObject):
     def connectSignals(self):
         """Connect the clickable labels with the corresponding slot"""
 
-        self.view.labelDate.singnal_clicked.connect(self.onClickableLabel)
-        self.view.labelName.singnal_clicked.connect(self.onClickableLabel)
+        self.view.labelDate.signal_clicked.connect(self.onClickableLabel)
+        self.view.labelName.signal_clicked.connect(self.onClickableLabel)
         self.view.labelAuthorHtml.linkActivated.connect(self.onClickableLabel)
 
     def onClickableLabel(self):
