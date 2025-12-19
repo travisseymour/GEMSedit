@@ -37,13 +37,13 @@ class MagicModel(QtCore.QAbstractTableModel):
         if signal_update is not None:
             self._signalupdate = signal_update
 
-    def rowCount(self, parent=QtCore.QModelIndex()):
+    def rowCount(self, parent=QtCore.QModelIndex()):  # noqa: B008
         try:
             return len(self._settings_list)
         except:
             return 0
 
-    def columnCount(self, index=QtCore.QModelIndex()):
+    def columnCount(self, index=QtCore.QModelIndex()):  # noqa: B008
         # was (self, index=QtCore.QModelIndex())
         return 1
 

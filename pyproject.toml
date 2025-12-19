@@ -85,9 +85,9 @@ exclude = [
   "gemsedit/gui/run_launch_dlg.py",
   "gemsedit/gui/settings_dlg.py",
   "gemsedit/gui/globalact_window.py",
-
   "gemsedit/gui/gems_window.py",
   "gemsedit/gui/gemsedit_rc.py",
+  "gemsedit/gui/run_launch_dlg.ui",
 ]
 
 # ==========================

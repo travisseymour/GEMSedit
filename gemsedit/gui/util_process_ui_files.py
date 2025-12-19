@@ -30,6 +30,7 @@ I only want to process ui files that actually changed.
 
 """
 
+
 def detect_qt_binding() -> tuple[str, str]:
     """Return (binding label, uic command) for an available Qt binding."""
     candidates = [
@@ -47,6 +48,7 @@ def detect_qt_binding() -> tuple[str, str]:
             continue
         return label, cli
     raise RuntimeError("Expecting to find either PySide6 or PyQt6 (and matching *uic tool) on PATH.")
+
 
 qt_type, uic_cmd = detect_qt_binding()
 

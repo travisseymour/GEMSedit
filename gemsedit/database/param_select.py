@@ -56,7 +56,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
         if signal_update is not None:
             self._signal_update = signal_update
 
-    def rowCount(self, parent=QtCore.QModelIndex()):
+    def rowCount(self, parent=QtCore.QModelIndex()):  # noqa: B008
         try:
             return len(self._param_dict[self._param_key])
         except:

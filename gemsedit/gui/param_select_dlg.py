@@ -1,4 +1,3 @@
-
 ################################################################################
 ## Form generated from reading UI file 'param_select_dlg.ui'
 ##
