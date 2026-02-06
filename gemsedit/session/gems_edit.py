@@ -470,7 +470,7 @@ class GemsViews:
             elif field_name == "Overlay":
                 new_value = self.ui.olPic_plainTextEdit.toPlainText()
         elif mode == "open":
-            filetype = "Images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
+            filetype = "Images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif *.webp)"
             new_value = QtWidgets.QFileDialog.getOpenFileName(
                 None, "Select Image File", self.media_path, filter=filetype
             )

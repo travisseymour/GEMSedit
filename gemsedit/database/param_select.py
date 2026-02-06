@@ -358,7 +358,7 @@ class ParamSelect:
                             genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "picfile":
-                        file_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
+                        file_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif *.webp)"
                         delegate.insertRowDelegate(
                             i,
                             genericrowdelegates.FileRowDelegate(self.media_path, file_filter),

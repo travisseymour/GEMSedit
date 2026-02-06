@@ -399,7 +399,7 @@ class Settings:
                     onoff = ["False", "True"]
                     delegate.insertRowDelegate(i, generic_row_delegates.ComboRowDelegate(onoff))
                 elif type_item == "picfile":
-                    pic_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif)"
+                    pic_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif *.webp)"
                     delegate.insertRowDelegate(
                         i,
                         generic_row_delegates.FileRowDelegate(self.media_path, pic_filter),
