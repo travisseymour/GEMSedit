@@ -20,6 +20,7 @@ from functools import partial
 import os
 from pathlib import Path
 import platform
+import subprocess
 import time
 import webbrowser
 
@@ -365,7 +366,13 @@ class GemsViews:
             return
 
         try:
-            webbrowser.open(f"file://{self.media_path}")
+            system = platform.system()
+            if system == "Windows":
+                os.startfile(self.media_path)
+            elif system == "Darwin":
+                subprocess.run(["open", self.media_path], check=True)
+            else:
+                subprocess.run(["xdg-open", self.media_path], check=True)
 
         except Exception as e:
             log.error(f"Unable to open media folder in this location: {self.media_path}. ({e})")
