@@ -74,6 +74,8 @@ action_desc = {
     "ShowPockets": "<b>ShowPockets</b>() : This action unhides all active pockets.",
     "StopSound": "<b>StopSound</b>() : This action stops playing audio based on <b><i>SoundFile</i></b>, assuming it is currently playing. Currently on MacOS only.",
     "StopAllSounds": "<b>StopAllSounds</b>() : This action stops playing all currently playing audio. It is currently available on MacOS only.",
+    "StopVideo": "<b>StopVideo</b>(VideoFile) : This action stops playing the video specified by <b><i>VideoFile</i></b>, assuming it is currently playing.",
+    "StopAllVideos": "<b>StopAllVideos</b>() : This action stops all currently playing videos.",
 }
 
 # (Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,

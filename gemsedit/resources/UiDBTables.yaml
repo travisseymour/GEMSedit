@@ -167,6 +167,18 @@ action_lst:
     Name: PlayVideoWithin
     Restrictions: viewobjectglobalpocket
     Template: '["vidfile","number","objnum","01float","bool"]'
+  '28':
+    Id: 28
+    Labels: '["VideoFile"]'
+    Name: StopVideo
+    Restrictions: viewobjectglobalpocket
+    Template: '["vidfile"]'
+  '29':
+    Id: 29
+    Labels: '[]'
+    Name: StopAllVideos
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
 condition_lst:
   '0':
     Id: 0
