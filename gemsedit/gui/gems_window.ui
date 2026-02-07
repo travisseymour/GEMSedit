@@ -30,8 +30,8 @@
   </property>
   <property name="font">
    <font>
-    <family>Verdana</family>
-    <pointsize>12</pointsize>
+    <family>Arial</family>
+    <pointsize>14</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -64,8 +64,8 @@
       </property>
       <property name="font">
        <font>
-        <family>Verdana</family>
-        <pointsize>12</pointsize>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
        </font>
       </property>
       <property name="autoFillBackground">
@@ -108,7 +108,7 @@
              <widget class="QLabel" name="label_4">
               <property name="font">
                <font>
-                <family>Verdana</family>
+                <family>Arial</family>
                 <pointsize>16</pointsize>
                 <italic>false</italic>
                </font>
@@ -175,7 +175,7 @@
              <widget class="QLabel" name="labelAppName">
               <property name="font">
                <font>
-                <family>Verdana</family>
+                <family>Arial</family>
                 <pointsize>24</pointsize>
                 <bold>true</bold>
                </font>
@@ -207,7 +207,7 @@
               </property>
               <property name="font">
                <font>
-                <family>Verdana</family>
+                <family>Arial</family>
                 <pointsize>14</pointsize>
                 <bold>true</bold>
                </font>
@@ -296,8 +296,8 @@
                 <widget class="QLabel" name="label">
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                    <italic>false</italic>
                    <bold>true</bold>
                   </font>
@@ -311,8 +311,8 @@
                 <widget class="QLabel" name="dbfilename_Label">
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -337,7 +337,7 @@
                 <widget class="QPushButton" name="objectsButton">
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
+                   <family>Arial</family>
                    <pointsize>16</pointsize>
                    <italic>false</italic>
                   </font>
@@ -358,7 +358,7 @@
                 <widget class="QLabel" name="label_3">
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
+                   <family>Arial</family>
                    <pointsize>16</pointsize>
                    <italic>false</italic>
                   </font>
@@ -425,8 +425,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="editTriggers">
@@ -473,7 +473,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
+                   <family>Arial</family>
                    <pointsize>14</pointsize>
                    <italic>false</italic>
                    <bold>false</bold>
@@ -548,8 +548,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="readOnly">
@@ -573,8 +573,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="frameShape">
@@ -599,7 +599,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
+                   <family>Arial</family>
                    <pointsize>14</pointsize>
                    <italic>false</italic>
                    <bold>false</bold>
@@ -674,8 +674,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="readOnly">
@@ -699,8 +699,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="frameShape">
@@ -725,7 +725,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
+                   <family>Arial</family>
                    <pointsize>14</pointsize>
                    <italic>false</italic>
                    <bold>false</bold>
@@ -786,8 +786,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="readOnly">
@@ -814,8 +814,8 @@
                  </property>
                  <property name="font">
                   <font>
-                   <family>Verdana</family>
-                   <pointsize>12</pointsize>
+                   <family>Arial</family>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="frameShape">
@@ -920,8 +920,8 @@
    </property>
    <property name="font">
     <font>
-     <family>Verdana</family>
-     <pointsize>12</pointsize>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="windowTitle">
@@ -966,7 +966,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -980,7 +980,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -994,7 +994,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1008,7 +1008,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1025,7 +1025,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1042,7 +1042,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1056,7 +1056,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1073,7 +1073,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1090,7 +1090,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1103,7 +1103,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1147,7 +1147,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
     </font>
    </property>
   </action>
@@ -1156,7 +1156,7 @@
   <customwidget>
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
-   <header>gemsedit.gui.CustomClickableLabel</header>
+   <header>gemsedit.gui.custom_clickable_label</header>
   </customwidget>
  </customwidgets>
  <resources>

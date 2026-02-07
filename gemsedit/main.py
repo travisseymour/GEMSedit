@@ -43,7 +43,7 @@ def main():
     # ---------
 
     gemsedit.APPLICATION = QApplication(sys.argv)
-    gemsedit.set_app_font(QFont("Arial", 12))
+    gemsedit.set_app_font(QFont("Arial", 14))
     gemsedit.SETTINGS = QSettings()
     gemsedit.APPLICATION.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
 

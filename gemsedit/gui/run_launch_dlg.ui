@@ -33,8 +33,8 @@
   </property>
   <property name="font">
    <font>
-    <family>Verdana</family>
-    <pointsize>12</pointsize>
+    <family>Arial</family>
+    <pointsize>14</pointsize>
     <underline>true</underline>
    </font>
   </property>
@@ -53,8 +53,8 @@
         <spacer name="horizontalSpacer_5">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -76,7 +76,7 @@
         <widget class="QLabel" name="label_7">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <italic>false</italic>
            <underline>false</underline>
@@ -91,7 +91,7 @@
         <widget class="QRadioButton" name="overwrite_radioButton">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -111,7 +111,7 @@
         <widget class="QRadioButton" name="rename_radioButton">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -128,8 +128,8 @@
         <spacer name="horizontalSpacer_6">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -152,7 +152,7 @@
         <widget class="QCheckBox" name="debug_checkBox">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -175,8 +175,8 @@
         <spacer name="horizontalSpacer_7">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -199,7 +199,7 @@
         <widget class="QCheckBox" name="media_checkBox">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -224,8 +224,8 @@ Note: Speak() actions will still play.</string>
         <spacer name="horizontalSpacer_4">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -246,7 +246,7 @@ Note: Speak() actions will still play.</string>
       <widget class="QLabel" name="fn_label">
        <property name="font">
         <font>
-         <family>Verdana</family>
+         <family>Arial</family>
          <pointsize>16</pointsize>
          <italic>false</italic>
          <underline>true</underline>
@@ -263,8 +263,8 @@ Note: Speak() actions will still play.</string>
         <spacer name="horizontalSpacer_8">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -283,7 +283,7 @@ Note: Speak() actions will still play.</string>
         <widget class="QPushButton" name="run_pushButton">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>16</pointsize>
            <bold>true</bold>
            <underline>false</underline>
@@ -302,8 +302,8 @@ Note: Speak() actions will still play.</string>
         <spacer name="horizontalSpacer_9">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -326,7 +326,7 @@ Note: Speak() actions will still play.</string>
         <widget class="QCheckBox" name="save_checkBox">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -349,8 +349,8 @@ Note: Speak() actions will still play.</string>
         <spacer name="horizontalSpacer_3">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -375,7 +375,7 @@ Note: Speak() actions will still play.</string>
           <widget class="QLabel" name="labelAppName">
            <property name="font">
             <font>
-             <family>Verdana</family>
+             <family>Arial</family>
              <pointsize>20</pointsize>
              <bold>true</bold>
              <underline>false</underline>
@@ -390,8 +390,8 @@ Note: Speak() actions will still play.</string>
           <spacer name="horizontalSpacer">
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <underline>false</underline>
             </font>
            </property>
@@ -416,8 +416,8 @@ Note: Speak() actions will still play.</string>
            </property>
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <underline>false</underline>
             </font>
            </property>
@@ -438,8 +438,8 @@ Note: Speak() actions will still play.</string>
         <spacer name="horizontalSpacer_2">
          <property name="font">
           <font>
-           <family>Verdana</family>
-           <pointsize>12</pointsize>
+           <family>Arial</family>
+           <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
          </property>
@@ -464,7 +464,7 @@ Note: Speak() actions will still play.</string>
          </property>
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>14</pointsize>
            <underline>false</underline>
           </font>
@@ -484,7 +484,7 @@ Note: Speak() actions will still play.</string>
           <widget class="QLabel" name="label">
            <property name="font">
             <font>
-             <family>Verdana</family>
+             <family>Arial</family>
              <pointsize>14</pointsize>
              <bold>false</bold>
              <underline>false</underline>
@@ -506,8 +506,8 @@ Note: Speak() actions will still play.</string>
           <spacer name="verticalSpacer">
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <underline>false</underline>
             </font>
            </property>
@@ -529,7 +529,7 @@ Note: Speak() actions will still play.</string>
           <widget class="QLabel" name="label_4">
            <property name="font">
             <font>
-             <family>Verdana</family>
+             <family>Arial</family>
              <pointsize>14</pointsize>
              <bold>false</bold>
              <underline>false</underline>
@@ -553,8 +553,8 @@ Note: Speak() actions will still play.</string>
           <spacer name="verticalSpacer_2">
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <underline>false</underline>
             </font>
            </property>
@@ -588,8 +588,8 @@ Note: Speak() actions will still play.</string>
              </property>
              <property name="font">
               <font>
-               <family>Verdana</family>
-               <pointsize>12</pointsize>
+               <family>Arial</family>
+               <pointsize>14</pointsize>
                <underline>false</underline>
               </font>
              </property>
@@ -611,8 +611,8 @@ Note: Speak() actions will still play.</string>
             <widget class="QToolButton" name="fileselect_toolButton">
              <property name="font">
               <font>
-               <family>Verdana</family>
-               <pointsize>12</pointsize>
+               <family>Arial</family>
+               <pointsize>14</pointsize>
                <underline>false</underline>
               </font>
              </property>
@@ -634,8 +634,8 @@ Note: Speak() actions will still play.</string>
           <widget class="QPlainTextEdit" name="user_plainTextEdit">
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <bold>false</bold>
              <underline>false</underline>
             </font>
@@ -658,8 +658,8 @@ Note: Speak() actions will still play.</string>
           <widget class="QLabel" name="filename_label">
            <property name="font">
             <font>
-             <family>Verdana</family>
-             <pointsize>12</pointsize>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
              <italic>false</italic>
              <bold>true</bold>
              <underline>false</underline>

@@ -148,28 +148,46 @@ class ActionColumnDelegate(QStyledItemDelegate):
         self.action_type = action_type
         self.param_selector = None
         self.media_path = media_path
+        self._current_editor = None
+        self._current_index = None
+        self._current_model = None
 
     def createEditor(self, parent, option, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
         self.param_selector = param_select.ParamSelect(
             self.coltype, value, self.action_type, self.media_path
-        )  # 'PortalTo("EndRoom")'
-        editor = self.param_selector.ParmSelectWindow
-        editor.setMinimumHeight(591)
-        editor.setMinimumWidth(631)
-        # editor.setModal(True)
-        # editor.repaint()
+        )
+
+        # Create a hidden line edit as the actual delegate editor
+        editor = QLineEdit(parent)
+        editor.setVisible(False)
+
+        # Store references for use when dialog closes
+        self._current_editor = editor
+        self._current_index = index
+        self._current_model = index.model()
+
+        # Show the ParamSelect dialog modally using exec()
+        dialog = self.param_selector.ParmSelectWindow
+        dialog.setMinimumHeight(591)
+        dialog.setMinimumWidth(631)
+        dialog.exec()
+
+        # After dialog closes, set the result in the editor
+        if self.param_selector.result is not None:
+            editor.setText(str(self.param_selector.result))
 
         return editor
 
     def setEditorData(self, editor, index):
-        # value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        # self.paramselector.setParamString(value)
-        pass
+        value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+        editor.setText(value if value else "")
 
     def setModelData(self, editor, model, index):
-        if self.param_selector.result is not None:
-            model.setData(index, str(self.param_selector.result))
+        # Use the text from the hidden editor (set after dialog closes)
+        text = editor.text()
+        if text:
+            model.setData(index, text)
 
 
 class RichTextColumnDelegate(QStyledItemDelegate):

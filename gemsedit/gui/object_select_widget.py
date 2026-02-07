@@ -20,6 +20,7 @@ import os
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QPoint
+from PySide6.QtWidgets import QApplication
 
 from gemsedit import log
 
@@ -223,7 +224,7 @@ class ObjectSelect(QtWidgets.QDialog):
         # draw other objects
         if len(self.other_objects):
             line_width = 3
-            font_size = 12
+            font_size = QApplication.instance().font().pointSize()
             for param_list in self.other_objects:
                 name, left, top, width, height, visible, takeable, draggable = param_list
 

@@ -21,7 +21,7 @@
   </property>
   <property name="font">
    <font>
-    <family>Verdana</family>
+    <family>Arial</family>
    </font>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
       <widget class="QLabel" name="Label9">
        <property name="font">
         <font>
-         <family>Verdana</family>
+         <family>Arial</family>
          <pointsize>14</pointsize>
          <italic>false</italic>
         </font>
@@ -60,8 +60,8 @@
        </property>
        <property name="font">
         <font>
-         <family>Verdana</family>
-         <pointsize>12</pointsize>
+         <family>Arial</family>
+         <pointsize>14</pointsize>
          <italic>false</italic>
          <bold>false</bold>
         </font>
@@ -87,8 +87,8 @@
       <widget class="QTableView" name="settings_tableView">
        <property name="font">
         <font>
-         <family>Verdana</family>
-         <pointsize>12</pointsize>
+         <family>Arial</family>
+         <pointsize>14</pointsize>
         </font>
        </property>
        <property name="editTriggers">
@@ -125,7 +125,7 @@
           <widget class="QLabel" name="label_5">
            <property name="font">
             <font>
-             <family>Verdana</family>
+             <family>Arial</family>
              <pointsize>24</pointsize>
              <bold>true</bold>
             </font>
@@ -186,7 +186,7 @@
         <widget class="QPushButton" name="applyButton">
          <property name="font">
           <font>
-           <family>Verdana</family>
+           <family>Arial</family>
            <pointsize>16</pointsize>
            <italic>false</italic>
           </font>
@@ -202,7 +202,7 @@
       <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
-         <family>Verdana</family>
+         <family>Arial</family>
          <pointsize>16</pointsize>
          <italic>false</italic>
         </font>

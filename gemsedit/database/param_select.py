@@ -122,7 +122,14 @@ class ParamSelect:
         self.color_list = []
         self.selection_model = None
         self.button_pressed = None
-        self.ParmSelectWindow = QtWidgets.QWidget()
+        # Use QDialog instead of QWidget for proper modal behavior
+        self.ParmSelectWindow = QtWidgets.QDialog()
+        self.ParmSelectWindow.setWindowFlags(
+            Qt.WindowType.Dialog
+            | Qt.WindowType.WindowTitleHint
+            | Qt.WindowType.WindowCloseButtonHint
+            | Qt.WindowType.WindowMinMaxButtonsHint
+        )
         self.ui = win.Ui_parameterSelectDialog()
         self.ui.setupUi(self.ParmSelectWindow)
 
@@ -177,11 +184,12 @@ class ParamSelect:
 
     def handleApply(self):
         self.button_pressed = "apply_button"
-        self.ParmSelectWindow.close()
+        self.ParmSelectWindow.accept()
 
     def handleCancel(self):
         self.button_pressed = "cancel_button"
-        self.ParmSelectWindow.close()
+        self.result = None
+        self.ParmSelectWindow.reject()
 
     # Note: connected to listview *after* list is filled from db
     def handleSelectionChange(self, selected, deselected):
