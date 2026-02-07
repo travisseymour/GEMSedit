@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import ast
 from pathlib import Path
 
 import sqlite_utils
@@ -48,25 +47,47 @@ def migrate_old_playvideo(action_str: str, env_version: str) -> tuple[str, bool]
     - Strip all parameters except the video file path
     - Return should_disable=True to disable the action
 
+    Action format is function-call style: PlayVideo("file.mp4",0,0,0,21)
+
     Returns: (migrated_action_str, should_disable)
     """
     if not isinstance(action_str, str):
         return action_str, False
 
     # Check if this is a PlayVideo action (but not PlayVideoWithin)
-    if "PlayVideo" not in action_str or "PlayVideoWithin" in action_str:
+    if not action_str.startswith("PlayVideo(") or action_str.startswith("PlayVideoWithin("):
+        return action_str, False
+
+    # Check if this is from an old environment
+    if not _version_less_than(env_version, "2026.2.6.4"):
         return action_str, False
 
     try:
-        parsed = ast.literal_eval(action_str)
-        if isinstance(parsed, list) and len(parsed) >= 1 and parsed[0] == "PlayVideo":
-            # Check if this is from an old environment
-            if _version_less_than(env_version, "2026.2.6.4"):
-                # Old environment - strip everything except action name and video file
-                if len(parsed) >= 2:
-                    parsed = [parsed[0], parsed[1]]
-                return str(parsed), True
-    except (ValueError, SyntaxError):
+        # Parse function-call format: PlayVideo("file.mp4",0,0,0,21)
+        # Extract the content between parentheses
+        paren_start = action_str.index("(")
+        paren_end = action_str.rindex(")")
+        args_str = action_str[paren_start + 1 : paren_end]
+
+        # Find the first argument (video file) - handle quoted strings
+        if args_str.startswith('"'):
+            # Find closing quote
+            end_quote = args_str.index('"', 1)
+            video_file = args_str[: end_quote + 1]
+        elif args_str.startswith("'"):
+            # Find closing quote
+            end_quote = args_str.index("'", 1)
+            video_file = args_str[: end_quote + 1]
+        else:
+            # Unquoted - find first comma or end
+            comma_pos = args_str.find(",")
+            video_file = args_str[:comma_pos] if comma_pos != -1 else args_str
+
+        # Return action with video file and default values for new parameters, and mark for disable
+        # New signature: PlayVideo(VideoFile, Start, Left, Top, Volume, Loop)
+        return f"PlayVideo({video_file},0,0,0,1.0,False)", True
+
+    except (ValueError, IndexError):
         pass
 
     return action_str, False

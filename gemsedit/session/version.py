@@ -24,14 +24,18 @@ import tomli
 
 def get_version_from_pyproject():
     pyproject_path = os.path.join(os.path.dirname(__file__), "..", "..", "pyproject.toml")
-    with open(pyproject_path, "rb") as f:
-        pyproject_data = tomli.load(f)
-        return pyproject_data.get("project", {}).get("version", "Unknown")
+    try:
+        with open(pyproject_path, "rb") as f:
+            pyproject_data = tomli.load(f)
+            return pyproject_data.get("project", {}).get("version", None)
+    except (FileNotFoundError, OSError):
+        return None
 
 
-try:
-    # Try to get version from installed package
-    __version__ = version("gemsedit")
-except:
-    # Fallback: Read version from pyproject.toml during development
-    __version__ = get_version_from_pyproject()
+# Prefer pyproject.toml when available (development mode), otherwise use installed package version
+__version__ = get_version_from_pyproject()
+if __version__ is None:
+    try:
+        __version__ = version("gemsedit")
+    except Exception:
+        __version__ = "Unknown"
