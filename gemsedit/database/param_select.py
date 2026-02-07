@@ -401,11 +401,11 @@ class ParamSelect:
         self.xx_model = CustomSqlModel()
         # note: (Id INT, Name Text, Template Text, Restrictions Text )
         if self.param_type == "Condition":
-            xx_sql = f"select * from condition_lst where Restrictions like '%{self.action_type}%';"
+            xx_sql = f"select * from condition_lst where Restrictions like '%{self.action_type}%' order by Name;"
         elif self.param_type == "Trigger":
-            xx_sql = f"select * from trigger_lst where Restrictions like '%{self.action_type}%';"
+            xx_sql = f"select * from trigger_lst where Restrictions like '%{self.action_type}%' order by Name;"
         elif self.param_type == "Action":
-            xx_sql = f"select * from action_lst where Restrictions like '%{self.action_type}%';"
+            xx_sql = f"select * from action_lst where Restrictions like '%{self.action_type}%' order by Name;"
         else:
             log.error(f"Problem in initializeDatabases(), got bad coltype of {self.param_type}")
             return
