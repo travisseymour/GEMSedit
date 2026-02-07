@@ -73,10 +73,10 @@ action_lst:
     Template: '[]'
   '2':
     Id: 2
-    Labels: '["SoundFile","Start","Volume","Loop"]'
+    Labels: '["SoundFile","Asynchronous","Volume","Loop"]'
     Name: PlaySound
     Restrictions: viewobjectglobalpocket
-    Template: '["sndfile","number","01float","bool"]'
+    Template: '["sndfile","bool","01float","bool"]'
   '20':
     Id: 20
     Labels: '[]'
