@@ -16,11 +16,60 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import ast
 from pathlib import Path
 
 import sqlite_utils
 from sqlite_utils import Database
 import yaml
+
+
+def _version_less_than(version_str: str, target: str) -> bool:
+    """Compare version strings. Returns True if version_str < target."""
+    if not version_str:
+        return True
+    try:
+        # Parse version strings like "2026.2.6.4" into tuples of ints
+        v1_parts = [int(x) for x in str(version_str).split(".")]
+        v2_parts = [int(x) for x in target.split(".")]
+        # Pad shorter version with zeros
+        max_len = max(len(v1_parts), len(v2_parts))
+        v1_parts.extend([0] * (max_len - len(v1_parts)))
+        v2_parts.extend([0] * (max_len - len(v2_parts)))
+        return v1_parts < v2_parts
+    except (ValueError, AttributeError):
+        return True
+
+
+def migrate_old_playvideo(action_str: str, env_version: str) -> tuple[str, bool]:
+    """
+    Migrate old PlayVideo actions from environments with version < 2026.2.6.4.
+    For old environments with PlayVideo actions:
+    - Strip all parameters except the video file path
+    - Return should_disable=True to disable the action
+
+    Returns: (migrated_action_str, should_disable)
+    """
+    if not isinstance(action_str, str):
+        return action_str, False
+
+    # Check if this is a PlayVideo action (but not PlayVideoWithin)
+    if "PlayVideo" not in action_str or "PlayVideoWithin" in action_str:
+        return action_str, False
+
+    try:
+        parsed = ast.literal_eval(action_str)
+        if isinstance(parsed, list) and len(parsed) >= 1 and parsed[0] == "PlayVideo":
+            # Check if this is from an old environment
+            if _version_less_than(env_version, "2026.2.6.4"):
+                # Old environment - strip everything except action name and video file
+                if len(parsed) >= 2:
+                    parsed = [parsed[0], parsed[1]]
+                return str(parsed), True
+    except (ValueError, SyntaxError):
+        pass
+
+    return action_str, False
 
 
 def un_string_lists(text: str) -> str:
@@ -196,15 +245,21 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     for aline in schema_commands:
         sql_db.execute(aline)
 
+    # Get environment version for migration checks
+    env_version = db.get("Global", {}).get("Options", {}).get("Version", "")
+
     def arrange_action(action: dict) -> dict:
+        # Apply migration for old PlayVideo signature
+        migrated_action, should_disable = migrate_old_playvideo(action["Action"], env_version)
+        enabled = 0 if should_disable else action["Enabled"]
         return {
             "Id": action["Id"],
             "ContextType": action["ContextType"],
             "ContextId": action["ContextId"],
             "Condition": action["Condition"],
             "Trigger": action["Trigger"],
-            "Action": action["Action"],
-            "Enabled": action["Enabled"],
+            "Action": migrated_action,
+            "Enabled": enabled,
             "RowOrder": action["RowOrder"],
         }
 

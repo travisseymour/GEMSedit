@@ -103,10 +103,10 @@ action_lst:
     Template: '[]'
   '3':
     Id: 3
-    Labels: '["VidFile","Start","Left","Top","WithinObject"]'
+    Labels: '["VidFile","Start","Left","Top","Volume","Loop"]'
     Name: PlayVideo
     Restrictions: viewobjectglobalpocket
-    Template: '["vidfile","number","number","number","objnum"]'
+    Template: '["vidfile","number","number","number","01float","bool"]'
   '4':
     Id: 4
     Labels: '["ImageFile","Left","Top","Duration","Clickthrough"]'
@@ -161,6 +161,12 @@ action_lst:
     Name: ShowImageWithin
     Restrictions: viewobject
     Template: '["picfile","number","number","float","bool","number","bool","bool"]'
+  '27':
+    Id: 27
+    Labels: '["VidFile","Start","WithinObject","Volume","Loop"]'
+    Name: PlayVideoWithin
+    Restrictions: viewobjectglobalpocket
+    Template: '["vidfile","number","objnum","01float","bool"]'
 condition_lst:
   '0':
     Id: 0
