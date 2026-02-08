@@ -82,7 +82,7 @@ class GemsDB:
     ) -> bool:
         global DB_CHANGED
         if self.db_opened():
-            self.close_db()
+            self.close_db(offer_to_save_changes=DB_CHANGED)
 
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.yaml_file_name = str(db_yaml_file)
