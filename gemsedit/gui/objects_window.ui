@@ -644,7 +644,7 @@
            </layout>
           </item>
           <item>
-           <widget class="ClickableLabel" name="objectLocPic_label">
+           <widget class="QLabel" name="objectLocPic_label">
             <property name="minimumSize">
              <size>
               <width>350</width>
@@ -680,13 +680,7 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ClickableLabel</class>
-   <extends>QLabel</extends>
-   <header>gemsedit.gui.custom_clickable_label</header>
-  </customwidget>
- </customwidgets>
+ <customwidgets/>
  <resources>
   <include location="gemsedit.qrc"/>
  </resources>

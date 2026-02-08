@@ -64,7 +64,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gemsedit.gui.custom_clickable_label import ClickableLabel
+# ClickableLabel no longer needed - using event filters instead
 import gemsedit.gui.gemsedit_rc
 
 
@@ -416,7 +416,7 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_6.addWidget(self.fgPic_plainTextEdit, 1, 0, 1, 4)
 
-        self.fgPic_label = ClickableLabel(self.layoutWidget2)
+        self.fgPic_label = QLabel(self.layoutWidget2)
         self.fgPic_label.setObjectName("fgPic_label")
         self.fgPic_label.setMinimumSize(QSize(259, 239))
         self.fgPic_label.setMaximumSize(QSize(16777215, 16777215))
@@ -469,7 +469,7 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_7.addWidget(self.bgPic_plainTextEdit, 1, 0, 1, 4)
 
-        self.bgPic_label = ClickableLabel(self.layoutWidget2)
+        self.bgPic_label = QLabel(self.layoutWidget2)
         self.bgPic_label.setObjectName("bgPic_label")
         self.bgPic_label.setMinimumSize(QSize(259, 239))
         self.bgPic_label.setMaximumSize(QSize(16777215, 16777215))
@@ -512,7 +512,7 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_8.addWidget(self.olPic_plainTextEdit, 1, 0, 1, 3)
 
-        self.olPic_label = ClickableLabel(self.layoutWidget2)
+        self.olPic_label = QLabel(self.layoutWidget2)
         self.olPic_label.setObjectName("olPic_label")
         self.olPic_label.setMinimumSize(QSize(259, 239))
         self.olPic_label.setMaximumSize(QSize(16777215, 16777215))

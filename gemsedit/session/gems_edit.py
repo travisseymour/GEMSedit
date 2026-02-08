@@ -32,7 +32,7 @@ from PySide6.QtWidgets import QMessageBox
 from gemsedit import LOG_PATH, app_long_name, log
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.database.sqltools import get_next_value
-from gemsedit.gui import action_list, object_select_widget as objselect
+from gemsedit.gui import action_list
 import gemsedit.gui.gems_window as win
 from gemsedit.session import objects, settings
 from gemsedit.session.networkgraph import show_gems_network_graph
@@ -41,6 +41,67 @@ from gemsedit.utils.apputils import (
     get_resource,
     start_external_app,
 )
+
+
+class ClickEventFilter(QtCore.QObject):
+    """Event filter that calls a callback when a widget is clicked."""
+
+    def __init__(self, callback, parent=None):
+        super().__init__(parent)
+        self.callback = callback
+
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.Type.MouseButtonPress:
+            if event.button() == QtCore.Qt.MouseButton.LeftButton:
+                self.callback()
+                return True
+        return super().eventFilter(obj, event)
+
+
+class ImageViewerDialog(QtWidgets.QDialog):
+    """A simple modal dialog that displays a full-sized image and closes when clicked."""
+
+    def __init__(self, image_path: str, view_name: str, image_type: str, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(f"GEMSedit: {view_name} {image_type} Picture. Click image to close.")
+        self.setModal(True)
+
+        # Load the image
+        pixmap = QtGui.QPixmap(image_path)
+        if pixmap.isNull():
+            self.reject()
+            return
+
+        # Create a label to display the image
+        self.image_label = QtWidgets.QLabel(self)
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        # Set up layout
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.image_label)
+
+        # Size the dialog to fit the image (with some maximum constraints)
+        screen = QGuiApplication.primaryScreen().availableGeometry()
+        max_width = int(screen.width() * 0.9)
+        max_height = int(screen.height() * 0.9)
+
+        if pixmap.width() > max_width or pixmap.height() > max_height:
+            scaled_pixmap = pixmap.scaled(
+                max_width,
+                max_height,
+                QtCore.Qt.AspectRatioMode.KeepAspectRatio,
+                QtCore.Qt.TransformationMode.SmoothTransformation,
+            )
+            self.image_label.setPixmap(scaled_pixmap)
+            self.resize(scaled_pixmap.size())
+        else:
+            self.resize(pixmap.size())
+
+    def mousePressEvent(self, event):
+        """Close the dialog when clicked anywhere."""
+        self.accept()
 
 
 class GemsViews:
@@ -134,8 +195,13 @@ class GemsViews:
 
         self.MainWindow.closeEvent = self.main_window_close
 
-        self.ui.fgPic_label.signal_clicked.connect(lambda: self.showBigPic("Foreground"))
-        self.ui.bgPic_label.signal_clicked.connect(lambda: self.showBigPic("Background"))
+        # Install event filters for picture label clicks
+        self.fg_click_filter = ClickEventFilter(lambda: self.showBigPic("Foreground"))
+        self.bg_click_filter = ClickEventFilter(lambda: self.showBigPic("Background"))
+        self.ol_click_filter = ClickEventFilter(lambda: self.showBigPic("Overlay"))
+        self.ui.fgPic_label.installEventFilter(self.fg_click_filter)
+        self.ui.bgPic_label.installEventFilter(self.bg_click_filter)
+        self.ui.olPic_label.installEventFilter(self.ol_click_filter)
 
         self.ui.tabWidget.currentChanged.connect(self.window_tab_changed)
 
@@ -1013,21 +1079,34 @@ class GemsViews:
         else:
             return os.getcwd()
 
-    def showBigPic(self, view_pic_name: str):
+    def showBigPic(self, image_type: str):
         if self.db_filename == "" or self.current_row is None:
             return
-        _id = self.model.record(self.current_row).value("Id")
-        obj_selector = objselect.ObjectSelect(
-            current_view=_id,
-            current_obj=None,
-            allow_selection=False,
-            view_pic=view_pic_name,
-            media_path=self.media_path,
-        )
-        self.MainWindow.hide()
-        obj_selector.showMaximized()
-        obj_selector.exec()
-        self.MainWindow.show()
+
+        # Get the image filename from the appropriate text field
+        if image_type == "Foreground":
+            image_filename = self.ui.fgPic_plainTextEdit.toPlainText()
+        elif image_type == "Background":
+            image_filename = self.ui.bgPic_plainTextEdit.toPlainText()
+        elif image_type == "Overlay":
+            image_filename = self.ui.olPic_plainTextEdit.toPlainText()
+        else:
+            return
+
+        if not image_filename:
+            return
+
+        # Construct full path
+        image_path = os.path.join(self.media_path, image_filename)
+        if not os.path.exists(image_path):
+            return
+
+        # Get view name for the title
+        view_name = self.model.record(self.current_row).value("Name")
+
+        # Show the image viewer dialog
+        dialog = ImageViewerDialog(image_path, view_name, image_type, self.MainWindow)
+        dialog.exec()
 
     def enableButtons(self):
         self.ui.actionAdd_toolButton.setEnabled(True)

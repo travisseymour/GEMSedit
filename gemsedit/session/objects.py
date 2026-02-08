@@ -32,6 +32,21 @@ from gemsedit.gui import action_list, object_select_widget as objselect
 import gemsedit.gui.objects_window as win
 
 
+class ClickEventFilter(QtCore.QObject):
+    """Event filter that calls a callback when a widget is clicked."""
+
+    def __init__(self, callback, parent=None):
+        super().__init__(parent)
+        self.callback = callback
+
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.Type.MouseButtonPress:
+            if event.button() == QtCore.Qt.MouseButton.LeftButton:
+                self.callback()
+                return True
+        return super().eventFilter(obj, event)
+
+
 class Objects:
     def __init__(self, parentid, mediapath, parent_win):
         self.parentid = parentid
@@ -83,7 +98,9 @@ class Objects:
         self.ui.delSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="delete"))
         self.ui.drawSelect_toolButton.pressed.connect(lambda: self.handlePicEdit(mode="select"))
 
-        self.ui.objectLocPic_label.signal_clicked.connect(lambda: self.handlePicEdit(mode="viewonly"))
+        # Install event filter for picture label click
+        self.pic_click_filter = ClickEventFilter(lambda: self.handlePicEdit(mode="viewonly"))
+        self.ui.objectLocPic_label.installEventFilter(self.pic_click_filter)
 
         self.ui.closeButton.pressed.connect(self.closeTheWindow)
 

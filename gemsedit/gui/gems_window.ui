@@ -558,7 +558,7 @@
                 </widget>
                </item>
                <item row="2" column="0" colspan="4">
-                <widget class="ClickableLabel" name="fgPic_label">
+                <widget class="QLabel" name="fgPic_label">
                  <property name="minimumSize">
                   <size>
                    <width>259</width>
@@ -684,7 +684,7 @@
                 </widget>
                </item>
                <item row="2" column="0" colspan="4">
-                <widget class="ClickableLabel" name="bgPic_label">
+                <widget class="QLabel" name="bgPic_label">
                  <property name="minimumSize">
                   <size>
                    <width>259</width>
@@ -799,7 +799,7 @@
                 </widget>
                </item>
                <item row="2" column="0" colspan="3">
-                <widget class="ClickableLabel" name="olPic_label">
+                <widget class="QLabel" name="olPic_label">
                  <property name="minimumSize">
                   <size>
                    <width>259</width>
@@ -1152,13 +1152,7 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ClickableLabel</class>
-   <extends>QLabel</extends>
-   <header>gemsedit.gui.custom_clickable_label</header>
-  </customwidget>
- </customwidgets>
+ <customwidgets/>
  <resources>
   <include location="gemsedit.qrc"/>
  </resources>

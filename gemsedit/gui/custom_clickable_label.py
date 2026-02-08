@@ -38,7 +38,8 @@ class ClickableLabel(QLabel):
         QLabel:hover {color:white; background:grey;}
         """
         )
-        self.setFixedSize(self.sizeHint())
+        # Don't call setFixedSize here - it prevents the widget from being
+        # properly sized later and makes the clickable area tiny
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:
@@ -58,7 +59,7 @@ class ClickableLabelOrig(QLabel):
         QLabel:hover {color:white; background:grey;}
         """
         )
-        self.setFixedSize(self.sizeHint())
+        # Don't call setFixedSize here - it prevents proper sizing
 
     def mousePressEvent(self, event):
         if event.button() == 1:  # Qt.LeftButton:

@@ -60,7 +60,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gemsedit.gui.custom_clickable_label import ClickableLabel
+# ClickableLabel no longer needed - using event filters instead
 import gemsedit.gui.gemsedit_rc
 
 
@@ -378,7 +378,7 @@ class Ui_ObjectsWindow(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
-        self.objectLocPic_label = ClickableLabel(self.layoutWidget2)
+        self.objectLocPic_label = QLabel(self.layoutWidget2)
         self.objectLocPic_label.setObjectName("objectLocPic_label")
         self.objectLocPic_label.setMinimumSize(QSize(350, 300))
         self.objectLocPic_label.setMaximumSize(QSize(350, 300))
