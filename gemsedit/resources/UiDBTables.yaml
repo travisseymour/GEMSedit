@@ -127,10 +127,10 @@ action_lst:
     Template: '["value"]'
   '7':
     Id: 7
-    Labels: '["Message","Left","Top","Duration","FontColor","BackColor","FontSize"]'
+    Labels: '["Message","Left","Top","Duration","FontColor","BackColor","FontSize","Bold"]'
     Name: TextBox
     Restrictions: viewobjectglobalpocket
-    Template: '["value","number","number","float","fgcolor","bgcolor","fontsize"]'
+    Template: '["value","number","number","float","fgcolor","bgcolor","fontsize","bool"]'
   '8':
     Id: 8
     Labels: '["Message"]'
