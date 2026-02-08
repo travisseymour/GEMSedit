@@ -14,7 +14,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "GEMSedit"
 description = "Environment Editor for GEMS (Graphical Environment Management System)"
-version = "2026.2.7.6"
+version = "2026.2.7.7"
 authors = [{name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu"}]
 license = {text = "GPLv3"}
 readme = "ReadMe.md"

@@ -211,7 +211,8 @@ class ParamSelect:
             param_list = self.param_data_dict[name]
             for i, x in enumerate(param_list):
                 xx = str(x[2]).strip('"').strip("'")
-                if not human_readable and ":" in xx:
+                # Extract ID from "id:name" format, but don't break URLs
+                if not human_readable and ":" in xx and not xx.startswith(("http://", "https://")):
                     xx = xx.split(":")[0].strip()
                 if xx.isdigit() or xx.replace(".", "").isdigit() or xx in ("True", "False"):
                     param_str += xx
