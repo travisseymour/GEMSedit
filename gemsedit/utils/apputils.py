@@ -78,8 +78,16 @@ def start_external_app(app_name: str, params: list[str] | None = None, wait: boo
     if params:
         command += [str(param) for param in params]
 
+    # start_new_session=True detaches the child process from the parent's process group,
+    # preventing crashes in the child from affecting the parent
     # text=True ensures we always get strings from stdout/stderr instead of bytes
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
     if wait:
         process.wait()
         output = [aline.rstrip("\n") for aline in process.stdout]
