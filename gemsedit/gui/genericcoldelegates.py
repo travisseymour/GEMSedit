@@ -151,9 +151,7 @@ class ActionColumnDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent, option, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        self.param_selector = param_select.ParamSelect(
-            self.coltype, value, self.action_type, self.media_path
-        )
+        self.param_selector = param_select.ParamSelect(self.coltype, value, self.action_type, self.media_path)
 
         # Show the ParamSelect dialog modally using exec()
         dialog = self.param_selector.ParmSelectWindow

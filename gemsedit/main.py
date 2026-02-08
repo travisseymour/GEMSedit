@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import os
 from pathlib import Path
-import platform
 import sys
 
 import appdirs
@@ -32,10 +31,6 @@ from gemsedit import log
 from gemsedit.utils.apputils import frozen, get_resource
 
 os.environ["OUTDATED_IGNORE"] = "1"
-
-# TODO: find out if this is still necessary:
-if platform.platform().split("-")[1].startswith("10."):
-    os.environ["QT_MAC_WANTS_LAYER"] = "1"
 
 
 def main():
