@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from importlib.resources import as_file, files
 from pathlib import Path
 import platform
+import shlex
 import subprocess
 import sys
 
@@ -94,3 +95,55 @@ def start_external_app(app_name: str, params: list[str] | None = None, wait: boo
     else:
         output = []
     return output
+
+
+def launch_in_terminal(app_name: str, params: list[str] | None = None) -> None:
+    """
+    Launch an application in a new terminal window, completely detached from the parent process.
+
+    Args:
+        app_name: Name or path of the executable to launch.
+        params: Optional list of arguments.
+    """
+    command_parts = [app_name]
+    if params:
+        command_parts += [str(param) for param in params]
+
+    # Build the full command string with proper quoting for shell
+    # shlex.quote handles spaces and special characters
+    full_command = " ".join(shlex.quote(part) for part in command_parts)
+
+    if OS == "Windows":
+        # Windows: use 'start' to open a new cmd window
+        subprocess.Popen(
+            ["cmd", "/c", "start", "cmd", "/k", full_command],
+            start_new_session=True,
+        )
+    elif OS == "Darwin":
+        # macOS: use osascript to open Terminal.app with the command
+        apple_script = f'tell application "Terminal" to do script "{full_command}"'
+        subprocess.Popen(
+            ["osascript", "-e", apple_script],
+            start_new_session=True,
+        )
+    else:
+        # Linux: try common terminal emulators in order of preference
+        terminals = [
+            ["gnome-terminal", "--", "bash", "-c", f"{full_command}; exec bash"],
+            ["konsole", "-e", "bash", "-c", f"{full_command}; exec bash"],
+            ["xfce4-terminal", "-e", f"bash -c '{full_command}; exec bash'"],
+            ["xterm", "-e", f"bash -c '{full_command}; read -p \"Press Enter to close...\"'"],
+        ]
+
+        for terminal_cmd in terminals:
+            try:
+                subprocess.Popen(terminal_cmd, start_new_session=True)
+                return
+            except FileNotFoundError:
+                continue
+
+        # If no terminal found, just run without a terminal
+        subprocess.Popen(
+            command_parts,
+            start_new_session=True,
+        )

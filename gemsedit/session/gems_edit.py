@@ -39,7 +39,7 @@ from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.session.version import __version__
 from gemsedit.utils.apputils import (
     get_resource,
-    start_external_app,
+    launch_in_terminal,
 )
 
 
@@ -202,8 +202,6 @@ class GemsViews:
         self.ui.fgPic_label.installEventFilter(self.fg_click_filter)
         self.ui.bgPic_label.installEventFilter(self.bg_click_filter)
         self.ui.olPic_label.installEventFilter(self.ol_click_filter)
-
-        self.ui.tabWidget.currentChanged.connect(self.window_tab_changed)
 
         QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
@@ -398,16 +396,10 @@ class GemsViews:
                 ...
 
         if self.db_filename:
-            log.debug(self.db_filename)
+            log.debug(f"Launching GEMSrun with {self.db_filename=}")
 
             try:
-                log.debug(f"{self.db_filename=}")
-                output = start_external_app(
-                    "GEMSrun",
-                    params=["--file", self.db_filename],
-                    wait=False if platform.platform().startswith("Windows") else True,
-                )
-                log.info("\n".join(output))
+                launch_in_terminal("GEMSrun", params=["--file", self.db_filename])
             except Exception as e:
                 _ = QMessageBox.critical(
                     self.MainWindow,
@@ -416,13 +408,6 @@ class GemsViews:
                     QMessageBox.StandardButton.Ok,
                 )
                 return
-
-    def window_tab_changed(self):
-        if self.ui.tabWidget.currentIndex() == 1:
-            try:
-                self.ui.log_plainTextEdit.setPlainText(LOG_PATH.read_text())
-            except Exception as e:
-                self.ui.log_plainTextEdit.setPlainText(f"Error reading log file at {str(LOG_PATH)} ({e})")
 
     def check_for_db_changed(self):
         self.ui.actionSaveEnv.setEnabled(self.connection.db_opened() and connection.DB_CHANGED)

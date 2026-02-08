@@ -57,7 +57,6 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QSplitter,
-    QTabWidget,
     QTableView,
     QToolBar,
     QToolButton,
@@ -84,7 +83,6 @@ class Ui_ViewsWindow(object):
         font.setFamilies(["Arial"])
         font.setPointSize(14)
         ViewsWindow.setFont(font)
-        ViewsWindow.setTabShape(QTabWidget.Rounded)
         self.actionOpen = QAction(ViewsWindow)
         self.actionOpen.setObjectName("actionOpen")
         icon = QIcon()
@@ -165,23 +163,7 @@ class Ui_ViewsWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.tabWidget = QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName("tabWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
-        self.tabWidget.setSizePolicy(sizePolicy1)
-        self.tabWidget.setMinimumSize(QSize(1114, 679))
-        self.tabWidget.setBaseSize(QSize(1114, 679))
-        self.tabWidget.setFont(font)
-        self.tabWidget.setAutoFillBackground(False)
-        self.tabWidget.setDocumentMode(True)
-        self.maintab = QWidget()
-        self.maintab.setObjectName("maintab")
-        self.gridLayout_10 = QGridLayout(self.maintab)
-        self.gridLayout_10.setObjectName("gridLayout_10")
-        self.splitter_2 = QSplitter(self.maintab)
+        self.splitter_2 = QSplitter(self.centralwidget)
         self.splitter_2.setObjectName("splitter_2")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
@@ -526,24 +508,7 @@ class Ui_ViewsWindow(object):
         self.splitter.addWidget(self.layoutWidget2)
         self.splitter_2.addWidget(self.splitter)
 
-        self.gridLayout_10.addWidget(self.splitter_2, 0, 0, 1, 1)
-
-        self.tabWidget.addTab(self.maintab, "")
-        self.logtab = QWidget()
-        self.logtab.setObjectName("logtab")
-        self.gridLayout_11 = QGridLayout(self.logtab)
-        self.gridLayout_11.setObjectName("gridLayout_11")
-        self.log_plainTextEdit = QPlainTextEdit(self.logtab)
-        self.log_plainTextEdit.setObjectName("log_plainTextEdit")
-        self.log_plainTextEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.log_plainTextEdit.setReadOnly(True)
-        self.log_plainTextEdit.setPlainText("")
-
-        self.gridLayout_11.addWidget(self.log_plainTextEdit, 0, 0, 1, 1)
-
-        self.tabWidget.addTab(self.logtab, "")
-
-        self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
 
         ViewsWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(ViewsWindow)
@@ -609,8 +574,6 @@ class Ui_ViewsWindow(object):
 
         self.retranslateUi(ViewsWindow)
         self.actionQuit.triggered.connect(ViewsWindow.close)
-
-        self.tabWidget.setCurrentIndex(0)
 
         QMetaObject.connectSlotsByName(ViewsWindow)
 
@@ -732,12 +695,6 @@ class Ui_ViewsWindow(object):
         self.olDel_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         self.olPic_plainTextEdit.setPlainText("")
         self.olPic_label.setText("")
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.maintab), QCoreApplication.translate("ViewsWindow", "Main", None)
-        )
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.logtab), QCoreApplication.translate("ViewsWindow", "Log", None)
-        )
         self.menuFile.setTitle(QCoreApplication.translate("ViewsWindow", "File", None))
         self.menuSettings.setTitle(QCoreApplication.translate("ViewsWindow", "Settings", None))
         self.menuHelp.setTitle(QCoreApplication.translate("ViewsWindow", "Help", None))
