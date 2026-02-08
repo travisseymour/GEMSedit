@@ -361,10 +361,10 @@ class ParamSelect:
                             genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "exefile":
-                        file_filter = "ProgramFile (*.exe *.app *.bat *.sh)"
+                        file_filter = "Executable (*.exe *.app *.sh *.AppImage)"
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
+                            genericrowdelegates.ExeFileRowDelegate(file_filter),
                         )
                     elif type_item == "picfile":
                         file_filter = "PictureFile (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.gif *.webp)"

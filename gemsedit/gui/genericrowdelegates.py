@@ -258,6 +258,42 @@ class FileRowDelegate(QStyledItemDelegate):
         os.chdir(self.oldwd)
 
 
+class ExeFileRowDelegate(QStyledItemDelegate):
+    """File delegate that stores the full path (for executables/applications)."""
+
+    def __init__(self, filterstr="All Files (*.*)", parent=None):
+        super().__init__(parent)
+        self.filterstr = filterstr
+
+    def createEditor(self, parent, option, index):
+        editor = QFileDialog(parent)
+        editor.setModal(False)
+        editor.setFileMode(QFileDialog.FileMode.ExistingFile)
+        editor.setNameFilter(self.filterstr)
+        editor.setWindowTitle("Choose an Application or Executable")
+
+        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
+
+        return editor
+
+    def setEditorData(self, editor, index):
+        val = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+        fs = val.rsplit(os.path.sep, 1)
+        if len(fs) == 2:
+            bdir, vdir = fs
+        else:
+            bdir = "."
+            vdir = fs[0]
+
+        editor.setDirectory(bdir)
+        editor.selectFile(vdir)
+
+    def setModelData(self, editor, model, index):
+        if editor.result() == QDialog.DialogCode.Accepted:
+            # Store the full path for executables
+            model.setData(index, str(editor.selectedFiles()[0]))
+
+
 class DateRowDelegate(QStyledItemDelegate):
     def __init__(
         self,
