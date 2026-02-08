@@ -148,7 +148,6 @@ class ActionColumnDelegate(QStyledItemDelegate):
         self.action_type = action_type
         self.param_selector = None
         self.media_path = media_path
-        self._dialog_result = None
 
     def createEditor(self, parent, option, index):
         value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
@@ -156,34 +155,24 @@ class ActionColumnDelegate(QStyledItemDelegate):
             self.coltype, value, self.action_type, self.media_path
         )
 
-        # Create a minimal hidden editor - make it read-only to prevent text input
-        editor = QLineEdit(parent)
-        editor.setReadOnly(True)
-        editor.setVisible(False)
-
         # Show the ParamSelect dialog modally using exec()
         dialog = self.param_selector.ParmSelectWindow
         dialog.setMinimumHeight(591)
         dialog.setMinimumWidth(631)
         dialog.exec()
 
-        # Store the result for use in setModelData
-        self._dialog_result = self.param_selector.result
+        # Commit the result directly to the model - bypass the editor widget entirely
+        if self.param_selector.result is not None:
+            index.model().setData(index, str(self.param_selector.result))
 
-        # Schedule the editor to close immediately after returning
-        from PySide6.QtCore import QTimer
-        QTimer.singleShot(0, editor.close)
-
-        return editor
+        # Return None to indicate no editor widget is needed
+        return None
 
     def setEditorData(self, editor, index):
-        # No-op: the dialog handles all editing
         pass
 
     def setModelData(self, editor, model, index):
-        # Use the stored dialog result directly
-        if self._dialog_result is not None:
-            model.setData(index, str(self._dialog_result))
+        pass
 
 
 class RichTextColumnDelegate(QStyledItemDelegate):
