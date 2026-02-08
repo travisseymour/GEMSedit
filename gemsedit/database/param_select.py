@@ -355,7 +355,7 @@ class ParamSelect:
                             genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
                         )
                     elif type_item == "vidfile":
-                        file_filter = "VideoFile (*.avi *.mov *.mp4 *.m4v *.ogg *.webm *.flv *.mpg *.mpeg *.wmv)"
+                        file_filter = "VideoFile (*.avi *.mov *.mp4 *.m4v *.ogg *.webm *.flv *.mpg *.mpeg *.wmv *.gif)"
                         delegate.insertRowDelegate(
                             i,
                             genericrowdelegates.FileRowDelegate(self.media_path, file_filter),
