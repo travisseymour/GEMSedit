@@ -181,6 +181,9 @@ class ActionList:
 
         self.add_del_busy: bool = False
 
+        # Always show vertical scroll bar for action lists
+        self.table_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+
         self.initializeDatabases()
         self.initializeViews()
 
