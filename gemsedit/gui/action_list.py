@@ -102,7 +102,7 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             else:
                 self.problem[str(item.row())] = ""
             if self.problem[str(item.row())] != "":
-                return QtGui.QColor(QtCore.Qt.GlobalColor.red)
+                return QtGui.QColor(255, 180, 180)  # Light red
 
         if role == QtCore.Qt.ItemDataRole.ToolTipRole:
             if self.problem[str(item.row())] != "":
