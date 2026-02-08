@@ -253,14 +253,40 @@ class ParamSelect:
                 #  with one for each parameter to populate interface
                 if name not in self.param_data_dict:
                     self.param_data_dict[name] = []
+
+                    # Check for parameter count mismatch when loading existing action
+                    existing_values = None
+                    if name == initial_xx:
+                        existing_values = self.getParamValueList()
+                        if len(existing_values) != len(template_list):
+                            if len(existing_values) < len(template_list):
+                                QtWidgets.QMessageBox.warning(
+                                    None,
+                                    "Incompatible Action Format",
+                                    f"The action '{initial_xx}' was saved with fewer parameters "
+                                    f"than the current version requires.\n\n"
+                                    f"Expected {len(template_list)} parameters, but found {len(existing_values)}.\n\n"
+                                    f"Missing parameters will be set to default values. "
+                                    f"Please review and update this action.",
+                                )
+                            else:
+                                QtWidgets.QMessageBox.warning(
+                                    None,
+                                    "Incompatible Action Format",
+                                    f"The action '{initial_xx}' was saved with more parameters "
+                                    f"than the current version expects.\n\n"
+                                    f"Expected {len(template_list)} parameters, but found {len(existing_values)}.\n\n"
+                                    f"Extra parameters will be ignored. "
+                                    f"Please review and update this action.",
+                                )
+
                     for i, x in enumerate(template_list):
                         type_item = x
                         param_item = label_list[i]
 
-                        if name == initial_xx:
-                            # first adding param passed, need to include passed value
-                            v = self.getParamValueList()
-                            value_item = v[i]
+                        if existing_values is not None and i < len(existing_values):
+                            # Use existing value from loaded action
+                            value_item = existing_values[i]
                         elif type_item in ("number",):  # note: varnum and obj_num are now names
                             value_item = 0
                         elif type_item in ("01float",):  # current primary use for volume so start at 1.0
