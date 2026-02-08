@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import re
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMessageBox
 
 from gemsedit import log
@@ -324,9 +325,10 @@ class ActionList:
             if query.lastError().isValid():
                 log.error(f"Problem in signalActionUpdate() update query failed: {query.lastError().text()}")
 
-        # Refresh Table View
+        # Refresh Table View after the editor closes
+        # Use QTimer.singleShot to defer refresh until after the current event loop
         if self.parent_id is not None:
-            self.filterActions()
+            QTimer.singleShot(0, self.filterActions)
 
         mark_db_as_changed()
 

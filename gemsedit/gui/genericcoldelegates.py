@@ -156,8 +156,9 @@ class ActionColumnDelegate(QStyledItemDelegate):
             self.coltype, value, self.action_type, self.media_path
         )
 
-        # Create a hidden line edit as the actual delegate editor
+        # Create a minimal hidden editor - make it read-only to prevent text input
         editor = QLineEdit(parent)
+        editor.setReadOnly(True)
         editor.setVisible(False)
 
         # Show the ParamSelect dialog modally using exec()
@@ -168,6 +169,10 @@ class ActionColumnDelegate(QStyledItemDelegate):
 
         # Store the result for use in setModelData
         self._dialog_result = self.param_selector.result
+
+        # Schedule the editor to close immediately after returning
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(0, editor.close)
 
         return editor
 
