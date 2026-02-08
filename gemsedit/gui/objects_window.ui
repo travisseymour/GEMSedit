@@ -325,7 +325,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Close</string>
+             <string>Return to View Editor</string>
             </property>
            </widget>
           </item>

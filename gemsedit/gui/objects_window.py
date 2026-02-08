@@ -411,7 +411,7 @@ class Ui_ObjectsWindow(object):
         self.visible_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Visible? ", None))
         self.takeable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Takeable? ", None))
         self.draggable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Draggable?", None))
-        self.closeButton.setText(QCoreApplication.translate("ObjectsWindow", "Close", None))
+        self.closeButton.setText(QCoreApplication.translate("ObjectsWindow", "Return to View Editor", None))
         self.label_9.setText(QCoreApplication.translate("ObjectsWindow", "Parent View:", None))
         self.parent_Label.setText(QCoreApplication.translate("ObjectsWindow", "-", None))
         self.label_3.setText(QCoreApplication.translate("ObjectsWindow", "Object Action List", None))
