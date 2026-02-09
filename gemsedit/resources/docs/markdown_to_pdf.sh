@@ -1,7 +1,8 @@
-# You might need to install pandoc and pdflatex
+# You might need to install pandoc and weasyprint
 
 pandoc gems_overview.md -o gems_overview.pdf \
+  --from=gfm \
   --toc --toc-depth=6 \
-  --pdf-engine=pdflatex \
-  -V mainfont="Garmond" \
-  -V geometry:margin=1in
+  -V toc-title="GEMS Overview - Table of Contents" \
+  --pdf-engine=weasyprint \
+  --css github.css

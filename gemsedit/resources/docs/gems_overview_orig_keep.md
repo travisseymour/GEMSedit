@@ -121,8 +121,14 @@ these will be the same image. However, if they are not the same,
 interesting possibilities arise. For example, consider these foreground
 and background images:
 
-![image1](./media/image1.jpeg)
-![image2](./media/image2.JPG)
+<!--
+![image1](./media/image1.jpeg){ width=3.64in height=2.73in }
+![image2](./media/image2.JPG){ width=3.64in height=2.73in }
+-->
+
+![image1](./media/image1.jpeg){ width=50% height=25% }
+![image2](./media/image2.JPG){ width=50% height=25% }
+
 If the designer specifies a foreground image that has some objects
 depicted and a background image that is identical, except that those
 objects are missing, then in the environment, several things become
@@ -152,11 +158,13 @@ pockets will be available. Pockets are icons that show up in the bottom
 left corner of the display that look like denim jeans back pockets,
 e.g.:
 
-![image3](./media/image3.png)
+![image3](./media/image3.png){ width=3.57156in height=0.88187in }
+
 If a takeable object is dragged to a pocket, it will appear as if it is
 dragged out of the environment and into the pocket:
 
-![image4](./media/image4.png)
+![image4](./media/image4.png){ width=3.55485in height=0.85104in }
+
 Pockets allow users to collect objects and move them from one view to
 another. Right-clicking a pocketed object will cause it to return to
 its original location. If you wanted the user to drag the boots into a
@@ -175,8 +183,9 @@ depicting the boots in the box. Either way, the effect for the user
 looks as if they have dragged the boots out of their pocket and into the
 box, e.g.:
 
-![image5](./media/image5.png)
-![image6](./media/image6.png)
+![image5](./media/image5.png){ width=3.73632in height=1.43537in }
+![image6](./media/image6.png){ width=3.73928in height=1.42889in }
+
 Automatically Portaling. Most often, moving from one view to another
 happens a result of some user-initiated action or interaction. However,
 portaling can also occur as a result of global timed events, or
@@ -195,13 +204,15 @@ the layout of a space. If, each of several views contained a
 entered that fires a **PortalTo** action, then you could fly the user
 from one point in a room to another. E.g.:
 
-![image7](./media/image7.png)
+![image7](./media/image7.png){ width=7.5in height=3.77083in }
+
 Left-clicking on view #1 could automatically portal you through the
 subsequent views until you stopped at view 5. This is animated in a way
 that feels as if you are flying from the door, around the room, to the
 table.
 
-![image8](./media/image8.png)
+![image8](./media/image8.png){ width=2.88472in height=2.17083in }
+
 In the test environment depicted above, an interaction is defined in
 view 5. If the dvd cover (which is not takeable in this case – we forgot
 to take a picture without the dvd) is dragged onto the monitor, a little
@@ -217,12 +228,16 @@ a folder of media (pictures and audio files), named [ENVNAME]\_media,
 e.g., kidsroom_media. To open an environment, press the OPEN ICON,
 navigate to an environment folder, and choose the database file.
 
-![image9](./media/image9.png)
-![image10](./media/image10.png)
+![image9](./media/image9.png){ width=3.22662in height=1.15967in }
+
+![image10](./media/image10.png){ width=5.38726in height=1.58703in }
+
 Global Environment Settings. There are several global settings.
 
-![image9](./media/image9.png)
-![image11](./media/image11.png)
+![image9](./media/image9.png){ width=3.22662in height=1.15967in }
+
+![image11](./media/image11.png){ width=3.98044in height=3.11027in }
+
 **ID**: Hmm…I don’t know what this is?!
 
 **Start View**: This defines the first view that will be loaded when the
@@ -249,7 +264,8 @@ designing view, you can specify a view-level overlap that can be
 different from one view to the next. We’ve used this for a dynamically
 updating map of where one is in an environment. E.g.:
 
-![image12](./media/image12.png)
+![image12](./media/image12.png){ width=1.78508in height=1.24415in }
+
 **Version:** This field will go away soon. Ignore it.
 
 **Stage Color**: Hopefully you won’t have to deal with this. The size of
@@ -281,8 +297,10 @@ ChangeCursor may be a useful user facing ui choice.
 
 To run a loaded environment, just click on the run icon:
 
-![image9](./media/image9.png)
-![image13](./media/image13.png)
+![image9](./media/image9.png){ width=3.22662in height=1.15967in }
+
+![image13](./media/image13.png){ width=4.52091in height=4.1337in }
+
 The **Environment Database File** is not editable and will be set to
 whatever environment is currently loaded into the editor. GEMS is
 designed to save data about everything that happens during a run, a user
@@ -294,8 +312,10 @@ be disabled when quiet operation is desired. Debug mode use helpful
 during environment design because it shows the current status of any
 defined environment variables. E.g.:
 
-![image14](./media/image14.png)
-![image15](./media/image15.png)
+![image14](./media/image14.png){ width=2.54696in height=1.6453in }
+
+![image15](./media/image15.png){ width=2.45558in height=1.65297in }
+
 This information floats in the upper left hand corner when Debug Mode is
 enabled.
 
@@ -308,18 +328,21 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 ### Creating a New GEMS Environment.
 
 1. Press the NEW button\
-   ![image9](./media/image9.png)
+   ![image9](./media/image9.png){ width=3.22662in height=1.15967in }
+
 2. Navigate to where you want the environment folder to be created
    (e.g., Desktop) and type in a name of your project (no extension).
    For example, enter “MyEnvironment” and press **SAVE**.\
-   ![image16](./media/image16.png)
+   ![image16](./media/image16.png){ width=5.61718in height=1.17285in }
+
 3. You will notice that GEMS creates a new environment with 2 default
    views (StartRoom and EndRoom). A couple of objects and interactions
    have been defined. You can delete these and specify your own
    environment.
 
 4. Click the **MediaFolder** icon to open your media folder.\
-   ![image9](./media/image9.png)
+   ![image9](./media/image9.png){ width=3.22662in height=1.15967in }
+
 5. Do not bother the files already here. Some of them are needed for
    GEMS operation. Dump all the images and sound files (e.g., .png or
    .jpg image files, and .mp3 or .ogg audio files. Many formats are
@@ -350,7 +373,7 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 
 ### Defining and Editing Views
 
-![image17](./media/image17.png)
+![image17](./media/image17.png){ width=7.5in height=4.60625in }
 
 1. These icons allow you to create a new empty view, or delete the
    currently selected view in the list, respectively. Be careful with
@@ -395,7 +418,10 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    via dialogs that pop up when you click each cell. For example,
    clicking the Condition, Trigger, and Action cells will pop up
    dialogs like these:\
-   ![image18](./media/image18.png) ![image19](./media/image19.png) ![image20](./media/image20.png)
+   ![image18](./media/image18.png){ width=3.30183in height=3.08262in }
+   ![image19](./media/image19.png){ width=3.29191in height=3.0883in }
+   ![image20](./media/image20.png){ width=3.30202in height=3.08739in }
+
 8. This button is used to open a new screen that allows the design and
    specification of objects for this view. Make sure you have specified
    your foreground and background pictures before creating objects.
@@ -404,7 +430,7 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 
 ### Defining and Editing View Objects
 
-![image21](./media/image21.png)
+![image21](./media/image21.png){ width=7.5in height=4.85208in }
 
 1. Similar to with the view editor, these buttons allow you to add
    define new objects, or remove previous object definitions. Be
@@ -452,13 +478,11 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 
 ---
 
-## Appendix - GEMS API Reference
+## APPENDIX - GEMS API REFERENCE
 
-This section describes all conditions, triggers, and actions available in GEMS (Graphical Environment Management System).
+This document describes all conditions, triggers, and actions available in GEMS (Graphical Environment Management System).
 
----
-
-### Restriction Scopes
+## Restriction Scopes
 
 Actions, conditions, and triggers can be restricted to specific contexts:
 
@@ -471,11 +495,11 @@ Actions, conditions, and triggers can be restricted to specific contexts:
 
 ---
 
-### Triggers
+## Triggers
 
 Triggers define events that initiate script execution.
 
-#### ViewTimePassed
+### ViewTimePassed
 
 ```
 ViewTimePassed(Seconds: float)
@@ -491,7 +515,7 @@ ViewTimePassed(Seconds: float)
 
 ---
 
-#### TotalTimePassed
+### TotalTimePassed
 
 ```
 TotalTimePassed(Seconds: float)
@@ -507,7 +531,7 @@ TotalTimePassed(Seconds: float)
 
 ---
 
-#### MouseClick
+### MouseClick
 
 ```
 MouseClick()
@@ -521,7 +545,7 @@ MouseClick()
 
 ---
 
-#### NavLeft
+### NavLeft
 
 ```
 NavLeft()
@@ -535,7 +559,7 @@ NavLeft()
 
 ---
 
-#### NavRight
+### NavRight
 
 ```
 NavRight()
@@ -549,7 +573,7 @@ NavRight()
 
 ---
 
-#### NavTop
+### NavTop
 
 ```
 NavTop()
@@ -563,7 +587,7 @@ NavTop()
 
 ---
 
-#### NavBottom
+### NavBottom
 
 ```
 NavBottom()
@@ -577,7 +601,7 @@ NavBottom()
 
 ---
 
-#### DroppedOn
+### DroppedOn
 
 ```
 DroppedOn(Object: objnum)
@@ -593,7 +617,7 @@ DroppedOn(Object: objnum)
 
 ---
 
-#### KeyPress
+### KeyPress
 
 ```
 KeyPress(Key: key)
@@ -609,11 +633,11 @@ KeyPress(Key: key)
 
 ---
 
-### Conditions
+## Conditions
 
 Conditions are evaluated to determine whether associated actions should execute.
 
-#### VarValueIs
+### VarValueIs
 
 ```
 VarValueIs(Variable: varname, Value: value)
@@ -630,7 +654,7 @@ VarValueIs(Variable: varname, Value: value)
 
 ---
 
-#### VarValueIsNot
+### VarValueIsNot
 
 ```
 VarValueIsNot(Variable: varname, Value: value)
@@ -647,7 +671,7 @@ VarValueIsNot(Variable: varname, Value: value)
 
 ---
 
-#### VarExists
+### VarExists
 
 ```
 VarExists(Variable: varname)
@@ -663,7 +687,7 @@ VarExists(Variable: varname)
 
 ---
 
-#### ViewTimePassed
+### ViewTimePassed
 
 ```
 ViewTimePassed(Seconds: number)
@@ -679,7 +703,7 @@ ViewTimePassed(Seconds: number)
 
 ---
 
-#### TotalTimePassed
+### TotalTimePassed
 
 ```
 TotalTimePassed(Seconds: number)
@@ -695,7 +719,7 @@ TotalTimePassed(Seconds: number)
 
 ---
 
-#### VarCountEq
+### VarCountEq
 
 ```
 VarCountEq(Count: number)
@@ -711,7 +735,7 @@ VarCountEq(Count: number)
 
 ---
 
-#### VarCountGtEq
+### VarCountGtEq
 
 ```
 VarCountGtEq(Count: number)
@@ -727,7 +751,7 @@ VarCountGtEq(Count: number)
 
 ---
 
-#### VarCountLtEq
+### VarCountLtEq
 
 ```
 VarCountLtEq(Count: number)
@@ -743,7 +767,7 @@ VarCountLtEq(Count: number)
 
 ---
 
-#### KeyBufferContains
+### KeyBufferContains
 
 ```
 KeyBufferContains(Keys: value, IgnoreCase: bool)
@@ -760,11 +784,11 @@ KeyBufferContains(Keys: value, IgnoreCase: bool)
 
 ---
 
-### Actions
+## Actions
 
 Actions are commands that modify the environment state or trigger effects.
 
-#### PortalTo
+### PortalTo
 
 ```
 PortalTo(View: viewnum, VidFile: vidfile = "")
@@ -781,7 +805,7 @@ PortalTo(View: viewnum, VidFile: vidfile = "")
 
 ---
 
-#### PlaySound
+### PlaySound
 
 ```
 PlaySound(SoundFile: sndfile, Asynchronous: bool, Volume: 01float, Loop: bool)
@@ -800,7 +824,7 @@ PlaySound(SoundFile: sndfile, Asynchronous: bool, Volume: 01float, Loop: bool)
 
 ---
 
-#### PlayBackgroundMusic
+### PlayBackgroundMusic
 
 ```
 PlayBackgroundMusic(SoundFile: sndfile, Volume: 01float, Loop: bool)
@@ -818,7 +842,7 @@ PlayBackgroundMusic(SoundFile: sndfile, Volume: 01float, Loop: bool)
 
 ---
 
-#### StopBackgroundMusic
+### StopBackgroundMusic
 
 ```
 StopBackgroundMusic()
@@ -832,7 +856,7 @@ StopBackgroundMusic()
 
 ---
 
-#### StopSound
+### StopSound
 
 ```
 StopSound(SoundFile: sndfile)
@@ -848,7 +872,7 @@ StopSound(SoundFile: sndfile)
 
 ---
 
-#### StopAllSounds
+### StopAllSounds
 
 ```
 StopAllSounds()
@@ -862,7 +886,7 @@ StopAllSounds()
 
 ---
 
-#### PlayVideo
+### PlayVideo
 
 ```
 PlayVideo(VidFile: vidfile, Start: number, Left: number, Top: number, Volume: 01float, Loop: bool)
@@ -883,7 +907,7 @@ PlayVideo(VidFile: vidfile, Start: number, Left: number, Top: number, Volume: 01
 
 ---
 
-#### PlayVideoWithin
+### PlayVideoWithin
 
 ```
 PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 01float, Loop: bool)
@@ -903,7 +927,7 @@ PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 0
 
 ---
 
-#### StopVideo
+### StopVideo
 
 ```
 StopVideo(VideoFile: vidfile)
@@ -919,7 +943,7 @@ StopVideo(VideoFile: vidfile)
 
 ---
 
-#### StopAllVideos
+### StopAllVideos
 
 ```
 StopAllVideos()
@@ -933,7 +957,7 @@ StopAllVideos()
 
 ---
 
-#### ShowImage
+### ShowImage
 
 ```
 ShowImage(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickthrough: bool)
@@ -953,7 +977,7 @@ ShowImage(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickt
 
 ---
 
-#### ShowImageWithin
+### ShowImageWithin
 
 ```
 ShowImageWithin(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickthrough: bool, WithinObject: number, HideTarget: bool, Stretch: bool)
@@ -976,7 +1000,7 @@ ShowImageWithin(ImageFile: picfile, Left: number, Top: number, Duration: float, 
 
 ---
 
-#### ShowObject
+### ShowObject
 
 ```
 ShowObject(Object: objnum)
@@ -992,7 +1016,7 @@ ShowObject(Object: objnum)
 
 ---
 
-#### HideObject
+### HideObject
 
 ```
 HideObject(Object: objnum)
@@ -1008,7 +1032,7 @@ HideObject(Object: objnum)
 
 ---
 
-#### AllowTake
+### AllowTake
 
 ```
 AllowTake(Object: objnum)
@@ -1024,7 +1048,7 @@ AllowTake(Object: objnum)
 
 ---
 
-#### DisallowTake
+### DisallowTake
 
 ```
 DisallowTake(Object: objnum)
@@ -1040,7 +1064,7 @@ DisallowTake(Object: objnum)
 
 ---
 
-#### SetVariable
+### SetVariable
 
 ```
 SetVariable(Variable: varname, Value: value)
@@ -1057,7 +1081,7 @@ SetVariable(Variable: varname, Value: value)
 
 ---
 
-#### DelVariable
+### DelVariable
 
 ```
 DelVariable(Variable: varname)
@@ -1073,7 +1097,7 @@ DelVariable(Variable: varname)
 
 ---
 
-#### ClearKeyBuffer
+### ClearKeyBuffer
 
 ```
 ClearKeyBuffer()
@@ -1087,7 +1111,7 @@ ClearKeyBuffer()
 
 ---
 
-#### TextBox
+### TextBox
 
 ```
 TextBox(Message: value, Left: number, Top: number, Duration: float, FontColor: fgcolor, BackColor: bgcolor, FontSize: fontsize, Bold: bool)
@@ -1110,7 +1134,7 @@ TextBox(Message: value, Left: number, Top: number, Duration: float, FontColor: f
 
 ---
 
-#### TextDialog
+### TextDialog
 
 ```
 TextDialog(Message: value)
@@ -1126,7 +1150,7 @@ TextDialog(Message: value)
 
 ---
 
-#### InputDialog
+### InputDialog
 
 ```
 InputDialog(Prompt: value, Variable: varname)
@@ -1143,7 +1167,7 @@ InputDialog(Prompt: value, Variable: varname)
 
 ---
 
-#### SayText
+### SayText
 
 ```
 SayText(Message: value)
@@ -1159,7 +1183,7 @@ SayText(Message: value)
 
 ---
 
-#### ShowURL
+### ShowURL
 
 ```
 ShowURL(URL: value)
@@ -1175,7 +1199,7 @@ ShowURL(URL: value)
 
 ---
 
-#### RunProgram
+### RunProgram
 
 ```
 RunProgram(Application: exefile, Parameters: value)
@@ -1192,7 +1216,7 @@ RunProgram(Application: exefile, Parameters: value)
 
 ---
 
-#### ChangeCursor
+### ChangeCursor
 
 ```
 ChangeCursor(Cursor: cursor)
@@ -1208,7 +1232,7 @@ ChangeCursor(Cursor: cursor)
 
 ---
 
-#### HideMouse
+### HideMouse
 
 ```
 HideMouse()
@@ -1222,7 +1246,7 @@ HideMouse()
 
 ---
 
-#### ShowMouse
+### ShowMouse
 
 ```
 ShowMouse()
@@ -1236,7 +1260,7 @@ ShowMouse()
 
 ---
 
-#### HidePockets
+### HidePockets
 
 ```
 HidePockets()
@@ -1250,7 +1274,7 @@ HidePockets()
 
 ---
 
-#### ShowPockets
+### ShowPockets
 
 ```
 ShowPockets()
@@ -1264,7 +1288,7 @@ ShowPockets()
 
 ---
 
-#### Quit
+### Quit
 
 ```
 Quit()
@@ -1278,7 +1302,7 @@ Quit()
 
 ---
 
-### Parameter Types
+## Parameter Types
 
 | Type       | Description               |
 | ---------- | ------------------------- |
