@@ -29,7 +29,7 @@ from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
 from PySide6.QtWidgets import QMessageBox
 
-from gemsedit import LOG_PATH, app_long_name, log
+from gemsedit import app_long_name, log
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list
@@ -776,6 +776,28 @@ class GemsViews:
                 if query4.lastError().isValid():
                     log.error(f"Problem in handleBaseDel(): deleting associated objects {query4.lastError().text()}")
                     error_list.append(4)
+
+                # If deleted view was the Startview, update Startview to first remaining view
+                if self.basename.lower() == "view":
+                    query_sv = QtSql.QSqlQuery()
+                    query_sv.exec("SELECT Startview FROM options")
+                    if query_sv.isActive() and query_sv.next():
+                        current_startview = query_sv.value(0)
+                        if current_startview == _id:
+                            # Find the first remaining view
+                            query_first = QtSql.QSqlQuery()
+                            query_first.exec("SELECT Id FROM views ORDER BY RowOrder LIMIT 1")
+                            if query_first.isActive() and query_first.next():
+                                new_startview = query_first.value(0)
+                                query_update = QtSql.QSqlQuery()
+                                query_update.prepare("UPDATE options SET Startview = :newid")
+                                query_update.bindValue(":newid", new_startview)
+                                query_update.exec()
+                                if query_update.lastError().isValid():
+                                    log.error(f"Problem updating Startview: {query_update.lastError().text()}")
+                                else:
+                                    log.info(f"Updated Startview from {_id} to {new_startview}")
+
                 # ok, refresh the display
                 if not error_list:
                     self.model.setQuery("select * from " + self.base_table_name + " order by RowOrder")
