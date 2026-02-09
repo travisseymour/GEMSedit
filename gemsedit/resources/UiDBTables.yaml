@@ -179,6 +179,18 @@ action_lst:
     Name: StopAllVideos
     Restrictions: viewobjectglobalpocket
     Template: '[]'
+  '30':
+    Id: 30
+    Labels: '["SoundFile","Volume","Loop"]'
+    Name: PlayBackgroundMusic
+    Restrictions: viewobjectglobalpocket
+    Template: '["sndfile","01float","bool"]'
+  '31':
+    Id: 31
+    Labels: '[]'
+    Name: StopBackgroundMusic
+    Restrictions: viewobjectglobalpocket
+    Template: '[]'
 condition_lst:
   '0':
     Id: 0

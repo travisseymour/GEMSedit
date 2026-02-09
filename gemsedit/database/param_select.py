@@ -409,7 +409,7 @@ class ParamSelect:
             self.ui.xxparam_tableView.resizeRowsToContents()
 
             # now that we have the name, look up and set the help_text
-            self.ui.xxHelpLabel.setText(self.help_dict[name])
+            self.ui.xxHelpLabel.setText(self.help_dict.get(name, ""))
 
             # init the result string
             self.signalUpdate()

@@ -46,7 +46,7 @@ trigger_desc = {
 
 action_desc = {
     "": "<b>Blank</b> : Returns a blank action.",
-    "PortalTo": "<b>PortalTo</b>(View) : This action causes GEMS to load <b><i>View</i></b>.",
+    "PortalTo": "<b>PortalTo</b>(View,VidFile) : This action causes GEMS to load <b><i>View</i></b>. If <b><i>VidFile</i></b> is provided, the video plays fullscreen as a transition effect before the view change. Right-click the video to skip.",
     "PlaySound": '<b>PlaySound</b>(SoundFile,Asynchronous,Volume,Loop) : This action instructs GEMS to play the audio in <b><i>SoundFile</i></b>. If <b><i>Asynchronous</i></b> is "True" [default], playback occurs in the background without blocking other actions. The audio plays at the desired <b><i>Volume</i></b> [0.0 to 1.0]. If <b><i>Loop</i></b> is "True" [default = "False"], the soundfile will loop continually.',
     "PlayVideo": '<b>PlayVideo</b>(VideoFile,Start,Left,Top,Volume,Loop) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> at position (<b><i>Left</i></b>,<b><i>Top</i></b>). The videofile begins playing at <b><i>Start</i></b> seconds [Default = 0 = beginning] and plays at the desired <b><i>Volume</i></b> [0.0 to 1.0]. If <b><i>Loop</i></b> is "True" [default = "False"], the video will loop continually.',
     "PlayVideoWithin": '<b>PlayVideoWithin</b>(VideoFile,Start,WithinObject,Volume,Loop) : This action instructs GEMS to play the video in <b><i>VideoFile</i></b> within the bounds of <b><i>WithinObject</i></b>. If <b><i>WithinObject</i></b> is -1 or does not refer to a currently visible object, the video will play fullscreen. The videofile begins playing at <b><i>Start</i></b> seconds [Default = 0 = beginning] and plays at the desired <b><i>Volume</i></b> [0.0 to 1.0]. If <b><i>Loop</i></b> is "True" [default = "False"], the video will loop continually.',
@@ -72,8 +72,10 @@ action_desc = {
     "ShowMouse": "<b>ShowMouse</b>() : This action unhides the mouse cursor.",
     "HidePockets": "<b>HidePockets</b>() : This action hides all active pockets.",
     "ShowPockets": "<b>ShowPockets</b>() : This action unhides all active pockets.",
-    "StopSound": "<b>StopSound</b>() : This action stops playing audio based on <b><i>SoundFile</i></b>, assuming it is currently playing. Currently on MacOS only.",
-    "StopAllSounds": "<b>StopAllSounds</b>() : This action stops playing all currently playing audio. It is currently available on MacOS only.",
+    "StopSound": "<b>StopSound</b>(SoundFile) : This action stops playing audio based on <b><i>SoundFile</i></b>, assuming it is currently playing.",
+    "StopAllSounds": "<b>StopAllSounds</b>() : This action stops playing all currently playing audio (except background music).",
+    "PlayBackgroundMusic": '<b>PlayBackgroundMusic</b>(SoundFile,Volume,Loop) : This action plays <b><i>SoundFile</i></b> as background music at the specified <b><i>Volume</i></b> [0.0 to 1.0]. Only one background music stream can play at a time. If <b><i>Loop</i></b> is "True", the music loops indefinitely. Background music persists across view changes and is not affected by StopAllSounds.',
+    "StopBackgroundMusic": "<b>StopBackgroundMusic</b>() : This action stops the currently playing background music.",
     "StopVideo": "<b>StopVideo</b>(VideoFile) : This action stops playing the video specified by <b><i>VideoFile</i></b>, assuming it is currently playing.",
     "StopAllVideos": "<b>StopAllVideos</b>() : This action stops all currently playing videos.",
 }
