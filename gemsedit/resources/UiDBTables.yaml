@@ -191,6 +191,18 @@ action_lst:
     Name: StopBackgroundMusic
     Restrictions: viewobjectglobalpocket
     Template: '[]'
+  '32':
+    Id: 32
+    Labels: '["Variable"]'
+    Name: VarIncrease
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname"]'
+  '33':
+    Id: 33
+    Labels: '["Variable"]'
+    Name: VarDecrease
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname"]'
 condition_lst:
   '0':
     Id: 0

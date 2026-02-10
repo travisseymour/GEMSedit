@@ -66,6 +66,8 @@ action_desc = {
     "ChangeCursor": "<b>ChangeCursor</b>(Cursor) : This action causes GEMS to change the mouse cursor to <b><i>Cursor</i></b>.",
     "SetVariable": "<b>SetVariable</b>(Variable,Value) : This action sets the user-created token <b><i>Variable</i></b> to <b><i>Value</i></b>. If <b><i>Variable</i></b> does not exist, it will be created first.",
     "DelVariable": "<b>DelVariable</b>(Variable) : This action removes the user-created token <b><i>Variable</i></b>.",
+    "VarIncrease": "<b>VarIncrease</b>(Variable) : This action increases the value of <b><i>Variable</i></b> by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 1.",
+    "VarDecrease": "<b>VarDecrease</b>(Variable) : This action decreases the value of <b><i>Variable</i></b> by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 0.",
     "ClearKeyBuffer": "<b>ClearKeyBuffer</b>() : This action clears all characters in the keyboard buffer.",
     "Quit": "<b>Quit</b>() : This action terminates the current GEMS environment.",
     "HideMouse": "<b>HideMouse</b>() : This action hides the mouse cursor.",

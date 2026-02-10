@@ -621,6 +621,38 @@ DelVariable(Variable: varname)
 
 ---
 
+### VarIncrease
+
+```
+VarIncrease(Variable: varname)
+```
+
+**Description:** Increases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 1.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to increment
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarDecrease
+
+```
+VarDecrease(Variable: varname)
+```
+
+**Description:** Decreases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 0.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to decrement
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ### ClearKeyBuffer
 
 ```
