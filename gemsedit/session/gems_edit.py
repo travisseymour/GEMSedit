@@ -189,9 +189,13 @@ class GemsViews:
         # self.ui.actionLocate_GEMSrun.triggered.connect(self.locate_gemsrun)
 
         self.ui.actionSaveEnv.triggered.connect(self.handle_save_db)
-        help_path = get_resource("docs", "gems_overview.pdf").resolve()
-        help_url = help_path.as_uri()
-        self.ui.actionDocumentation.triggered.connect(partial(webbrowser.open, help_url))
+        overview_path = get_resource("docs", "gems_overview.pdf").resolve()
+        overview_url = overview_path.as_uri()
+        self.ui.actionOverview.triggered.connect(partial(webbrowser.open, overview_url))
+        self.ui.actionDocumentation.triggered.connect(partial(webbrowser.open, overview_url))
+        action_ref_path = get_resource("docs", "GEMS_Action_Reference.pdf").resolve()
+        action_ref_url = action_ref_path.as_uri()
+        self.ui.actionActionReference.triggered.connect(partial(webbrowser.open, action_ref_url))
 
         self.MainWindow.closeEvent = self.main_window_close
 
