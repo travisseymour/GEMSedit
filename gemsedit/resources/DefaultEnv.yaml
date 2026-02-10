@@ -6,7 +6,7 @@ Global:
     Id: 0
     ObjectHover: ChangeCursor
     Pocketcount: 4
-    Preloadresources: 0
+    Preloadresources: 1
     Roomtransition: Fade
     StageColor: '[''Dark Slate Gray'',47,79,79,255]'
     Startview: 0
@@ -26,7 +26,7 @@ Views:
       '1':
         Actions:
           '1':
-            Action: PortalTo(1)
+            Action: PortalTo(1,"")
             Condition: ''
             ContextId: 1
             ContextType: object
