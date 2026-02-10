@@ -203,6 +203,12 @@ action_lst:
     Name: VarDecrease
     Restrictions: viewobjectglobalpocket
     Template: '["varname"]'
+  '34':
+    Id: 34
+    Labels: '["View","Foreground","Background"]'
+    Name: ChangeViewImages
+    Restrictions: viewobjectglobalpocket
+    Template: '["viewnum","picfile","picfile"]'
 condition_lst:
   '0':
     Id: 0

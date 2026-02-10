@@ -329,6 +329,24 @@ PortalTo(View: viewnum, VidFile: vidfile = "")
 
 ---
 
+### ChangeViewImages
+
+```
+ChangeViewImages(View: viewnum, Foreground: picfile = "", Background: picfile = "")
+```
+
+**Description:** Changes the Foreground and/or Background images for the specified view. Only valid image file paths will be applied. This is intended to alter images for a view the user may travel to subsequently - if the specified view is the current view, no refresh occurs.
+
+**Parameters:**
+
+- `View` (viewnum): ID of the view to modify
+- `Foreground` (picfile): Optional new foreground image file
+- `Background` (picfile): Optional new background image file
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ### PlaySound
 
 ```
