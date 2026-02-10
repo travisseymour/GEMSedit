@@ -297,6 +297,8 @@ class ParamSelect:
                             value_item = 14
                         elif type_item in ("bool",):
                             value_item = "False"
+                        elif type_item in ("booltrue",):
+                            value_item = "True"
                         elif type_item in ("color",):
                             value_item = "['Black',0,0,0,255]"
                         elif type_item in ("fgcolor",):
@@ -371,7 +373,7 @@ class ParamSelect:
                             i,
                             genericrowdelegates.ComboRowColoredDelegate(self.color_list),
                         )
-                    elif type_item == "bool":
+                    elif type_item in ("bool", "booltrue"):
                         onoff = ["False", "True"]
                         delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(onoff))
                     elif type_item == "sndfile":

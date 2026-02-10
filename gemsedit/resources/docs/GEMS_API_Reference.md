@@ -332,17 +332,17 @@ PortalTo(View: viewnum, VidFile: vidfile = "")
 ### PlaySound
 
 ```
-PlaySound(SoundFile: sndfile, Asynchronous: bool, Volume: 01float, Loop: bool)
+PlaySound(SoundFile: sndfile, Asynchronous: bool = True, Volume: 01float = 1.0, Loop: bool = False)
 ```
 
-**Description:** Plays the specified audio file. Asynchronous playback returns control immediately; synchronous playback blocks until complete.
+**Description:** Plays the specified audio file. Asynchronous playback (the default) returns control immediately; synchronous playback blocks until complete.
 
 **Parameters:**
 
 - `SoundFile` (sndfile): Path to the audio file
-- `Asynchronous` (bool): If true, plays without blocking
-- `Volume` (01float): Volume level (0.0 to 1.0)
-- `Loop` (bool): If true, loops the audio continuously
+- `Asynchronous` (bool): If true (default), plays without blocking
+- `Volume` (01float): Volume level (0.0 to 1.0), default 1.0
+- `Loop` (bool): If true, loops the audio continuously (default false)
 
 **Restrictions:** view, object, global, pocket
 

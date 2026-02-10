@@ -458,7 +458,7 @@ This section describes all conditions, triggers, and actions available in GEMS (
 
 ---
 
-### Restriction Scopes
+## Restriction Scopes
 
 Actions, conditions, and triggers can be restricted to specific contexts:
 
@@ -471,11 +471,11 @@ Actions, conditions, and triggers can be restricted to specific contexts:
 
 ---
 
-### Triggers
+## Triggers
 
 Triggers define events that initiate script execution.
 
-#### ViewTimePassed
+### ViewTimePassed
 
 ```
 ViewTimePassed(Seconds: float)
@@ -491,7 +491,7 @@ ViewTimePassed(Seconds: float)
 
 ---
 
-#### TotalTimePassed
+### TotalTimePassed
 
 ```
 TotalTimePassed(Seconds: float)
@@ -507,7 +507,7 @@ TotalTimePassed(Seconds: float)
 
 ---
 
-#### MouseClick
+### MouseClick
 
 ```
 MouseClick()
@@ -521,7 +521,7 @@ MouseClick()
 
 ---
 
-#### NavLeft
+### NavLeft
 
 ```
 NavLeft()
@@ -535,7 +535,7 @@ NavLeft()
 
 ---
 
-#### NavRight
+### NavRight
 
 ```
 NavRight()
@@ -549,7 +549,7 @@ NavRight()
 
 ---
 
-#### NavTop
+### NavTop
 
 ```
 NavTop()
@@ -563,7 +563,7 @@ NavTop()
 
 ---
 
-#### NavBottom
+### NavBottom
 
 ```
 NavBottom()
@@ -577,7 +577,7 @@ NavBottom()
 
 ---
 
-#### DroppedOn
+### DroppedOn
 
 ```
 DroppedOn(Object: objnum)
@@ -593,7 +593,7 @@ DroppedOn(Object: objnum)
 
 ---
 
-#### KeyPress
+### KeyPress
 
 ```
 KeyPress(Key: key)
@@ -609,11 +609,11 @@ KeyPress(Key: key)
 
 ---
 
-### Conditions
+## Conditions
 
 Conditions are evaluated to determine whether associated actions should execute.
 
-#### VarValueIs
+### VarValueIs
 
 ```
 VarValueIs(Variable: varname, Value: value)
@@ -630,7 +630,7 @@ VarValueIs(Variable: varname, Value: value)
 
 ---
 
-#### VarValueIsNot
+### VarValueIsNot
 
 ```
 VarValueIsNot(Variable: varname, Value: value)
@@ -647,7 +647,7 @@ VarValueIsNot(Variable: varname, Value: value)
 
 ---
 
-#### VarExists
+### VarExists
 
 ```
 VarExists(Variable: varname)
@@ -663,7 +663,7 @@ VarExists(Variable: varname)
 
 ---
 
-#### ViewTimePassed
+### ViewTimePassed
 
 ```
 ViewTimePassed(Seconds: number)
@@ -679,7 +679,7 @@ ViewTimePassed(Seconds: number)
 
 ---
 
-#### TotalTimePassed
+### TotalTimePassed
 
 ```
 TotalTimePassed(Seconds: number)
@@ -695,7 +695,7 @@ TotalTimePassed(Seconds: number)
 
 ---
 
-#### VarCountEq
+### VarCountEq
 
 ```
 VarCountEq(Count: number)
@@ -711,7 +711,7 @@ VarCountEq(Count: number)
 
 ---
 
-#### VarCountGtEq
+### VarCountGtEq
 
 ```
 VarCountGtEq(Count: number)
@@ -727,7 +727,7 @@ VarCountGtEq(Count: number)
 
 ---
 
-#### VarCountLtEq
+### VarCountLtEq
 
 ```
 VarCountLtEq(Count: number)
@@ -743,7 +743,7 @@ VarCountLtEq(Count: number)
 
 ---
 
-#### KeyBufferContains
+### KeyBufferContains
 
 ```
 KeyBufferContains(Keys: value, IgnoreCase: bool)
@@ -760,11 +760,11 @@ KeyBufferContains(Keys: value, IgnoreCase: bool)
 
 ---
 
-### Actions
+## Actions
 
 Actions are commands that modify the environment state or trigger effects.
 
-#### PortalTo
+### PortalTo
 
 ```
 PortalTo(View: viewnum, VidFile: vidfile = "")
@@ -781,26 +781,26 @@ PortalTo(View: viewnum, VidFile: vidfile = "")
 
 ---
 
-#### PlaySound
+### PlaySound
 
 ```
-PlaySound(SoundFile: sndfile, Asynchronous: bool, Volume: 01float, Loop: bool)
+PlaySound(SoundFile: sndfile, Asynchronous: bool = True, Volume: 01float = 1.0, Loop: bool = False)
 ```
 
-**Description:** Plays the specified audio file. Asynchronous playback returns control immediately; synchronous playback blocks until complete.
+**Description:** Plays the specified audio file. Asynchronous playback (the default) returns control immediately; synchronous playback blocks until complete.
 
 **Parameters:**
 
 - `SoundFile` (sndfile): Path to the audio file
-- `Asynchronous` (bool): If true, plays without blocking
-- `Volume` (01float): Volume level (0.0 to 1.0)
-- `Loop` (bool): If true, loops the audio continuously
+- `Asynchronous` (bool): If true (default), plays without blocking
+- `Volume` (01float): Volume level (0.0 to 1.0), default 1.0
+- `Loop` (bool): If true, loops the audio continuously (default false)
 
 **Restrictions:** view, object, global, pocket
 
 ---
 
-#### PlayBackgroundMusic
+### PlayBackgroundMusic
 
 ```
 PlayBackgroundMusic(SoundFile: sndfile, Volume: 01float, Loop: bool)
@@ -818,7 +818,7 @@ PlayBackgroundMusic(SoundFile: sndfile, Volume: 01float, Loop: bool)
 
 ---
 
-#### StopBackgroundMusic
+### StopBackgroundMusic
 
 ```
 StopBackgroundMusic()
@@ -832,7 +832,7 @@ StopBackgroundMusic()
 
 ---
 
-#### StopSound
+### StopSound
 
 ```
 StopSound(SoundFile: sndfile)
@@ -848,7 +848,7 @@ StopSound(SoundFile: sndfile)
 
 ---
 
-#### StopAllSounds
+### StopAllSounds
 
 ```
 StopAllSounds()
@@ -862,7 +862,7 @@ StopAllSounds()
 
 ---
 
-#### PlayVideo
+### PlayVideo
 
 ```
 PlayVideo(VidFile: vidfile, Start: number, Left: number, Top: number, Volume: 01float, Loop: bool)
@@ -883,7 +883,7 @@ PlayVideo(VidFile: vidfile, Start: number, Left: number, Top: number, Volume: 01
 
 ---
 
-#### PlayVideoWithin
+### PlayVideoWithin
 
 ```
 PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 01float, Loop: bool)
@@ -903,7 +903,7 @@ PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 0
 
 ---
 
-#### StopVideo
+### StopVideo
 
 ```
 StopVideo(VideoFile: vidfile)
@@ -919,7 +919,7 @@ StopVideo(VideoFile: vidfile)
 
 ---
 
-#### StopAllVideos
+### StopAllVideos
 
 ```
 StopAllVideos()
@@ -933,7 +933,7 @@ StopAllVideos()
 
 ---
 
-#### ShowImage
+### ShowImage
 
 ```
 ShowImage(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickthrough: bool)
@@ -953,7 +953,7 @@ ShowImage(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickt
 
 ---
 
-#### ShowImageWithin
+### ShowImageWithin
 
 ```
 ShowImageWithin(ImageFile: picfile, Left: number, Top: number, Duration: float, Clickthrough: bool, WithinObject: number, HideTarget: bool, Stretch: bool)
@@ -976,7 +976,7 @@ ShowImageWithin(ImageFile: picfile, Left: number, Top: number, Duration: float, 
 
 ---
 
-#### ShowObject
+### ShowObject
 
 ```
 ShowObject(Object: objnum)
@@ -992,7 +992,7 @@ ShowObject(Object: objnum)
 
 ---
 
-#### HideObject
+### HideObject
 
 ```
 HideObject(Object: objnum)
@@ -1008,7 +1008,7 @@ HideObject(Object: objnum)
 
 ---
 
-#### AllowTake
+### AllowTake
 
 ```
 AllowTake(Object: objnum)
@@ -1024,7 +1024,7 @@ AllowTake(Object: objnum)
 
 ---
 
-#### DisallowTake
+### DisallowTake
 
 ```
 DisallowTake(Object: objnum)
@@ -1040,7 +1040,7 @@ DisallowTake(Object: objnum)
 
 ---
 
-#### SetVariable
+### SetVariable
 
 ```
 SetVariable(Variable: varname, Value: value)
@@ -1057,7 +1057,7 @@ SetVariable(Variable: varname, Value: value)
 
 ---
 
-#### DelVariable
+### DelVariable
 
 ```
 DelVariable(Variable: varname)
@@ -1073,7 +1073,7 @@ DelVariable(Variable: varname)
 
 ---
 
-#### ClearKeyBuffer
+### ClearKeyBuffer
 
 ```
 ClearKeyBuffer()
@@ -1087,7 +1087,7 @@ ClearKeyBuffer()
 
 ---
 
-#### TextBox
+### TextBox
 
 ```
 TextBox(Message: value, Left: number, Top: number, Duration: float, FontColor: fgcolor, BackColor: bgcolor, FontSize: fontsize, Bold: bool)
@@ -1110,7 +1110,7 @@ TextBox(Message: value, Left: number, Top: number, Duration: float, FontColor: f
 
 ---
 
-#### TextDialog
+### TextDialog
 
 ```
 TextDialog(Message: value)
@@ -1126,7 +1126,7 @@ TextDialog(Message: value)
 
 ---
 
-#### InputDialog
+### InputDialog
 
 ```
 InputDialog(Prompt: value, Variable: varname)
@@ -1143,7 +1143,7 @@ InputDialog(Prompt: value, Variable: varname)
 
 ---
 
-#### SayText
+### SayText
 
 ```
 SayText(Message: value)
@@ -1159,7 +1159,7 @@ SayText(Message: value)
 
 ---
 
-#### ShowURL
+### ShowURL
 
 ```
 ShowURL(URL: value)
@@ -1175,7 +1175,7 @@ ShowURL(URL: value)
 
 ---
 
-#### RunProgram
+### RunProgram
 
 ```
 RunProgram(Application: exefile, Parameters: value)
@@ -1192,7 +1192,7 @@ RunProgram(Application: exefile, Parameters: value)
 
 ---
 
-#### ChangeCursor
+### ChangeCursor
 
 ```
 ChangeCursor(Cursor: cursor)
@@ -1208,7 +1208,7 @@ ChangeCursor(Cursor: cursor)
 
 ---
 
-#### HideMouse
+### HideMouse
 
 ```
 HideMouse()
@@ -1222,7 +1222,7 @@ HideMouse()
 
 ---
 
-#### ShowMouse
+### ShowMouse
 
 ```
 ShowMouse()
@@ -1236,7 +1236,7 @@ ShowMouse()
 
 ---
 
-#### HidePockets
+### HidePockets
 
 ```
 HidePockets()
@@ -1250,7 +1250,7 @@ HidePockets()
 
 ---
 
-#### ShowPockets
+### ShowPockets
 
 ```
 ShowPockets()
@@ -1264,7 +1264,7 @@ ShowPockets()
 
 ---
 
-#### Quit
+### Quit
 
 ```
 Quit()
@@ -1278,7 +1278,7 @@ Quit()
 
 ---
 
-### Parameter Types
+## Parameter Types
 
 | Type       | Description               |
 | ---------- | ------------------------- |
