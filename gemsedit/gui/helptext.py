@@ -31,6 +31,8 @@ condition_desc = {
     "KeyBufferContains": "<b>KeyBufferContains</b>(String,IgnoreCase) : This condition returns <i>true</i> when the keyboard buffer contains the characters in <b><i>Keys</i></b>. Use only these characters: [a-zA-Z0-9 -_./]. Optionally set <b>IgnoreCase</b> to True (default is False). It is recommended that the action ClearKeyBuffer() precede use of this condition. You can Optionally set <b>IgnoreCase</b> to True(default is False).",
     "ObjectInPocketByID": "<b>ObjectInPocketByID</b>(Object) : This condition returns <i>true</i> if the object with the specified <b><i>Object</i></b> ID is currently in one of the pockets.",
     "ObjectInPocketByName": "<b>ObjectInPocketByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently in one of the pockets, regardless of its ID.",
+    "ObjectIsHiddenByID": "<b>ObjectIsHiddenByID</b>(Object) : This condition returns <i>true</i> if the object with the specified <b><i>Object</i></b> ID is currently hidden (not visible) in the current view.",
+    "ObjectIsHiddenByName": "<b>ObjectIsHiddenByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently hidden (not visible) in the current view.",
 }
 
 trigger_desc = {

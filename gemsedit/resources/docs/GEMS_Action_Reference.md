@@ -340,6 +340,38 @@ ObjectInPocketByName(Name: value)
 
 ---
 
+### ObjectIsHiddenByID
+
+```
+ObjectIsHiddenByID(Object: objnum)
+```
+
+**Description:** Returns true if the object with the specified ID is currently hidden (not visible) in the current view.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object to check
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### ObjectIsHiddenByName
+
+```
+ObjectIsHiddenByName(Name: value)
+```
+
+**Description:** Returns true if any object with the specified name is currently hidden (not visible) in the current view.
+
+**Parameters:**
+
+- `Name` (value): Name of the object to check
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ## Actions
 
 Actions are commands that modify the environment state or trigger effects.

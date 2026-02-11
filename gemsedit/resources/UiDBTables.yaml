@@ -282,6 +282,18 @@ condition_lst:
     Name: ObjectInPocketByName
     Restrictions: viewobjectglobalpocket
     Template: '["value"]'
+  '12':
+    Id: 12
+    Labels: '["Object"]'
+    Name: ObjectIsHiddenByID
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '13':
+    Id: 13
+    Labels: '["Name"]'
+    Name: ObjectIsHiddenByName
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
 trigger_lst:
   '0':
     Id: 0
