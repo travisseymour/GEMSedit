@@ -270,6 +270,18 @@ condition_lst:
     Name: KeyBufferContains
     Restrictions: viewglobal
     Template: '["value","bool"]'
+  '10':
+    Id: 10
+    Labels: '["Object"]'
+    Name: ObjectInPocketByID
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
+  '11':
+    Id: 11
+    Labels: '["Name"]'
+    Name: ObjectInPocketByName
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
 trigger_lst:
   '0':
     Id: 0

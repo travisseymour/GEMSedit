@@ -308,6 +308,38 @@ KeyBufferContains(Keys: value, IgnoreCase: bool)
 
 ---
 
+### ObjectInPocketByID
+
+```
+ObjectInPocketByID(Object: objnum)
+```
+
+**Description:** Returns true if the object with the specified ID is currently in one of the pockets.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object to check for
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### ObjectInPocketByName
+
+```
+ObjectInPocketByName(Name: value)
+```
+
+**Description:** Returns true if any object with the specified name is currently in one of the pockets, regardless of its ID.
+
+**Parameters:**
+
+- `Name` (value): Name of the object to check for
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ## Actions
 
 Actions are commands that modify the environment state or trigger effects.
