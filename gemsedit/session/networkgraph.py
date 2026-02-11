@@ -81,7 +81,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
         if view.Actions:
             for action in view.Actions.values():
                 if "PortalTo" in action.Action:
-                    portal_room = re.compile(r"\((\d+)\)")
+                    portal_room = re.compile(r"PortalTo\((\d+)")
                     destination = portal_room.findall(action.Action)
                     if destination:
                         net.add_edge(
@@ -98,7 +98,7 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
                 if obj.Actions:
                     for action in obj.Actions.values():
                         if "PortalTo" in action.Action:
-                            portal_room = re.compile(r"\((\d+)\)")
+                            portal_room = re.compile(r"PortalTo\((\d+)")
                             destination = portal_room.findall(action.Action)
                             if destination:
                                 if action.Trigger == "MouseClick()":
