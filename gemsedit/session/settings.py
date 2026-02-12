@@ -412,6 +412,8 @@ class Settings:
         # other table view config
         self.ui.settings_tableView.resizeColumnsToContents()
         self.ui.settings_tableView.resizeRowsToContents()
+        min_row_height = self.ui.settings_tableView.fontMetrics().height() + 8
+        self.ui.settings_tableView.verticalHeader().setMinimumSectionSize(min_row_height)
 
         # setup selection model handler (mouse or keyboard)...have to do *after* table is filled: http://goo.gl/KPaajQ
         self.selection_model = self.ui.settings_tableView.selectionModel()
