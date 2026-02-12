@@ -107,7 +107,8 @@ settings_desc = {
     "Id": "",
     "Start View": "<b>Starting View</b> : When run, the GEMS environment will first open this view.",
     "Pocket Count": "<b>Pocket Count</b> : Number of pockets to display/use in the environment.",
-    "View Transition": "<b>Room Transition</b> : Dictates how images will transition between views.",
+    "View Transition": "<b>Room Transition</b> : Dictates how images will transition between views. "
+    "Note: When Transition Duration is 0, no transition will be performed regardless of this setting.",
     "Preload Resources": "<b>Preload Resources</b> : Preload all resources into RAM before starting environment."
     " Currently limited to pre-generating Text-To-Speech outputs.",
     "Global Overlay\n(Right-Click To Clear)": "<b>Global Overly</b> : Overlay to use on all views unless overridden "
@@ -124,7 +125,8 @@ settings_desc = {
     "objects are hovered -- this may be confusing to users and is not recommended.",
     "Media Volume": "This setting sets the overall volume level for any media playback within GEMSrun (0.0 to 1.0).",
     "Transition Duration\n(100-2000 ms)": "<b>Transition Duration</b> : Duration in milliseconds for view transitions "
-    "(100-2000). Default is 400ms. Only applies when View Transition is set to a value other than None.",
+    "(100-2000). Default is 400ms. A value of 0 means no transition will be performed, "
+    "regardless of the View Transition setting. Only applies when View Transition is set to a value other than None.",
 }
 
 transistion_desc = {

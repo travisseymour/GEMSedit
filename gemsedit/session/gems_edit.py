@@ -21,6 +21,7 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import threading
 import time
 import webbrowser
 
@@ -36,7 +37,7 @@ from gemsedit.gui import action_list
 import gemsedit.gui.gems_window as win
 from gemsedit.session import objects, settings
 from gemsedit.session.networkgraph import show_gems_network_graph
-from gemsedit.session.version import __version__
+from gemsedit.session.version import __version__, check_latest_github_version, version_less_than
 from gemsedit.utils.apputils import (
     get_resource,
     launch_in_terminal,
@@ -145,6 +146,7 @@ class GemsViews:
         self.setup_recent_menu()
 
         self.MainWindow.setWindowTitle(f"{app_long_name} version {__version__}")
+        self._check_for_update()
 
         self.ui.actionSaveEnv.setIconVisibleInMenu(True)
         self.ui_timer = QTimer()
@@ -156,6 +158,21 @@ class GemsViews:
         cp = QGuiApplication.primaryScreen().availableGeometry().center()
         qr.moveCenter(cp)
         self.MainWindow.move(qr.topLeft())
+
+    def _check_for_update(self):
+        """Check GitHub for a newer version in a background thread, amend window title if found."""
+
+        def _do_check():
+            latest = check_latest_github_version()
+            if latest and version_less_than(__version__, latest):
+                QTimer.singleShot(
+                    0,
+                    lambda: self.MainWindow.setWindowTitle(
+                        f"{app_long_name} version {__version__}    [New version {latest} available!]"
+                    ),
+                )
+
+        threading.Thread(target=_do_check, daemon=True).start()
 
     def connectSlots(self):
         self.ui.view_tableView.doubleClicked.connect(self.handleBaseDoubleClick)

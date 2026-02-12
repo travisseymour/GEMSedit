@@ -382,8 +382,8 @@ class Settings:
 
             if setting_item not in ("Id", "Version"):
                 if type_item == "number":
-                    if i == 11:  # Transition Duration
-                        delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(100, 2000))
+                    if i == 11:  # Transition Duration (0 = no transition)
+                        delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(0, 2000))
                     else:
                         delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(0, 6))
                 elif type_item == "01float":
