@@ -105,8 +105,11 @@ class SettingsListModel(QtCore.QAbstractTableModel):
                     v = int(v.split(":")[0])
 
             elif index.row() == 3:  # >>>>>> view transitions
-                if str(v).title() in ("None", "Fade"):
-                    v = str(v).title()
+                valid_transitions = ("None", "Dissolve", "Wipe-Left", "Wipe-Right")
+                if str(v) in valid_transitions:
+                    v = str(v)
+                elif str(v).title() == "Fade":
+                    v = "Dissolve"  # migrate legacy "Fade" to "Dissolve"
                 else:
                     v = "None"
 
@@ -273,7 +276,7 @@ class Settings:
                 self.settings_list.append(
                     [
                         "picfile",
-                        "Global Overlay\n(Right-Click To Clear)",
+                        "Global Overlay (Right-Click To Clear)",
                         query.value(5),
                     ]
                 )
@@ -282,6 +285,7 @@ class Settings:
                 self.settings_list.append(["displaylist", "Display Type", query.value(8)])
                 self.settings_list.append(["hoverlist", "Object Hover", query.value(9)])
                 self.settings_list.append(["01float", "Media Volume", query.value(10)])
+                self.settings_list.append(["number", "Transition Duration (100-2000 ms)", query.value(11)])
 
     def connect_slots(self):
         # QtCore.QObject.connect(self.ui.applyButton, QtCore.SIGNAL("pressed()"), self.handleApply)
@@ -315,7 +319,8 @@ class Settings:
             f'StageColor="{self.settings_list[7][2]}", '
             f"DisplayType='{self.settings_list[8][2]}', "
             f"ObjectHover='{self.settings_list[9][2]}', "
-            f"Volume='{self.settings_list[10][2]}' where Id = {0}"
+            f"Volume='{self.settings_list[10][2]}', "
+            f"TransitionDuration='{self.settings_list[11][2]}' where Id = {0}"
         )
 
         query.exec(sqlstr)
@@ -377,7 +382,10 @@ class Settings:
 
             if setting_item not in ("Id", "Version"):
                 if type_item == "number":
-                    delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(0, 6))
+                    if i == 11:  # Transition Duration
+                        delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(100, 2000))
+                    else:
+                        delegate.insertRowDelegate(i, generic_row_delegates.IntegerRowDelegate(0, 6))
                 elif type_item == "01float":
                     delegate.insertRowDelegate(i, generic_row_delegates.FloatRowDelegate(0.0, 1.0))
                 elif type_item == "value":
@@ -414,6 +422,12 @@ class Settings:
         self.ui.settings_tableView.resizeRowsToContents()
         min_row_height = self.ui.settings_tableView.fontMetrics().height() + 8
         self.ui.settings_tableView.verticalHeader().setMinimumSectionSize(min_row_height)
+        # Widen the vertical header (setting names column) to fit text
+        fm = self.ui.settings_tableView.verticalHeader().fontMetrics()
+        max_width = 0
+        for i in range(len(self.settings_list)):
+            max_width = max(max_width, fm.horizontalAdvance(str(self.settings_list[i][1])))
+        self.ui.settings_tableView.verticalHeader().setFixedWidth(max_width + 70)
 
         # setup selection model handler (mouse or keyboard)...have to do *after* table is filled: http://goo.gl/KPaajQ
         self.selection_model = self.ui.settings_tableView.selectionModel()
@@ -443,4 +457,10 @@ class Settings:
         if self.current_id:
             # data = self.settings_list[self.current_id][2]
             name = self.settings_list[self.current_id][1]
-            self.ui.xxHelpLabel.setText(self.help_dict[name] if name else "")
+            help_text = self.help_dict.get(name, "")
+            if not help_text and name:
+                for key, val in self.help_dict.items():
+                    if key.replace("\n", " ") == name:
+                        help_text = val
+                        break
+            self.ui.xxHelpLabel.setText(help_text)

@@ -154,6 +154,10 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
     if "Volume" not in options:
         options["Volume"] = 1.0
 
+    # add transition duration to options
+    if "TransitionDuration" not in options:
+        options["TransitionDuration"] = 400
+
     # add global options info
     dict_db["Global"] = {}
 
@@ -257,7 +261,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
         "CREATE TABLE objects(Id INT PRIMARY KEY UNIQUE, Parent INT, Name TEXT, Left INT, Top INT, Width INT, Height INT, Visible INT, Takeable INT, Draggable INT, RowOrder INT);",
         "CREATE TABLE actions(Id INT PRIMARY KEY UNIQUE, ContextType TEXT, ContextId INT, Condition TEXT, Trigger TEXT, Action TEXT, Enabled boolean, RowOrder INT);",
         "CREATE TABLE views(Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT, RowOrder INT);",
-        "CREATE TABLE options(Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,  Roomtransition TEXT, Preloadresources INT, Globaloverlay TEXT, Version TEXT, StageColor TEXT, DisplayType TEXT, ObjectHover TEXT, Volume REAL);",
+        "CREATE TABLE options(Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,  Roomtransition TEXT, Preloadresources INT, Globaloverlay TEXT, Version TEXT, StageColor TEXT, DisplayType TEXT, ObjectHover TEXT, Volume REAL, TransitionDuration INT);",
         "CREATE TABLE condition_lst(Id INT PRIMARY KEY UNIQUE, Name TEXT, Template TEXT, Labels TEXT, Restrictions TEXT );",
         "CREATE TABLE trigger_lst(Id INT PRIMARY KEY UNIQUE, Name TEXT, Template TEXT, Labels TEXT, Restrictions TEXT );",
         "CREATE TABLE action_lst(Id INT PRIMARY KEY UNIQUE, Name TEXT, Template TEXT, Labels TEXT, Restrictions TEXT );",

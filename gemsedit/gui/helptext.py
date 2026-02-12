@@ -123,11 +123,15 @@ settings_desc = {
     "several less subtle options, mostly used in debugging. You can also choose to do nothing when"
     "objects are hovered -- this may be confusing to users and is not recommended.",
     "Media Volume": "This setting sets the overall volume level for any media playback within GEMSrun (0.0 to 1.0).",
+    "Transition Duration\n(100-2000 ms)": "<b>Transition Duration</b> : Duration in milliseconds for view transitions "
+    "(100-2000). Default is 400ms. Only applies when View Transition is set to a value other than None.",
 }
 
 transistion_desc = {
-    "None": "<b>None</b> : No transition.",
-    "Fade": "<b>Fade</b> : Fade transition.",
+    "None": "<b>None</b> : No transition between views.",
+    "Dissolve": "<b>Dissolve</b> : Crossfade/dissolve transition between views.",
+    "Wipe-Left": "<b>Wipe Left</b> : New view wipes in from the left edge.",
+    "Wipe-Right": "<b>Wipe Right</b> : New view wipes in from the right edge.",
 }
 
 # ObjectHover TEXT (none,frameobject, cursorchange, tooltip)
