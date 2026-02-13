@@ -27,7 +27,7 @@ import webbrowser
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QSettings, QTimer
-from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
+from PySide6.QtGui import QCloseEvent, QGuiApplication
 from PySide6.QtWidgets import QMessageBox
 
 from gemsedit import app_long_name, log
@@ -121,7 +121,6 @@ class GemsViews:
         self.recent_menu = None
 
         self.MainWindow = QtWidgets.QMainWindow()
-        self.MainWindow.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
 
         self.ui = win.Ui_ViewsWindow()
         self.ui.setupUi(self.MainWindow)

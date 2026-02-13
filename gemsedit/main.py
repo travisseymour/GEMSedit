@@ -40,12 +40,21 @@ def main():
     gemsedit.APPLICATION = QApplication(sys.argv)
     gemsedit.set_app_font(QFont("Arial", 14))
     gemsedit.SETTINGS = QSettings()
-    gemsedit.APPLICATION.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
 
     # Set some global vars
     QCoreApplication.setOrganizationName("TravisSeymour")
     QCoreApplication.setOrganizationDomain("travisseymour.com")
     QCoreApplication.setApplicationName("GEMSedit")
+
+    # gemsedit.APPLICATION.setWindowIcon(QIcon(str(get_resource("images", "Icon.png"))))
+    app_icon = QIcon()
+    for size in [16, 24, 32, 48, 64, 128, 256, 512]:
+        try:
+            icon_path = get_resource("images", "appicon", f"icon_{size}.png")
+            app_icon.addFile(str(icon_path))
+        except FileNotFoundError:
+            log.warning(f"Problem adding app icon {str(icon_path)}")
+    gemsedit.APPLICATION.setWindowIcon(app_icon)
 
     gemsedit.CONFIG_PATH = Path(appdirs.user_config_dir(), "GEMS")
     gemsedit.CONFIG_PATH.mkdir(exist_ok=True)
@@ -61,8 +70,6 @@ def main():
         gemsedit.log.info(f"GEMSedit app logging enabled at {gemsedit.LOG_PATH}")
     except Exception as e:
         gemsedit.log.warning(f'GEMSedit app logging to {gemsedit.LOG_PATH} failed: "{e}"')
-
-    # tray = QSystemTrayIcon()
 
     # Run App
     # -------
