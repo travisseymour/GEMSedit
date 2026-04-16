@@ -90,12 +90,24 @@ class GemsDB:
         db_as_dict = load_yaml_as_dict(db_yaml_file, extra_yaml=ui_list_yaml_file)
         self.tmp_file = Path(self.tmp_folder.name, "gems_sqlite_temp.db")
 
-        tmp_db_in_sqlite_file = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
+        tmp_db_in_sqlite_file, migration_info = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
         self.db.setDatabaseName(str(tmp_db_in_sqlite_file))
         self.db.open()
         DB_CHANGED = False
 
         if self.db_opened():
+            # Check for migrations and inform user
+            if migration_info.get("portalto_migrated", 0) > 0:
+                count = migration_info["portalto_migrated"]
+                QMessageBox.information(
+                    None,
+                    "PortalTo Actions Updated",
+                    f"{count} old PortalTo action(s) (e.g., PortalTo(3)) have been automatically "
+                    f"converted to the new format with an empty transition VidFile (e.g., PortalTo(3,\"\")).\n\n"
+                    f"Please save the environment file to store these changes.",
+                    QMessageBox.StandardButton.Ok,
+                )
+                mark_db_as_changed()
             return True
         else:
             self.close_db(offer_to_save_changes=False)

@@ -40,6 +40,38 @@ def _version_less_than(version_str: str, target: str) -> bool:
         return True
 
 
+def migrate_old_portalto(action_str: str) -> tuple[str, bool]:
+    """
+    Migrate old PortalTo actions that only have a single integer parameter.
+    Old format: PortalTo(3)
+    New format: PortalTo(3, "")
+
+    Returns: (migrated_action_str, was_migrated)
+    """
+    if not isinstance(action_str, str):
+        return action_str, False
+
+    if not action_str.startswith("PortalTo("):
+        return action_str, False
+
+    try:
+        # Parse function-call format: PortalTo(3)
+        paren_start = action_str.index("(")
+        paren_end = action_str.rindex(")")
+        args_str = action_str[paren_start + 1 : paren_end].strip()
+
+        # Check if it's just a single integer (old format)
+        # New format would have a comma for the second parameter
+        if "," not in args_str and args_str.isdigit():
+            # Old format - convert to new format with empty string
+            return f'PortalTo({args_str},"")', True
+
+    except (ValueError, IndexError):
+        pass
+
+    return action_str, False
+
+
 def migrate_old_playvideo(action_str: str, env_version: str) -> tuple[str, bool]:
     """
     Migrate old PlayVideo actions from environments with version < 2026.2.6.4.
@@ -241,10 +273,18 @@ def load_yaml_as_dict(yaml_file: str | Path, extra_yaml: str | Path | None = Non
     return db_dict
 
 
-def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = False) -> Path:
-    """Automatically saves to disk as sqlite db is constructed from the dict. Returns path of sqlite db."""
+def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = False) -> tuple[Path, dict]:
+    """Automatically saves to disk as sqlite db is constructed from the dict.
+
+    Returns: (path of sqlite db, migration_info dict)
+    """
     db_path = Path(db_file_name)
     sql_db = Database(db_path, recreate=overwrite)
+
+    # Track migrations that occurred
+    migration_info = {
+        "portalto_migrated": 0,
+    }
 
     """
     what we got from original sqlitedb schema [KEEP HERE]
@@ -274,9 +314,20 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     env_version = db.get("Global", {}).get("Options", {}).get("Version", "")
 
     def arrange_action(action: dict) -> dict:
+        nonlocal migration_info
+
+        current_action = action["Action"]
+
+        # Apply migration for old PortalTo signature (single integer to integer + empty string)
+        migrated_action, portalto_was_migrated = migrate_old_portalto(current_action)
+        if portalto_was_migrated:
+            migration_info["portalto_migrated"] += 1
+            current_action = migrated_action
+
         # Apply migration for old PlayVideo signature
-        migrated_action, should_disable = migrate_old_playvideo(action["Action"], env_version)
+        migrated_action, should_disable = migrate_old_playvideo(current_action, env_version)
         enabled = 0 if should_disable else action["Enabled"]
+
         return {
             "Id": action["Id"],
             "ContextType": action["ContextType"],
@@ -341,7 +392,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     # for row in sql_db['condition_lst'].rows:
     #     print(row)
 
-    return db_path
+    return db_path, migration_info
 
 
 if __name__ == "__main__":
@@ -379,4 +430,5 @@ if __name__ == "__main__":
     new_db_file = Path(Path(db_file).parent, Path(db_file).stem + "_y2s2y.db")
     db_as_dict_from_disk = load_yaml_as_dict(new_yaml_file)
 
-    sqlite_db_file = dict_to_sqlite_file(db_as_dict_from_disk, new_db_file, overwrite=True)
+    sqlite_db_file, migration_info = dict_to_sqlite_file(db_as_dict_from_disk, new_db_file, overwrite=True)
+    print(f"Migration info: {migration_info}")
