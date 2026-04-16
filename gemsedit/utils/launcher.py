@@ -290,20 +290,25 @@ def _windows_get_shortcut_path() -> Path:
     return start_menu / f"{APP_NAME}.lnk"
 
 
-def _windows_get_icon_path() -> Path:
-    """Get the path where we'll store the icon on Windows."""
+def _windows_get_icon_dest_path() -> Path:
+    """Get the destination path where we'll store the icon on Windows."""
     app_data = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
     icon_dir = app_data / "GEMSedit"
     icon_dir.mkdir(parents=True, exist_ok=True)
     return icon_dir / "gemsedit.ico"
 
 
+def _windows_get_icon_source() -> Path:
+    """Get the path to the source .ico file."""
+    return get_resource("images", "appicon", "appicon.ico")
+
+
 def _windows_install() -> tuple[bool, str]:
     """Install Start Menu shortcut on Windows."""
     try:
-        # Copy icon (we'll use PNG since we don't have an ICO)
-        icon_src = get_icon_path(256)
-        icon_dest = _windows_get_icon_path().with_suffix(".png")
+        # Copy .ico file to local app data
+        icon_src = _windows_get_icon_source()
+        icon_dest = _windows_get_icon_dest_path()
         icon_dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(icon_src, icon_dest)
 
@@ -311,13 +316,14 @@ def _windows_install() -> tuple[bool, str]:
         exec_path = get_executable_path()
 
         # Use PowerShell to create the shortcut
+        # IconLocation for .ico files should just be the path (index 0 is default)
         ps_script = f"""
 $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("{shortcut_path}")
 $Shortcut.TargetPath = "{exec_path}"
 $Shortcut.WorkingDirectory = "{Path.home()}"
 $Shortcut.Description = "Environment Editor for GEMS"
-$Shortcut.IconLocation = "{icon_dest}"
+$Shortcut.IconLocation = "{icon_dest},0"
 $Shortcut.Save()
 """
         result = subprocess.run(
@@ -346,7 +352,7 @@ def _windows_uninstall() -> tuple[bool, str]:
     else:
         messages.append(f"Shortcut not found: {shortcut_path}")
 
-    icon_path = _windows_get_icon_path().with_suffix(".png")
+    icon_path = _windows_get_icon_dest_path()
     if icon_path.exists():
         icon_path.unlink()
         messages.append(f"Removed icon: {icon_path}")
@@ -355,6 +361,16 @@ def _windows_uninstall() -> tuple[bool, str]:
             icon_path.parent.rmdir()
         except OSError:
             pass
+    else:
+        # Also check for old .png icon from previous installs
+        old_icon_path = icon_path.with_suffix(".png")
+        if old_icon_path.exists():
+            old_icon_path.unlink()
+            messages.append(f"Removed old icon: {old_icon_path}")
+            try:
+                old_icon_path.parent.rmdir()
+            except OSError:
+                pass
 
     return True, "\n".join(messages)
 
