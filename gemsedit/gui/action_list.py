@@ -363,6 +363,5 @@ class ActionList:
             5,
             generic_col_delegates.ActionColumnDelegate("Action", self.action_type, self.media_path),
         )  # 5
-        delegate.insertColumnDelegate(6, generic_col_delegates.IntegerColumnDelegate(0, 1))  # 6
-        # delegate.insertColumnDelegate(6, genericcoldelegates.TFComboColumnDelegate())  # 6
+        delegate.insertColumnDelegate(6, generic_col_delegates.BooleanColumnDelegate())  # 6
         self.table_view.setItemDelegate(delegate)

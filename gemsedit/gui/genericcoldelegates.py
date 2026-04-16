@@ -13,6 +13,7 @@ from PySide6.QtCore import QDate, QSize, Qt
 from PySide6.QtGui import QColor, QTextDocument
 from PySide6.QtWidgets import (
     QApplication,
+    QComboBox,
     QDateEdit,
     QLineEdit,
     QSpinBox,
@@ -94,6 +95,31 @@ class IntegerColumnDelegate(QStyledItemDelegate):
         # assumes editor has 2 attributes: 'interpretText' and 'value'
         editor.interpretText()
         model.setData(index, editor.value(), Qt.ItemDataRole.EditRole)
+
+
+class BooleanColumnDelegate(QStyledItemDelegate):
+    """A delegate that shows True/False in a combo box but stores 1/0 internally."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def createEditor(self, parent, option, index):
+        combo = QComboBox(parent)
+        combo.addItems(["True", "False"])
+        return combo
+
+    def setEditorData(self, editor, index):
+        value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+        # Handle both string and integer representations
+        if value in ("True", 1, "1"):
+            editor.setCurrentIndex(0)  # "True" is at index 0
+        else:
+            editor.setCurrentIndex(1)  # "False" is at index 1
+
+    def setModelData(self, editor, model, index):
+        # Store as integer: 1 for True, 0 for False
+        value = 1 if editor.currentText() == "True" else 0
+        model.setData(index, value, Qt.ItemDataRole.EditRole)
 
 
 class DateColumnDelegate(QStyledItemDelegate):

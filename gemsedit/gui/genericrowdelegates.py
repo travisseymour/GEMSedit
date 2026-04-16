@@ -17,7 +17,6 @@ from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
     QDateEdit,
-    QDialog,
     QDoubleSpinBox,
     QFileDialog,
     QLineEdit,
@@ -187,33 +186,50 @@ class ComboRowColoredDelegate(QStyledItemDelegate):
 
 
 class DirectoryRowDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._selected_dir = None
+
     def createEditor(self, parent, option, index):
-        editor = QFileDialog(parent)
-        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
-        editor.setFileMode(QFileDialog.FileMode.Directory)
-        editor.setWindowTitle("Choose A Directory")
-        # r = option.rect
-        # r.setHeight(600)
-        # r.setWidth(600)
-        # editor.setGeometry(r)
+        # Use the static getExistingDirectory method for reliable cross-platform behavior
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+
+        # Determine starting directory
+        if current_val and os.path.isdir(current_val):
+            start_path = current_val
+        elif current_val and os.path.isdir(os.path.dirname(current_val)):
+            start_path = os.path.dirname(current_val)
+        else:
+            start_path = os.path.expanduser("~")
+
+        directory = QFileDialog.getExistingDirectory(
+            parent,
+            "Choose A Directory",
+            start_path,
+            QFileDialog.Option.ShowDirsOnly,
+        )
+
+        if directory:
+            self._selected_dir = directory
+        else:
+            self._selected_dir = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
         return editor
 
     def setEditorData(self, editor, index):
-        val = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        fs = val.rsplit(os.path.sep, 1)
-        if len(fs) == 2:
-            bdir, vdir = fs
+        if self._selected_dir is not None:
+            editor.setText(self._selected_dir)
         else:
-            bdir = "."
-            vdir = fs[0]
-
-        editor.setDirectory(bdir)
-        editor.selectFile(vdir)
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
 
     def setModelData(self, editor, model, index):
-        # model.setData(index, str(editor.selectedFiles()[0]))
-        if editor.result() == QDialog.DialogCode.Accepted:
-            model.setData(index, str(editor.selectedFiles()[0]))
+        if self._selected_dir is not None:
+            model.setData(index, self._selected_dir)
+        self._selected_dir = None  # Reset for next use
 
 
 class FileRowDelegate(QStyledItemDelegate):
@@ -221,41 +237,46 @@ class FileRowDelegate(QStyledItemDelegate):
         super().__init__(parent)
         self.filterstr = filterstr
         self.mediapath = mediapath
-        self.oldwd = "./"
+        self._selected_file = None
 
     def createEditor(self, parent, option, index):
-        editor = QFileDialog(parent)
-        editor.setModal(False)
-        editor.setDirectory(self.mediapath)
-        editor.setFileMode(QFileDialog.FileMode.ExistingFile)
-        editor.setNameFilter(self.filterstr)
-        editor.setWindowTitle("Choose an existing " + self.filterstr)
+        # Use the static getOpenFileName method for reliable cross-platform behavior
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
 
-        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
+        # Determine starting directory
+        if current_val and os.path.exists(os.path.join(self.mediapath, current_val)):
+            start_path = os.path.join(self.mediapath, current_val)
+        else:
+            start_path = self.mediapath
 
-        self.oldwd = os.getcwd()
-        os.chdir(self.mediapath)
+        filename, _ = QFileDialog.getOpenFileName(
+            parent,
+            "Choose an existing " + self.filterstr,
+            start_path,
+            self.filterstr,
+        )
 
+        if filename:
+            self._selected_file = os.path.basename(filename)
+        else:
+            self._selected_file = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
         return editor
 
     def setEditorData(self, editor, index):
-        val = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        fs = val.rsplit(os.path.sep, 1)
-        if len(fs) == 2:
-            bdir, vdir = fs
+        if self._selected_file is not None:
+            editor.setText(self._selected_file)
         else:
-            bdir = "."
-            vdir = fs[0]
-
-        editor.setDirectory(bdir)
-        editor.selectFile(vdir)
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
 
     def setModelData(self, editor, model, index):
-        # model.setData(index, str(editor.selectedFiles()[0]))
-        # print("filerowdelegate: editor.result={} qdialog.accepted={}".format(editor.result(),QDialog.Accepted))
-        if editor.result() == QDialog.DialogCode.Accepted:
-            model.setData(index, os.path.basename(str(editor.selectedFiles()[0])))
-        os.chdir(self.oldwd)
+        if self._selected_file is not None:
+            model.setData(index, self._selected_file)
+        self._selected_file = None  # Reset for next use
 
 
 class ExeFileRowDelegate(QStyledItemDelegate):
@@ -264,34 +285,48 @@ class ExeFileRowDelegate(QStyledItemDelegate):
     def __init__(self, filterstr="All Files (*.*)", parent=None):
         super().__init__(parent)
         self.filterstr = filterstr
+        self._selected_file = None
 
     def createEditor(self, parent, option, index):
-        editor = QFileDialog(parent)
-        editor.setModal(False)
-        editor.setFileMode(QFileDialog.FileMode.ExistingFile)
-        editor.setNameFilter(self.filterstr)
-        editor.setWindowTitle("Choose an Application or Executable")
+        # Use the static getOpenFileName method for reliable cross-platform behavior
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
 
-        editor.filesSelected.connect(lambda: editor.setResult(QDialog.DialogCode.Accepted))
+        # Determine starting directory from current value or use home
+        if current_val and os.path.exists(current_val):
+            start_path = current_val
+        elif current_val and os.path.exists(os.path.dirname(current_val)):
+            start_path = os.path.dirname(current_val)
+        else:
+            start_path = os.path.expanduser("~")
 
+        filename, _ = QFileDialog.getOpenFileName(
+            parent,
+            "Choose an Application or Executable",
+            start_path,
+            self.filterstr,
+        )
+
+        if filename:
+            self._selected_file = filename  # Store full path for executables
+        else:
+            self._selected_file = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
         return editor
 
     def setEditorData(self, editor, index):
-        val = index.model().data(index, Qt.ItemDataRole.DisplayRole)
-        fs = val.rsplit(os.path.sep, 1)
-        if len(fs) == 2:
-            bdir, vdir = fs
+        if self._selected_file is not None:
+            editor.setText(self._selected_file)
         else:
-            bdir = "."
-            vdir = fs[0]
-
-        editor.setDirectory(bdir)
-        editor.selectFile(vdir)
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
 
     def setModelData(self, editor, model, index):
-        if editor.result() == QDialog.DialogCode.Accepted:
-            # Store the full path for executables
-            model.setData(index, str(editor.selectedFiles()[0]))
+        if self._selected_file is not None:
+            model.setData(index, self._selected_file)
+        self._selected_file = None  # Reset for next use
 
 
 class DateRowDelegate(QStyledItemDelegate):

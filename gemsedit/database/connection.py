@@ -103,7 +103,7 @@ class GemsDB:
                     None,
                     "PortalTo Actions Updated",
                     f"{count} old PortalTo action(s) (e.g., PortalTo(3)) have been automatically "
-                    f"converted to the new format with an empty transition VidFile (e.g., PortalTo(3,\"\")).\n\n"
+                    f'converted to the new format with an empty transition VidFile (e.g., PortalTo(3,"")).\n\n'
                     f"Please save the environment file to store these changes.",
                     QMessageBox.StandardButton.Ok,
                 )
