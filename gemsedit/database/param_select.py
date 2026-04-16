@@ -133,6 +133,11 @@ class ParamSelect:
         self.ui = win.Ui_parameterSelectDialog()
         self.ui.setupUi(self.ParmSelectWindow)
 
+        # Fix dark mode: clear inline stylesheets that override palette colors
+        # These labels had white backgrounds hardcoded in the generated UI file
+        self.ui.resultLabel.setStyleSheet("")
+        self.ui.xxHelpLabel.setStyleSheet("")
+
         self.ui.titleLabel.setText(f"Action {self.param_type.title()} Editor")
         self.ui.xxLabel.setText(f"{self.param_type.title()} List")
         self.ui.xxparamLabel.setText(f"{self.param_type.title()} Parameter List")

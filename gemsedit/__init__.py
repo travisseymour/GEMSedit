@@ -76,23 +76,24 @@ def set_app_font(font: QFont):
                 color: palette(buttonText);
             }}
 
-            /* Help text labels (white bg in Designer) - adapt to theme */
-            /* Use !important to override inline stylesheets from generated UI files */
+            /* Help/result text labels - use palette colors for dark mode compatibility */
+            /* Inline stylesheets are cleared programmatically in param_select.py and settings.py */
             #xxHelpLabel, #resultLabel {{
-                background-color: palette(base) !important;
-                color: palette(text) !important;
+                background-color: palette(base);
+                color: palette(text);
+                border: 1px solid palette(mid);
             }}
 
             /* Section header labels (light blue) - ensure readable dark text on colored bg */
             #label_3, #label_4, #label_7, #label_8, #label_13, #titleLabel {{
-                background-color: rgb(102, 204, 255) !important;
-                color: #000000 !important;
+                background-color: rgb(102, 204, 255);
+                color: #000000;
             }}
 
             /* Parameter highlight labels (orange) - ensure readable dark text */
             #xxparamLabel, #xxLabel {{
-                background-color: rgb(255, 204, 102) !important;
-                color: #000000 !important;
+                background-color: rgb(255, 204, 102);
+                color: #000000;
             }}
         """
         app.setStyleSheet(app_stylesheet)

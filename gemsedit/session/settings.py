@@ -198,6 +198,9 @@ class Settings:
         self.ui.setupUi(self.MainWindow)
         self.MainWindow.setModal(False)
 
+        # Fix dark mode: clear inline stylesheets that override palette colors
+        self.ui.xxHelpLabel.setStyleSheet("")
+
         self.load_lists()
         self.help_dict = helptext.settings_desc
         self.connect_slots()
