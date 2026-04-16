@@ -39,23 +39,25 @@ cli = typer.Typer(add_completion=False)
 cli.add_typer(launcher_app, name="launcher")
 
 
-def version_callback(value: bool):
-    if value:
-        typer.echo(f"GEMSedit version {__version__}")
-        raise typer.Exit()
-
-
-@cli.command()
+@cli.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: bool | None = typer.Option(  # noqa: F841
         None,
         "--version",
         "-v",
-        callback=version_callback,
-        is_eager=True,
         help="Show the application version and exit.",
+        is_eager=True,
     ),
 ):
+    # Handle --version flag
+    if version:
+        typer.echo(f"GEMSedit version {__version__}")
+        raise typer.Exit()
+
+    # If a subcommand was invoked (e.g., "launcher"), don't run the GUI
+    if ctx.invoked_subcommand is not None:
+        return
     # Setup App
     # ---------
 
