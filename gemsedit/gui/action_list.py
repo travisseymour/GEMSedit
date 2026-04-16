@@ -106,13 +106,14 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
                 return QtGui.QColor(255, 180, 180)  # Light red
 
         if role == QtCore.Qt.ItemDataRole.ForegroundRole:
-            # Gray text for disabled rows, black for enabled
+            # Gray text for disabled rows, use palette text color for enabled (dark mode compatible)
             enabled_index = self.index(item.row(), 6)
             enabled = super().data(enabled_index, QtCore.Qt.ItemDataRole.DisplayRole)
             if not enabled:
                 return QtGui.QColor(QtCore.Qt.GlobalColor.gray)
             else:
-                return QtGui.QColor(QtCore.Qt.GlobalColor.black)
+                # Return None to use the default palette text color (works in both light and dark modes)
+                return None
 
         if role == QtCore.Qt.ItemDataRole.ToolTipRole:
             if self.problem[str(item.row())] != "":

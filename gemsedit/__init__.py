@@ -58,22 +58,41 @@ def set_app_font(font: QFont):
                 color: palette(text);
             }}
 
-            /* Help text labels (white bg in Designer) - adapt to theme */
-            #xxHelpLabel, #resultLabel {{
+            /* Fix QTableView for dark mode - ensure text is readable */
+            QTableView {{
                 background-color: palette(base);
                 color: palette(text);
+                alternate-background-color: palette(alternateBase);
+            }}
+            QTableView::item {{
+                color: palette(text);
+            }}
+            QTableView::item:selected {{
+                background-color: palette(highlight);
+                color: palette(highlighted-text);
+            }}
+            QHeaderView::section {{
+                background-color: palette(button);
+                color: palette(buttonText);
+            }}
+
+            /* Help text labels (white bg in Designer) - adapt to theme */
+            /* Use !important to override inline stylesheets from generated UI files */
+            #xxHelpLabel, #resultLabel {{
+                background-color: palette(base) !important;
+                color: palette(text) !important;
             }}
 
             /* Section header labels (light blue) - ensure readable dark text on colored bg */
             #label_3, #label_4, #label_7, #label_8, #label_13, #titleLabel {{
-                background-color: rgb(102, 204, 255);
-                color: #000000;
+                background-color: rgb(102, 204, 255) !important;
+                color: #000000 !important;
             }}
 
             /* Parameter highlight labels (orange) - ensure readable dark text */
             #xxparamLabel, #xxLabel {{
-                background-color: rgb(255, 204, 102);
-                color: #000000;
+                background-color: rgb(255, 204, 102) !important;
+                color: #000000 !important;
             }}
         """
         app.setStyleSheet(app_stylesheet)
