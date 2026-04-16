@@ -36,7 +36,9 @@ def set_app_font(font: QFont):
         # Apply font to menus via stylesheet since they don't always respect app font
         font_family = font.family()
         font_size = max(font.pointSize(), 14)  # Minimum size of 14 for menus
-        menu_stylesheet = f"""
+        # Combined stylesheet for menus and dark mode compatibility
+        # Uses palette colors to properly support both light and dark system themes
+        app_stylesheet = f"""
             QMenuBar, QMenuBar::item, QMenu, QMenu::item {{
                 font-family: "{font_family}";
                 font-size: {font_size}pt;
@@ -49,8 +51,32 @@ def set_app_font(font: QFont):
                 background-color: palette(highlight);
                 color: palette(highlighted-text);
             }}
+
+            /* Fix QTextEdit and QPlainTextEdit for dark mode */
+            QTextEdit, QPlainTextEdit {{
+                background-color: palette(base);
+                color: palette(text);
+            }}
+
+            /* Help text labels (white bg in Designer) - adapt to theme */
+            #xxHelpLabel, #resultLabel {{
+                background-color: palette(base);
+                color: palette(text);
+            }}
+
+            /* Section header labels (light blue) - ensure readable dark text on colored bg */
+            #label_3, #label_4, #label_7, #label_8, #label_13, #titleLabel {{
+                background-color: rgb(102, 204, 255);
+                color: #000000;
+            }}
+
+            /* Parameter highlight labels (orange) - ensure readable dark text */
+            #xxparamLabel, #xxLabel {{
+                background-color: rgb(255, 204, 102);
+                color: #000000;
+            }}
         """
-        app.setStyleSheet(menu_stylesheet)
+        app.setStyleSheet(app_stylesheet)
         log.debug(f"Global app font changed to {font.styleName()} ({font.pointSize()} pt)")
     except AttributeError:
         ...

@@ -103,18 +103,22 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
     def colorMenu(self):
         pixmap = QtGui.QPixmap(22, 22)
         menu = QtWidgets.QMenu("Colour")
+        # Include both dark and light colors for compatibility with light and dark modes
         for text, color in (
             ("&Black", QtCore.Qt.GlobalColor.black),
+            ("&White", QtCore.Qt.GlobalColor.white),
+            ("&Gray", QtCore.Qt.GlobalColor.gray),
             ("B&lue", QtCore.Qt.GlobalColor.blue),
             ("Dark Bl&ue", QtCore.Qt.GlobalColor.darkBlue),
             ("&Cyan", QtCore.Qt.GlobalColor.cyan),
             ("Dar&k Cyan", QtCore.Qt.GlobalColor.darkCyan),
             ("&Green", QtCore.Qt.GlobalColor.green),
             ("Dark Gr&een", QtCore.Qt.GlobalColor.darkGreen),
+            ("&Yellow", QtCore.Qt.GlobalColor.yellow),
             ("M&agenta", QtCore.Qt.GlobalColor.magenta),
             ("Dark Mage&nta", QtCore.Qt.GlobalColor.darkMagenta),
             ("&Red", QtCore.Qt.GlobalColor.red),
-            ("&Dark Red", QtCore.Qt.GlobalColor.darkRed),
+            ("Da&rk Red", QtCore.Qt.GlobalColor.darkRed),
         ):
             color = QtGui.QColor(color)
             pixmap.fill(color)
@@ -221,7 +225,9 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
 
     def toSimpleHtml(self):
         html = ""
-        black = QtGui.QColor(QtCore.Qt.GlobalColor.black)
+        # Use the system palette's text color as the "default" instead of hardcoded black
+        # This ensures correct behavior in both light and dark modes
+        default_text_color = self.palette().color(QtGui.QPalette.ColorRole.Text)
         block = self.document().begin()
         while block.isValid():
             iterator = block.begin()
@@ -246,9 +252,9 @@ class RichTextLineEdit(QtWidgets.QTextEdit):
                         text = f"<b>{text}</b>"
                     if format.fontStrikeOut():
                         text = f"<s>{text}</s>"
-                    if color != black or family:
+                    if color != default_text_color or family:
                         attributes = ""
-                        if color != black:
+                        if color != default_text_color:
                             attributes += f' color="{color.name()}"'
                         if family:
                             attributes += f' face="{family}"'

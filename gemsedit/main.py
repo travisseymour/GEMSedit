@@ -57,7 +57,6 @@ def main(
         is_eager=True,
     ),
 ):
-
     # If a subcommand was invoked (e.g., "launcher"), don't run the GUI
     if ctx.invoked_subcommand is not None:
         return

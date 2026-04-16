@@ -32,10 +32,11 @@ class ClickableLabel(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Use palette colors for proper light/dark mode support
         self.setStyleSheet(
             """
         QLabel {text-decoration:none}
-        QLabel:hover {color:white; background:grey;}
+        QLabel:hover {color: palette(highlighted-text); background: palette(highlight);}
         """
         )
         # Don't call setFixedSize here - it prevents the widget from being
@@ -53,10 +54,11 @@ class ClickableLabelOrig(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Use palette colors for proper light/dark mode support
         self.setStyleSheet(
             """
         QLabel {text-decoration:none}
-        QLabel:hover {color:white; background:grey;}
+        QLabel:hover {color: palette(highlighted-text); background: palette(highlight);}
         """
         )
         # Don't call setFixedSize here - it prevents proper sizing
@@ -74,7 +76,8 @@ class HtmlLabel(QLabel):
 
     def __init__(self, text, parent=None):
         super().__init__(self.getHtml(text), parent)
-        self.setStyleSheet("QLabel:hover {background:grey;}")
+        # Use palette colors for proper light/dark mode support
+        self.setStyleSheet("QLabel:hover {color: palette(highlighted-text); background: palette(highlight);}")
         self.setFixedSize(self.sizeHint())
 
     def getHtml(self, text):
