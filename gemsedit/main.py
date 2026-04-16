@@ -22,9 +22,9 @@ from pathlib import Path
 import sys
 
 import appdirs
-from PySide6.QtCore import QCoreApplication, QSettings
-from PySide6.QtGui import QFont, QIcon
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QCoreApplication, QSettings, Qt
+from PySide6.QtGui import QFont, QIcon, QPixmap
+from PySide6.QtWidgets import QApplication, QSplashScreen
 import typer
 
 import gemsedit
@@ -64,6 +64,13 @@ def main(
     # ---------
 
     gemsedit.APPLICATION = QApplication(sys.argv)
+
+    # Show splash screen while loading
+    splash_pixmap = QPixmap(str(get_resource("images", "loading.png")))
+    splash = QSplashScreen(splash_pixmap, Qt.WindowType.WindowStaysOnTopHint)
+    splash.show()
+    gemsedit.APPLICATION.processEvents()  # Ensure splash is displayed immediately
+
     gemsedit.set_app_font(QFont("Arial", 14))
     gemsedit.SETTINGS = QSettings()
 
@@ -107,6 +114,9 @@ def main(
 
     gems_views = GemsViews()
     gems_views.MainWindow.show()
+
+    # Close splash screen now that main window is visible
+    splash.finish(gems_views.MainWindow)
 
     sys.exit(gemsedit.APPLICATION.exec())
 
