@@ -1,6 +1,6 @@
 """
 GEMSedit: Environment Editor for GEMS (Graphical Environment Management System)
-Copyright (C) 2025 Travis L. Seymour, PhD
+Copyright (C) 2021-2026 Travis L. Seymour, PhD
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,15 +25,37 @@ import appdirs
 from PySide6.QtCore import QCoreApplication, QSettings
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import QApplication
+import typer
 
 import gemsedit
 from gemsedit import log
+from gemsedit.session.version import __version__
 from gemsedit.utils.apputils import frozen, get_resource
+from gemsedit.utils.launcher import launcher_app
 
 os.environ["OUTDATED_IGNORE"] = "1"
 
+cli = typer.Typer(add_completion=False)
+cli.add_typer(launcher_app, name="launcher")
 
-def main():
+
+def version_callback(value: bool):
+    if value:
+        typer.echo(f"GEMSedit version {__version__}")
+        raise typer.Exit()
+
+
+@cli.command()
+def main(
+    version: bool | None = typer.Option(  # noqa: F841
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Show the application version and exit.",
+    ),
+):
     # Setup App
     # ---------
 
@@ -86,4 +108,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    cli()
