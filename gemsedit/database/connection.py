@@ -91,9 +91,8 @@ class GemsDB:
         db_as_dict = load_yaml_as_dict(db_yaml_file, extra_yaml=ui_list_yaml_file)
         self.tmp_file = Path(self.tmp_folder.name, "gems_sqlite_temp.db")
 
-        tmp_db_in_sqlite_file, migration_info = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
-
-        # Validate signatures after migrations have been applied
+        # Validate signatures BEFORE dict_to_sqlite_file (which modifies db_as_dict in-place)
+        # Note: migrations are applied internally by the validator
         validate_and_report(
             db_as_dict,
             yaml_file_path=str(db_yaml_file),
@@ -101,6 +100,7 @@ class GemsDB:
             show_report=True,
         )
 
+        tmp_db_in_sqlite_file, migration_info = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
         self.db.setDatabaseName(str(tmp_db_in_sqlite_file))
         self.db.open()
         DB_CHANGED = False
