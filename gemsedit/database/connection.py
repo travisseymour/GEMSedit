@@ -23,6 +23,7 @@ from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
 import yaml
 
+from gemsedit.database.signature_validator import validate_and_report
 from gemsedit.database.yamlsqlexchange import (
     dict_to_sqlite_file,
     load_yaml_as_dict,
@@ -91,6 +92,15 @@ class GemsDB:
         self.tmp_file = Path(self.tmp_folder.name, "gems_sqlite_temp.db")
 
         tmp_db_in_sqlite_file, migration_info = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
+
+        # Validate signatures after migrations have been applied
+        validate_and_report(
+            db_as_dict,
+            yaml_file_path=str(db_yaml_file),
+            tmp_folder=self.tmp_folder,
+            show_report=True,
+        )
+
         self.db.setDatabaseName(str(tmp_db_in_sqlite_file))
         self.db.open()
         DB_CHANGED = False

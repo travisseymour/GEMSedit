@@ -3,7 +3,7 @@
 # > make install
 
 # NOTE: Fix PySide6 xcb plugin error on linux by installing: sudo apt install libxcb-cursor0
-
+ 
 [build-system]
 requires = [
   "setuptools>=61.0.0",  # for PEP 621 metadata support (fully pyproject.toml projects only)
@@ -14,7 +14,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "GEMSedit"
 description = "Environment Editor for GEMS (Graphical Environment Management System)"
-version = "2026.4.15.11"
+version = "2026.4.16.1"
 authors = [{name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu"}]
 license = {text = "GPLv3"}
 readme = "ReadMe.md"
