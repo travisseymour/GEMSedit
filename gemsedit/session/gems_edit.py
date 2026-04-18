@@ -40,7 +40,7 @@ from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.session.version import __version__, check_latest_github_version, version_less_than
 from gemsedit.utils.apputils import (
     get_resource,
-    launch_in_terminal,
+    start_external_app,
 )
 
 
@@ -423,7 +423,7 @@ class GemsViews:
             log.debug(f"Launching GEMSrun with {self.db_filename=}")
 
             try:
-                launch_in_terminal("GEMSrun", params=["--file", self.db_filename])
+                start_external_app("GEMSrun", params=["--file", self.db_filename])
             except Exception as e:
                 _ = QMessageBox.critical(
                     self.MainWindow,
