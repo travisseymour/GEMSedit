@@ -152,6 +152,10 @@ class GemsViews:
         self.ui_timer.timeout.connect(self.check_for_db_changed)
         self.ui_timer.start(1000)
 
+        # Set up click handler for environment filename label (for validation report)
+        self.dbfilename_click_filter = ClickEventFilter(callback=self._handle_validation_label_click)
+        self.ui.dbfilename_Label.installEventFilter(self.dbfilename_click_filter)
+
     def center(self):
         qr = self.MainWindow.frameGeometry()
         cp = QGuiApplication.primaryScreen().availableGeometry().center()
@@ -431,6 +435,31 @@ class GemsViews:
 
     def check_for_db_changed(self):
         self.ui.actionSaveEnv.setEnabled(self.connection.db_opened() and connection.DB_CHANGED)
+
+    def _update_validation_label_style(self, has_issues: bool) -> None:
+        """Update the environment filename label styling based on validation status."""
+        # Always show pointer cursor to indicate clickability
+        self.ui.dbfilename_Label.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
+        if has_issues:
+            # Orange text (better visibility in dark mode), failure tooltip
+            self.ui.dbfilename_Label.setStyleSheet("color: orange;")
+            self.ui.dbfilename_Label.setToolTip("Environment has failed validation. Click to see validation report")
+        else:
+            # Normal text color (use palette for dark mode compatibility), success tooltip
+            self.ui.dbfilename_Label.setStyleSheet("")  # Clear custom style, use palette
+            self.ui.dbfilename_Label.setToolTip("Environment has passed validation. Click to see validation report")
+
+    def _handle_validation_label_click(self) -> None:
+        """Handle click on environment filename label - re-run validation and show report."""
+        if not self.connection.db_opened():
+            return
+
+        result = self.connection.revalidate()
+        if result is None:
+            return
+
+        self._update_validation_label_style(result.has_issues)
+        self.connection.show_validation_report_in_browser(result)
 
     def launchMediaFolder(self):
         if not self.media_path or not Path(self.media_path).is_dir():
@@ -1062,6 +1091,7 @@ class GemsViews:
             self.initializeDatabases()
             self.initializeViews()
             self.ui.dbfilename_Label.setText(os.path.basename(filename))
+            self._update_validation_label_style(self.connection.has_validation_issues())
             self.enableButtons()
         else:
             QMessageBox.critical(
@@ -1084,6 +1114,9 @@ class GemsViews:
         self.media_path = ""
 
         self.ui.dbfilename_Label.setText("...")
+        self.ui.dbfilename_Label.setStyleSheet("")
+        self.ui.dbfilename_Label.setToolTip("")
+        self.ui.dbfilename_Label.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
         self.ui.fgPic_plainTextEdit.setPlainText("")
         self.ui.bgPic_plainTextEdit.setPlainText("")

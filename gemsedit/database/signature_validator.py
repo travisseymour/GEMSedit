@@ -364,12 +364,13 @@ def generate_html_report(result: ValidationResult) -> str:
 
     summary_class = "summary-ok" if not result.has_issues else "summary-error"
     summary_text = "No Issues Found" if not result.has_issues else f"{result.issue_count} Issue(s) Found"
+    page_title = "Environment Validation Passed" if not result.has_issues else "Issues Were Found With Your Environment"
 
     html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Signature Validation Report</title>
+    <title>Environment Validation Report</title>
     <style>
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -423,7 +424,7 @@ def generate_html_report(result: ValidationResult) -> str:
     </style>
 </head>
 <body>
-    <h1>Signature Validation Report</h1>
+    <h1>{page_title}</h1>
 
     <div class="summary {summary_class}">
         <h3>{summary_text}</h3>
@@ -487,7 +488,7 @@ def generate_html_report(result: ValidationResult) -> str:
     return html
 
 
-def show_validation_report(result: ValidationResult, tmp_folder: TemporaryDirectory) -> Path | None:
+def show_validation_report(result: ValidationResult, tmp_folder: TemporaryDirectory) -> Path:
     """
     Save HTML report to temp folder and open in browser.
 
@@ -496,11 +497,8 @@ def show_validation_report(result: ValidationResult, tmp_folder: TemporaryDirect
         tmp_folder: TemporaryDirectory from GemsDB connection
 
     Returns:
-        Path to the report file, or None if no issues
+        Path to the report file
     """
-    if not result.has_issues:
-        return None
-
     html_content = generate_html_report(result)
     report_path = Path(tmp_folder.name, "signature_validation_report.html")
     report_path.write_text(html_content)

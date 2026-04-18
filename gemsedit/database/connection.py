@@ -23,7 +23,11 @@ from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
 import yaml
 
-from gemsedit.database.signature_validator import validate_and_report
+from gemsedit.database.signature_validator import (
+    ValidationResult,
+    show_validation_report,
+    validate_and_report,
+)
 from gemsedit.database.yamlsqlexchange import (
     dict_to_sqlite_file,
     load_yaml_as_dict,
@@ -50,6 +54,7 @@ class GemsDB:
         self.tmp_file = None
         self.yaml_file_name = None
         self.ui_list_yaml_file = None
+        self.validation_result: ValidationResult | None = None
 
     def __del__(self):
         try:
@@ -93,11 +98,12 @@ class GemsDB:
 
         # Validate signatures BEFORE dict_to_sqlite_file (which modifies db_as_dict in-place)
         # Note: migrations are applied internally by the validator
-        validate_and_report(
+        # Store result but don't auto-open browser - UI will handle display
+        self.validation_result = validate_and_report(
             db_as_dict,
             yaml_file_path=str(db_yaml_file),
             tmp_folder=self.tmp_folder,
-            show_report=True,
+            show_report=False,
         )
 
         tmp_db_in_sqlite_file, migration_info = dict_to_sqlite_file(db_as_dict, self.tmp_file, overwrite=True)
@@ -195,3 +201,28 @@ class GemsDB:
         self.yaml_file_name = None
         self.ui_list_yaml_file = None
         self.db = None
+        self.validation_result = None
+
+    def has_validation_issues(self) -> bool:
+        """Check if the current environment has validation issues."""
+        return self.validation_result is not None and self.validation_result.has_issues
+
+    def revalidate(self) -> ValidationResult | None:
+        """Re-run validation on current db and return the result."""
+        if not self.db_opened() or not self.yaml_file_name:
+            return None
+
+        # Re-load the YAML to get fresh dict for validation
+        from gemsedit.database.yamlsqlexchange import load_yaml_as_dict
+
+        db_as_dict = load_yaml_as_dict(self.yaml_file_name, extra_yaml=self.ui_list_yaml_file)
+        return validate_and_report(
+            db_as_dict,
+            yaml_file_path=self.yaml_file_name,
+            tmp_folder=self.tmp_folder,
+            show_report=False,
+        )
+
+    def show_validation_report_in_browser(self, result: ValidationResult) -> None:
+        """Show the validation report in browser."""
+        show_validation_report(result, self.tmp_folder)
