@@ -997,8 +997,10 @@ class GemsViews:
             return
 
         file_path = Path(filename)
-        file_path = Path(file_path.parent, file_path.stem.replace(" ", "_").strip() + ".yaml")
-        media_folder = Path(file_path.parent, f"{file_path.stem}_media")
+        env_name = file_path.stem.replace(" ", "_").strip()
+        root_folder = Path(file_path.parent, env_name)
+        file_path = Path(root_folder, env_name + ".yaml")
+        media_folder = Path(root_folder, f"{env_name}_media")
 
         errors = gems_db.new_database(yaml_db_file=file_path, media_folder=media_folder)
 

@@ -49,7 +49,7 @@ def new_database(yaml_db_file: Path, media_folder: Path) -> tuple:
     # Create Base Environment
 
     try:
-        media_folder.mkdir(exist_ok=True)
+        media_folder.mkdir(parents=True, exist_ok=True)
     except Exception as e:
         errors.append(f"Error making media folder at {media_folder} ('{e}').")
         return tuple(errors)
