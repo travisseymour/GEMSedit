@@ -10,7 +10,8 @@ Global:
     Roomtransition: Fade
     StageColor: '[''Dark Slate Gray'',47,79,79,255]'
     Startview: 0
-    Version: 1.0.6
+    TransitionDuration: 1.0
+    Version: 2026.4.17.2
     Volume: 0.5
   PocketActions: {}
 Id: 0
