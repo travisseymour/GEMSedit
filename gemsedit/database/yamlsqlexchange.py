@@ -150,6 +150,15 @@ def un_string_lists(text: str) -> str:
         return txt
 
 
+def _is_blank_action(action: dict) -> bool:
+    """Return True if an action has no Condition, Trigger, or Action specified."""
+    return (
+        not str(action.get("Condition", "") or "").strip()
+        and not str(action.get("Trigger", "") or "").strip()
+        and not str(action.get("Action", "") or "").strip()
+    )
+
+
 def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
     db = sqlite_utils.Database(db_file)
 
@@ -199,6 +208,8 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
     # add global actions
     dict_db["Global"]["GlobalActions"] = {}
     for action in db["actions"].rows_where('ContextType == "global"'):
+        if _is_blank_action(action):
+            continue
         action["Action"] = un_string_lists(action["Action"])
         # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
         dict_db["Global"]["GlobalActions"][str(action["Id"])] = action
@@ -206,6 +217,8 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
     # add pocket actions
     dict_db["Global"]["PocketActions"] = {}
     for action in db["actions"].rows_where('ContextType == "pocket"'):
+        if _is_blank_action(action):
+            continue
         action["Action"] = un_string_lists(action["Action"])
         # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
         dict_db["Global"]["PocketActions"][str(action["Id"])] = action
@@ -216,6 +229,8 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
         # add view actions
         view["Actions"] = {}
         for action in db["actions"].rows_where(f'ContextType == "view" and ContextId == {view["Id"]}'):
+            if _is_blank_action(action):
+                continue
             action["Action"] = un_string_lists(action["Action"])
             # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
             view["Actions"][str(action["Id"])] = action
@@ -230,6 +245,8 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
             # add view object actions
             obj["Actions"] = {}
             for action in db["actions"].rows_where(f'ContextType == "object" and ContextId == {obj["Id"]}'):
+                if _is_blank_action(action):
+                    continue
                 action["Action"] = un_string_lists(action["Action"])
                 # action['Enabled'] = bool(action['Enabled'])   # instead, convert when used
                 obj["Actions"][str(action["Id"])] = action

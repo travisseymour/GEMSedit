@@ -953,6 +953,16 @@ class GemsViews:
         self.connectBaseModelToTableView(self.model, self.ui.view_tableView)
 
     def initializeViews(self):
+        # disconnect any previous action button connections to avoid duplicate signals
+        try:
+            self.ui.actionAdd_toolButton.pressed.disconnect()
+        except (TypeError, RuntimeError):
+            pass
+        try:
+            self.ui.actionDel_toolButton.pressed.disconnect()
+        except (TypeError, RuntimeError):
+            pass
+
         # if there is anything in the base list, select the first one
         if self.model.rowCount() > 0:
             _id = self.model.record(0).value("Id")
