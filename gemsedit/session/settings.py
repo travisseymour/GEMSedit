@@ -313,20 +313,32 @@ class Settings:
         # Version REAL, StageColor TEXT, DisplayType TEXT, ObjectHover TEXT)
 
         query = QtSql.QSqlQuery()
-        sqlstr = (
-            f"update options set Startview='{self.settings_list[1][2]}', "
-            f"Pocketcount='{self.settings_list[2][2]}', "
-            f"Roomtransition='{self.settings_list[3][2]}', "
-            f"Preloadresources='{self.settings_list[4][2]}', "
-            f"Globaloverlay='{self.settings_list[5][2]}', "
-            f'StageColor="{self.settings_list[7][2]}", '
-            f"DisplayType='{self.settings_list[8][2]}', "
-            f"ObjectHover='{self.settings_list[9][2]}', "
-            f"Volume='{self.settings_list[10][2]}', "
-            f"TransitionDuration='{self.settings_list[11][2]}' where Id = {0}"
+        query.prepare(
+            "UPDATE options SET "
+            "Startview=:startview, "
+            "Pocketcount=:pocketcount, "
+            "Roomtransition=:roomtransition, "
+            "Preloadresources=:preloadresources, "
+            "Globaloverlay=:globaloverlay, "
+            "StageColor=:stagecolor, "
+            "DisplayType=:displaytype, "
+            "ObjectHover=:objecthover, "
+            "Volume=:volume, "
+            "TransitionDuration=:transitionduration "
+            "WHERE Id = :id"
         )
-
-        query.exec(sqlstr)
+        query.bindValue(":startview", self.settings_list[1][2])
+        query.bindValue(":pocketcount", self.settings_list[2][2])
+        query.bindValue(":roomtransition", self.settings_list[3][2])
+        query.bindValue(":preloadresources", self.settings_list[4][2])
+        query.bindValue(":globaloverlay", self.settings_list[5][2])
+        query.bindValue(":stagecolor", self.settings_list[7][2])
+        query.bindValue(":displaytype", self.settings_list[8][2])
+        query.bindValue(":objecthover", self.settings_list[9][2])
+        query.bindValue(":volume", self.settings_list[10][2])
+        query.bindValue(":transitionduration", self.settings_list[11][2])
+        query.bindValue(":id", 0)
+        query.exec()
 
         if query.lastError().isValid():
             log.error(f"Error in data update query: {query.lastError().text()}")

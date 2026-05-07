@@ -131,12 +131,29 @@ class Objects:
             self.ui.object_tableView.selectRow(curr_row)
 
     def handlePicEdit(self, mode):
-        left = 0
-        top = 0
-        width = 0
-        height = 0
         if mode == "delete":
-            left = top = width = height = 0
+            if self.parentid is None or self.currentrow is None:
+                return
+            id = self.model.record(self.currentrow).value("Id")
+            query = QtSql.QSqlQuery()
+            sql = (
+                f"UPDATE {self.basetablename}"
+                f" SET Left = :left, Top = :top, Width = :width, Height = :height WHERE Id = :id"
+            )
+            query.prepare(sql)
+            query.bindValue(":left", 0)
+            query.bindValue(":top", 0)
+            query.bindValue(":width", 0)
+            query.bindValue(":height", 0)
+            query.bindValue(":id", id)
+            query.exec()
+            if query.lastError().isValid():
+                log.error(f"Problem in handlePicEdit() delete query: {query.lastError().text()}")
+            sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+            self.model.setQuery(sql)
+            self.loadPicFields()
+            self.reinstateViewSelection()
+            mark_db_as_changed()
         elif mode == "select":
             if self.parentid is None or self.currentrow is None:
                 return
@@ -170,6 +187,8 @@ class Objects:
                 sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
                 self.model.setQuery(sql)
                 self.loadPicFields()
+                self.reinstateViewSelection()
+                mark_db_as_changed()
         elif mode == "viewonly":
             self.MainWindow.hide()
             id = self.model.record(self.currentrow).value("Id")
@@ -183,12 +202,6 @@ class Objects:
             obj_selector.showMaximized()
             obj_selector.exec()
             self.MainWindow.show()
-        else:
-            return
-
-        self.reinstateViewSelection()
-
-        mark_db_as_changed()
 
     def create_box(self, targetobject, left, top, width, height, colorname, name="Box"):
         colordict = {

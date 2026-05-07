@@ -163,19 +163,48 @@ class GemsViews:
         self.MainWindow.move(qr.topLeft())
 
     def _check_for_update(self):
-        """Check GitHub for a newer version in a background thread, amend window title if found."""
+        """Check GitHub for a newer version in a background thread, add toolbar button if found."""
+        self._update_version = None
 
         def _do_check():
-            latest = check_latest_github_version()
-            if latest and version_less_than(__version__, latest):
-                QTimer.singleShot(
-                    0,
-                    lambda: self.MainWindow.setWindowTitle(
-                        f"{app_long_name} version {__version__}    [New version {latest} available!]"
-                    ),
-                )
+            log.debug(f"Update check starting, local version={__version__}")
+            try:
+                latest = check_latest_github_version()
+                log.debug(f"Update check result: github={latest}")
+                if latest and version_less_than(__version__, latest):
+                    log.info(f"New version available: {latest}")
+                    self._update_version = latest
+                else:
+                    log.debug("No update needed")
+            except Exception as e:
+                log.error(f"Update check failed: {e}")
 
-        threading.Thread(target=_do_check, daemon=True).start()
+        def _poll_result():
+            if thread.is_alive():
+                return  # still waiting, timer will fire again
+            self._update_poll_timer.stop()
+            if self._update_version:
+                self._show_update_button(self._update_version)
+
+        thread = threading.Thread(target=_do_check, daemon=True)
+        thread.start()
+        self._update_poll_timer = QTimer()
+        self._update_poll_timer.timeout.connect(_poll_result)
+        self._update_poll_timer.start(1000)
+
+    def _show_update_button(self, latest_version: str):
+        """Add an update notification button to the right side of the toolbar."""
+        log.debug("_show_update_button called")
+        spacer = QtWidgets.QWidget()
+        spacer.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+        self.ui.toolBar.addWidget(spacer)
+
+        update_btn = QtWidgets.QPushButton(f"New version {latest_version} available!\nRun:  uv tool upgrade gemsedit")
+        update_btn.setFlat(True)
+        # 1a73e8
+        update_btn.setStyleSheet("QPushButton { color: #ba55d3; font-weight: bold; padding: 4px 10px; }")
+        update_btn.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
+        self.ui.toolBar.addWidget(update_btn)
 
     def connectSlots(self):
         self.ui.view_tableView.doubleClicked.connect(self.handleBaseDoubleClick)
@@ -623,9 +652,9 @@ class GemsViews:
             return
 
         # get the info from the model
-        fg = os.path.join(self.media_path, self.model.record(self.current_row).value("Foreground"))
-        bg = os.path.join(self.media_path, self.model.record(self.current_row).value("Background"))
-        ol = os.path.join(self.media_path, self.model.record(self.current_row).value("Overlay"))
+        fg = os.path.join(self.media_path, self.model.record(self.current_row).value("Foreground") or "")
+        bg = os.path.join(self.media_path, self.model.record(self.current_row).value("Background") or "")
+        ol = os.path.join(self.media_path, self.model.record(self.current_row).value("Overlay") or "")
 
         # show filenames
         if not skip_show_files:
@@ -671,7 +700,9 @@ class GemsViews:
             obj_list = ""
             obj_count = 0
             query = QtSql.QSqlQuery()
-            query.exec("select * from objects where Parent is {id} order by RowOrder")
+            query.prepare("select * from objects where Parent = :id order by RowOrder")
+            query.bindValue(":id", _id)
+            query.exec()
             if query.isActive():
                 while query.next():
                     obj_count += 1
@@ -679,9 +710,9 @@ class GemsViews:
                 tooltip = f"Objects: {obj_count}\n--------\n{obj_list}"
                 self.ui.objectsButton.setToolTip(tooltip)
                 if obj_count > 0:
-                    self.ui.objectsButton.setText("Objects")
-                else:
                     self.ui.objectsButton.setText(f"Objects ({obj_count})")
+                else:
+                    self.ui.objectsButton.setText("Objects")
             else:
                 self.ui.objectsButton.setText("Objects")
         except Exception as e:
@@ -850,6 +881,14 @@ class GemsViews:
                 # ok, refresh the display
                 if not error_list:
                     self.model.setQuery("select * from " + self.base_table_name + " order by RowOrder")
+
+                    # disconnect old selection model before getting the new one
+                    if self.selection_model is not None:
+                        try:
+                            self.selection_model.selectionChanged.disconnect(self.handleSelectionChange)
+                        except (TypeError, RuntimeError):
+                            pass
+
                     if self.model.rowCount() > 0:
                         self.current_row = self.model.rowCount() - 1
                         self.ui.view_tableView.selectRow(self.current_row)
@@ -860,18 +899,11 @@ class GemsViews:
                         # setup selection model handler (mouse or keyboard)...
                         # have to do *after* table is filled: http://goo.gl/KPaajQ
                         self.selection_model = self.ui.view_tableView.selectionModel()
-                        # QtCore.QObject.connect(self.selectionmodel,
-                        #                        QtCore.SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
-                        #                        self.handleSelectionChange)
                         self.selection_model.selectionChanged.connect(self.handleSelectionChange)
                         if self.model.rowCount() > 0:
                             self.reinstateViewSelection(self.model.rowCount() - 1)
                     else:
                         self.action_list.parent_id = None
-                        # QtCore.QObject.disconnect(self.selectionmodel,
-                        #                           QtCore.SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
-                        #                           self.handleSelectionChange)
-                        self.selection_model.selectionChanged.connect(self.handleSelectionChange)
                     self.action_list.filterActions()
                     self.loadPicFields()
 
@@ -953,7 +985,7 @@ class GemsViews:
         self.connectBaseModelToTableView(self.model, self.ui.view_tableView)
 
     def initializeViews(self):
-        # disconnect any previous action button connections to avoid duplicate signals
+        # disconnect any previous signal connections to avoid duplicate signals
         try:
             self.ui.actionAdd_toolButton.pressed.disconnect()
         except (TypeError, RuntimeError):
@@ -962,6 +994,11 @@ class GemsViews:
             self.ui.actionDel_toolButton.pressed.disconnect()
         except (TypeError, RuntimeError):
             pass
+        if self.selection_model is not None:
+            try:
+                self.selection_model.selectionChanged.disconnect(self.handleSelectionChange)
+            except (TypeError, RuntimeError):
+                pass
 
         # if there is anything in the base list, select the first one
         if self.model.rowCount() > 0:
@@ -989,7 +1026,6 @@ class GemsViews:
         else:
             self.action_list = action_list.ActionList(None, self.ui.view_tableView, "view", media_path=self.media_path)
             self.action_list.parent_id = None
-            self.selection_model.selectionChanged.connect(self.handleSelectionChange)
 
     def new_environment(self):
         self.closeEnv()

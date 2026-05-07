@@ -202,10 +202,7 @@ class ActionList:
         self.table_view.hideColumn(0)  # id
         self.table_view.hideColumn(1)  # ContextType
         self.table_view.hideColumn(2)  # ContextId
-        # self.tableView.hideColumn(3) #Condition
-        # self.tableView.hideColumn(4) #Trigger
-        # self.tableView.hideColumn(5) #Action
-        self.table_view.resizeColumnsToContents()
+        self._configureColumnSizing(self.table_view)
 
     def handleActionAdd(self):
         if self.add_del_busy:
@@ -284,18 +281,25 @@ class ActionList:
         model.setHeaderData(7, QtCore.Qt.Orientation.Horizontal, "RowOrder")
 
     def connectVALModelToTableView(self, model, view):
-        # Note: The really doesn't do anything because there is no model yet.
-        #      Model is set via query and columns hidden here: self.filterActions()
         view.setModel(model)
         view.hideColumn(0)  # id
         view.hideColumn(1)  # ContextType
         view.hideColumn(2)  # ContextId
-        # view.hideColumn(3) #Condition
-        # view.hideColumn(4) #Trigger
-        # view.hideColumn(5) #Action
-        # view.hideColumn(6) #Enabled
         view.hideColumn(7)  # RowOrder
-        view.resizeColumnsToContents()
+        self._configureColumnSizing(view)
+
+    def _configureColumnSizing(self, view):
+        header = view.horizontalHeader()
+        header.setStretchLastSection(False)
+        # Enabled column: fixed width based on header title with padding
+        fm = header.fontMetrics()
+        enabled_width = fm.horizontalAdvance("Enabled") + 20
+        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeMode.Fixed)
+        header.resizeSection(6, enabled_width)
+        # Condition, Trigger, Action: evenly split remaining space
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
     def signalActionUpdate(self, index, record_id, value):
         # http://goo.gl/3afhWi

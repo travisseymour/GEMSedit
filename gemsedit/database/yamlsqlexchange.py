@@ -196,7 +196,7 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
         options["Volume"] = 1.0
 
     # add transition duration to options
-    if not options.get("TransitionDuration"):
+    if options.get("TransitionDuration") is None:
         options["TransitionDuration"] = 1.0
 
     # add global options info
@@ -402,7 +402,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
 
     # other misc tables
     options = db["Global"]["Options"]
-    if not options.get("TransitionDuration"):
+    if options.get("TransitionDuration") is None:
         options["TransitionDuration"] = 1.0
     sql_db["options"].insert(options)
     sql_db["condition_lst"].insert_all(db["condition_lst"].values())

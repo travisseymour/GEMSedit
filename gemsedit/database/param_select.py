@@ -415,6 +415,12 @@ class ParamSelect:
             self.ui.xxparam_tableView.resizeColumnsToContents()
             self.ui.xxparam_tableView.resizeRowsToContents()
 
+            # widen vertical header to fit the longest parameter name
+            if name in self.param_data_dict and self.param_data_dict[name]:
+                fm = self.ui.xxparam_tableView.verticalHeader().fontMetrics()
+                max_width = max(fm.horizontalAdvance(str(row[1])) for row in self.param_data_dict[name])
+                self.ui.xxparam_tableView.verticalHeader().setFixedWidth(max_width + 20)
+
             # now that we have the name, look up and set the help_text
             self.ui.xxHelpLabel.setText(self.help_dict.get(name, ""))
 
