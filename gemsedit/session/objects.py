@@ -29,6 +29,7 @@ from gemsedit.database.connection import mark_db_as_changed
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list, object_select_widget as objselect
+from gemsedit.gui.action_list import parse_linked_object_name, get_linked_object_info
 import gemsedit.gui.objects_window as win
 
 
@@ -67,6 +68,9 @@ class Objects:
         self.objbox = self.create_box(self.ui.objectLocPic_label, 0, 0, 0, 0, "yellow", "ObjectBox")
 
         self.actionlist = None
+
+        # Track broken link references (pattern matched but source object not found)
+        self.broken_link_ref: tuple[int, int] | None = None
 
         self.getParentInfo()
         self.initializeDatabases()
@@ -277,7 +281,8 @@ class Objects:
         try:
             # get some required info
             row = QtCore.QItemSelection(selected).indexes()[0].row()
-            id = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Id")
+            obj_id = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Id")
+            obj_name = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Name")
             visible = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Visible")
             takeable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Takeable")
             draggable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Draggable")
@@ -299,12 +304,67 @@ class Objects:
 
             # reflect change in ui
             self.currentrow = row
-            self.actionlist.parent_id = id
+            self.actionlist.parent_id = obj_id
+
+            # Check if this object has a linked action name pattern
+            linked_ref = parse_linked_object_name(obj_name)
+            if linked_ref:
+                view_id, source_obj_id = linked_ref
+                linked_info = get_linked_object_info(view_id, source_obj_id)
+                if linked_info:
+                    self.broken_link_ref = None
+                    self.actionlist.set_linked_mode(linked_info, self._on_linked_mode_changed)
+                else:
+                    # Pattern matched but object not found - this is a broken link
+                    self.broken_link_ref = (view_id, source_obj_id)
+                    self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
+                    log.warning(
+                        f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}"
+                    )
+            else:
+                self.broken_link_ref = None
+                self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
+
             self.actionlist.filterActions()
+            self._update_linked_status_display()
 
             self.loadPicFields()
         except Exception as e:
             log.error(f"Problem in handleSelectionChange({selected}, {deselected}): {e}")
+
+    def _on_linked_mode_changed(self, is_linked: bool):
+        """Callback when linked mode changes - enable/disable action buttons."""
+        # Disable buttons if linked OR if there's a broken link
+        should_disable = is_linked or self.broken_link_ref is not None
+        self.ui.actionAdd_toolButton.setEnabled(not should_disable)
+        self.ui.actionDel_toolButton.setEnabled(not should_disable)
+        self.ui.actionCopy_toolButton.setEnabled(not should_disable)
+
+    def _update_linked_status_display(self):
+        """Update the UI to show linked status information."""
+        if self.actionlist.is_linked():
+            desc = self.actionlist.get_linked_description()
+            self.ui.label_3.setText("Object Action List (LINKED)")
+            self.ui.label_3.setToolTip(desc)
+            # Orange background for linked status
+            self.ui.label_3.setStyleSheet("background-color: rgb(255, 200, 100)")
+        elif self.broken_link_ref is not None:
+            view_id, obj_id = self.broken_link_ref
+            self.ui.label_3.setText("Object Action List (BROKEN LINK)")
+            self.ui.label_3.setToolTip(
+                f"Broken link: Object {obj_id} in View {view_id} not found.\n"
+                "Rename this object to fix or remove the link."
+            )
+            # Red background for broken link
+            self.ui.label_3.setStyleSheet("background-color: rgb(255, 150, 150)")
+            # Also disable buttons for broken links
+            self.ui.actionAdd_toolButton.setEnabled(False)
+            self.ui.actionDel_toolButton.setEnabled(False)
+            self.ui.actionCopy_toolButton.setEnabled(False)
+        else:
+            self.ui.label_3.setText("Object Action List")
+            self.ui.label_3.setToolTip("")
+            self.ui.label_3.setStyleSheet("background-color: rgb(102, 204, 255)")
 
     def handleBaseDoubleClick(self, index):
         # id =  self.getIdFromClick(index)
@@ -617,7 +677,8 @@ class Objects:
     def initializeViews(self):
         # if there is anything in the base list, select the first one
         if self.model.rowCount() > 0:
-            id = self.model.record(0).value("Id")
+            obj_id = self.model.record(0).value("Id")
+            obj_name = self.model.record(0).value("Name")
             # select first row
             self.ui.object_tableView.selectRow(0)
             self.currentrow = 0
@@ -627,9 +688,28 @@ class Objects:
             self.ui.takeable_checkBox.setChecked(self.model.record(0).value("Takeable"))
             self.ui.draggable_checkBox.setChecked(self.model.record(0).value("Draggable"))
             # load any corresponding actions
-            self.actionlist = action_list.ActionList(id, self.ui.OAL_tableView, "object", media_path=self.mediapath)
-            self.actionlist.parent_id = id
+            self.actionlist = action_list.ActionList(obj_id, self.ui.OAL_tableView, "object", media_path=self.mediapath)
+            self.actionlist.parent_id = obj_id
+
+            # Check if this object has a linked action name pattern
+            linked_ref = parse_linked_object_name(obj_name)
+            if linked_ref:
+                view_id, source_obj_id = linked_ref
+                linked_info = get_linked_object_info(view_id, source_obj_id)
+                if linked_info:
+                    self.broken_link_ref = None
+                    self.actionlist.set_linked_mode(linked_info, self._on_linked_mode_changed)
+                else:
+                    # Pattern matched but object not found - this is a broken link
+                    self.broken_link_ref = (view_id, source_obj_id)
+                    log.warning(
+                        f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}"
+                    )
+            else:
+                self.broken_link_ref = None
+
             self.actionlist.filterActions()
+            self._update_linked_status_display()
             # handle pic fields
             self.loadPicFields()
         # This clause just added to fix problem loading objects win when there are no objects

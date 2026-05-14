@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
+from typing import Optional
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QTimer
@@ -28,6 +29,86 @@ from gemsedit.database.connection import mark_db_as_changed
 # from html import escape
 from gemsedit.database.sqltools import get_next_value
 import gemsedit.gui.genericcoldelegates as generic_col_delegates
+
+
+def parse_linked_object_name(object_name: str) -> Optional[tuple[int, int]]:
+    """
+    Parse an object name to check if it references another object's actions.
+
+    Objects with names ending in _[VIEWID]_[OBJECTID] will use the actions
+    from the referenced object instead of having their own actions.
+
+    Args:
+        object_name: The name of the object to check
+
+    Returns:
+        A tuple of (view_id, object_id) if the name matches the pattern,
+        or None if it doesn't match.
+
+    Examples:
+        "Doorknob_3_7" -> (3, 7)  # Uses actions from object 7 in view 3
+        "Doorknob" -> None  # Normal object
+        "Door_handle" -> None  # Underscore but not the pattern
+    """
+    if not object_name:
+        return None
+
+    # Pattern: anything followed by _NUMBER_NUMBER at the end
+    pattern = r"^.+_(\d+)_(\d+)$"
+    match = re.match(pattern, object_name)
+
+    if match:
+        view_id = int(match.group(1))
+        object_id = int(match.group(2))
+        return (view_id, object_id)
+
+    return None
+
+
+def get_linked_object_info(view_id: int, object_id: int) -> Optional[dict]:
+    """
+    Get information about a linked object.
+
+    Args:
+        view_id: The ID of the view containing the source object
+        object_id: The ID of the source object
+
+    Returns:
+        A dict with 'view_name', 'object_name', 'object_id' if found, else None
+    """
+    # First verify the object exists and belongs to the specified view
+    query = QtSql.QSqlQuery()
+    query.prepare("SELECT Name, Parent FROM objects WHERE Id = :id")
+    query.bindValue(":id", object_id)
+    query.exec()
+
+    if not query.isActive() or not query.next():
+        return None
+
+    obj_name = query.value(0)
+    parent_view_id = query.value(1)
+
+    # Verify the object belongs to the specified view
+    if parent_view_id != view_id:
+        return None
+
+    # Get the view name
+    view_query = QtSql.QSqlQuery()
+    view_query.prepare("SELECT Name FROM views WHERE Id = :id")
+    view_query.bindValue(":id", view_id)
+    view_query.exec()
+
+    if not view_query.isActive() or not view_query.next():
+        return None
+
+    view_name = view_query.value(0)
+
+    return {
+        "view_id": view_id,
+        "view_name": view_name,
+        "object_id": object_id,
+        "object_name": obj_name,
+    }
 
 
 def getHumanReadableFromId(table, _id):
@@ -315,18 +396,58 @@ class ActionList:
 
         self.add_del_busy: bool = False
 
+        # Linked object support - when set, shows another object's actions read-only
+        self.linked_source: Optional[dict] = None
+        self._on_linked_changed_callback = None
+
         # Always show vertical scroll bar for action lists
         self.table_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
 
         self.initializeDatabases()
         self.initializeViews()
 
+    def set_linked_mode(self, linked_info: Optional[dict], callback=None):
+        """
+        Set linked mode for this action list.
+
+        Args:
+            linked_info: Dict with view_id, view_name, object_id, object_name from get_linked_object_info(),
+                         or None to disable linked mode.
+            callback: Optional callback function(is_linked: bool) to be called when linked state changes.
+        """
+        self.linked_source = linked_info
+        self._on_linked_changed_callback = callback
+
+        if self._on_linked_changed_callback:
+            self._on_linked_changed_callback(linked_info is not None)
+
+    def is_linked(self) -> bool:
+        """Return True if this action list is showing linked actions from another object."""
+        return self.linked_source is not None
+
+    def get_linked_description(self) -> str:
+        """Return a human-readable description of the linked source."""
+        if not self.linked_source:
+            return ""
+        return (
+            f"Actions linked from: {self.linked_source['view_name']}:{self.linked_source['object_name']} "
+            f"(View {self.linked_source['view_id']}, Object {self.linked_source['object_id']})"
+        )
+
     def filterActions(self):
         # REMEMBER to set parent_id in your instance before calling this!
-        sql = (
-            f"select * from actions where ContextType = '{self.action_type}' "
-            f"and ContextId = '{self.parent_id}' order by RowOrder"
-        )
+        # If linked to another object, show that object's actions instead
+        if self.linked_source:
+            source_id = self.linked_source["object_id"]
+            sql = (
+                f"select * from actions where ContextType = 'object' "
+                f"and ContextId = '{source_id}' order by RowOrder"
+            )
+        else:
+            sql = (
+                f"select * from actions where ContextType = '{self.action_type}' "
+                f"and ContextId = '{self.parent_id}' order by RowOrder"
+            )
         self.model.setQuery(sql)
         if not self.model.lastError().isValid():
             self.connectVALModelToTableView(self.model, self.table_view)
@@ -338,7 +459,7 @@ class ActionList:
         self._configureColumnSizing(self.table_view)
 
     def handleActionAdd(self):
-        if self.add_del_busy:
+        if self.add_del_busy or self.is_linked():
             return
 
         self.add_del_busy = True
@@ -370,7 +491,7 @@ class ActionList:
             self.add_del_busy = False
 
     def handleActionDel(self):
-        if self.add_del_busy:
+        if self.add_del_busy or self.is_linked():
             return
 
         self.add_del_busy = True
@@ -403,7 +524,7 @@ class ActionList:
 
     def handleActionCopy(self):
         """Copy actions from another view or object to the current one."""
-        if self.add_del_busy:
+        if self.add_del_busy or self.is_linked():
             return
 
         if self.parent_id is None:
