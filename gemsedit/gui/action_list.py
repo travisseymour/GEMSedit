@@ -533,6 +533,8 @@ class ActionList:
                 query.exec()
                 if query.lastError().isValid():
                     log.error(f"Problem in handleActionAdd(): {query.lastError().text()}")
+                else:
+                    mark_db_as_changed()
                 self.filterActions()
                 self.table_view.scrollToBottom()
         finally:
@@ -562,6 +564,8 @@ class ActionList:
                     query1.exec()
                     if query1.lastError().isValid():
                         log.error(f"Problem in handleActionDel(): {query1.lastError().text()}")
+                    else:
+                        mark_db_as_changed()
                     # clear current_id
                     self.current_id = None
                     # reset actionview
