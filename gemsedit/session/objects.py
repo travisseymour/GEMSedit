@@ -808,6 +808,28 @@ class Objects:
                 if self.model.lastError().isValid():
                     log.error(f"Problem in editBaseName() list refresh: {query.lastError().text()}")
 
+                # Re-check linked pattern after name change
+                linked_ref = parse_linked_object_name(newname)
+                if linked_ref:
+                    view_id, source_obj_id = linked_ref
+                    linked_info = get_linked_object_info(view_id, source_obj_id)
+                    if linked_info:
+                        self.broken_link_ref = None
+                        self.actionlist.set_linked_mode(linked_info, self._on_linked_mode_changed)
+                    else:
+                        # Pattern matched but object not found - this is a broken link
+                        self.broken_link_ref = (view_id, source_obj_id)
+                        self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
+                        log.warning(
+                            f"Object '{newname}' references non-existent object {source_obj_id} in view {view_id}"
+                        )
+                else:
+                    self.broken_link_ref = None
+                    self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
+
+                self.actionlist.filterActions()
+                self._update_linked_status_display()
+
                 mark_db_as_changed()
 
     def updateTakeable(self, state):

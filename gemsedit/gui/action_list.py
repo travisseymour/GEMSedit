@@ -385,6 +385,44 @@ class CustomSqlModel2(QtSql.QSqlQueryModel):
             return False
 
 
+class LinkedEditEventFilter(QtCore.QObject):
+    """Event filter to intercept editing attempts on linked action lists."""
+
+    def __init__(self, action_list: "ActionList", parent=None):
+        super().__init__(parent)
+        self.action_list = action_list
+        self._warned_this_session = False
+
+    def eventFilter(self, obj, event):
+        # Intercept double-click which triggers editing
+        if event.type() == QtCore.QEvent.Type.MouseButtonDblClick:
+            if self.action_list.is_linked():
+                if not self._warned_this_session:
+                    # Show warning dialog
+                    ret = QMessageBox.warning(
+                        None,
+                        "Editing Linked Actions",
+                        "This object's actions are linked from another object.\n\n"
+                        "Any changes you make here will affect ALL objects that "
+                        "share these linked actions.\n\n"
+                        "Do you want to proceed with editing?",
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        QMessageBox.StandardButton.No,
+                    )
+                    if ret == QMessageBox.StandardButton.Yes:
+                        self._warned_this_session = True
+                        return False  # Allow the event to proceed
+                    else:
+                        return True  # Block the event
+                # Already warned, allow editing
+                return False
+        return False  # Don't block other events
+
+    def reset_warning(self):
+        """Reset the warning flag (call when switching to a different linked object)."""
+        self._warned_this_session = False
+
+
 class ActionList:
     def __init__(self, parent_id, table_view, action_type, media_path):
         self.model = None
@@ -399,6 +437,10 @@ class ActionList:
         # Linked object support - when set, shows another object's actions read-only
         self.linked_source: Optional[dict] = None
         self._on_linked_changed_callback = None
+
+        # Event filter to intercept editing on linked actions
+        self._linked_edit_filter = LinkedEditEventFilter(self)
+        self.table_view.viewport().installEventFilter(self._linked_edit_filter)
 
         # Always show vertical scroll bar for action lists
         self.table_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -415,6 +457,12 @@ class ActionList:
                          or None to disable linked mode.
             callback: Optional callback function(is_linked: bool) to be called when linked state changes.
         """
+        # Reset warning when linked source changes (different object or disabling linked mode)
+        old_source_id = self.linked_source.get("object_id") if self.linked_source else None
+        new_source_id = linked_info.get("object_id") if linked_info else None
+        if old_source_id != new_source_id:
+            self._linked_edit_filter.reset_warning()
+
         self.linked_source = linked_info
         self._on_linked_changed_callback = callback
 
