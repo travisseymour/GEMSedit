@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import re
+from datetime import datetime
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtGui import QGuiApplication
@@ -46,6 +47,74 @@ class ClickEventFilter(QtCore.QObject):
                 self.callback()
                 return True
         return super().eventFilter(obj, event)
+
+
+class CopyObjectsDialog(QtWidgets.QDialog):
+    """Dialog for selecting a source view to copy all objects from."""
+
+    def __init__(self, current_view_id: int, parent=None):
+        super().__init__(parent)
+        self.current_view_id = current_view_id
+        self.selected_view_id = None
+
+        self.setWindowTitle("Copy Objects From View")
+        self.setMinimumSize(400, 300)
+        self.setup_ui()
+        self.load_views()
+
+    def setup_ui(self):
+        layout = QtWidgets.QVBoxLayout(self)
+
+        label = QtWidgets.QLabel("Select a view to copy all objects from:")
+        layout.addWidget(label)
+
+        self.list_widget = QtWidgets.QListWidget()
+        self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        layout.addWidget(self.list_widget)
+
+        button_layout = QtWidgets.QHBoxLayout()
+        button_layout.addStretch()
+
+        self.cancel_button = QtWidgets.QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        button_layout.addWidget(self.cancel_button)
+
+        self.select_button = QtWidgets.QPushButton("Select")
+        self.select_button.clicked.connect(self.on_select)
+        self.select_button.setEnabled(False)
+        button_layout.addWidget(self.select_button)
+
+        layout.addLayout(button_layout)
+
+        self.list_widget.itemSelectionChanged.connect(self.on_selection_changed)
+
+    def load_views(self):
+        self.list_widget.clear()
+
+        query = QtSql.QSqlQuery()
+        query.exec("SELECT Id, Name FROM views ORDER BY RowOrder")
+        if query.isActive():
+            while query.next():
+                view_id = query.value(0)
+                view_name = query.value(1)
+                if view_id != self.current_view_id:
+                    item = QtWidgets.QListWidgetItem(f"{view_name}")
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, view_id)
+                    self.list_widget.addItem(item)
+
+    def on_selection_changed(self):
+        items = self.list_widget.selectedItems()
+        self.select_button.setEnabled(len(items) > 0)
+
+    def on_item_double_clicked(self, item):
+        self.selected_view_id = item.data(QtCore.Qt.ItemDataRole.UserRole)
+        self.accept()
+
+    def on_select(self):
+        items = self.list_widget.selectedItems()
+        if items:
+            self.selected_view_id = items[0].data(QtCore.Qt.ItemDataRole.UserRole)
+            self.accept()
 
 
 class Objects:
@@ -93,6 +162,7 @@ class Objects:
         self.ui.object_tableView.doubleClicked.connect(self.handleBaseDoubleClick)
         self.ui.objectAdd_toolButton.pressed.connect(self.handleBaseAdd)
         self.ui.objectDel_toolButton.pressed.connect(self.handleBaseDel)
+        self.ui.objectCopy_toolButton.pressed.connect(self.handleObjectsCopy)
         self.ui.OAL_tableView.clicked.connect(self.handleActionClick)
         self.ui.actionAdd_toolButton.pressed.connect(self.actionlist.handleActionAdd)
         self.ui.actionDel_toolButton.pressed.connect(self.actionlist.handleActionDel)
@@ -507,6 +577,180 @@ class Objects:
                     self.loadPicFields()
 
                 mark_db_as_changed()
+
+    def handleObjectsCopy(self):
+        """Copy all objects and their actions from another view to this view."""
+        if self.parentid is None:
+            return
+
+        dialog = CopyObjectsDialog(self.parentid, self.MainWindow)
+        if dialog.exec() != QtWidgets.QDialog.DialogCode.Accepted:
+            return
+
+        source_view_id = dialog.selected_view_id
+        if source_view_id is None:
+            return
+
+        # Get all objects from the source view
+        source_query = QtSql.QSqlQuery()
+        source_query.prepare(
+            "SELECT Id, Name, Left, Top, Width, Height, Visible, Takeable, Draggable "
+            "FROM objects WHERE Parent = :parent ORDER BY RowOrder"
+        )
+        source_query.bindValue(":parent", source_view_id)
+        source_query.exec()
+
+        if source_query.lastError().isValid():
+            log.error(f"Problem in handleObjectsCopy() source query: {source_query.lastError().text()}")
+            return
+
+        objects_to_copy = []
+        if source_query.isActive():
+            while source_query.next():
+                objects_to_copy.append({
+                    "id": source_query.value(0),
+                    "name": source_query.value(1),
+                    "left": source_query.value(2),
+                    "top": source_query.value(3),
+                    "width": source_query.value(4),
+                    "height": source_query.value(5),
+                    "visible": source_query.value(6),
+                    "takeable": source_query.value(7),
+                    "draggable": source_query.value(8),
+                })
+
+        if not objects_to_copy:
+            QMessageBox.information(
+                self.MainWindow,
+                "No Objects to Copy",
+                "The selected view has no objects to copy.",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Get existing object names in this view to check for conflicts
+        existing_names = set()
+        name_query = QtSql.QSqlQuery()
+        name_query.prepare("SELECT Name FROM objects WHERE Parent = :parent")
+        name_query.bindValue(":parent", self.parentid)
+        name_query.exec()
+        if name_query.isActive():
+            while name_query.next():
+                existing_names.add(name_query.value(0))
+
+        # Check if any names conflict
+        has_conflicts = any(obj["name"] in existing_names for obj in objects_to_copy)
+
+        # Generate time suffix if there are conflicts
+        time_suffix = ""
+        if has_conflicts:
+            time_suffix = datetime.now().strftime("%H%M")
+
+        # Count how many actions will be copied
+        total_actions = 0
+        for obj in objects_to_copy:
+            action_count_query = QtSql.QSqlQuery()
+            action_count_query.prepare(
+                "SELECT COUNT(*) FROM actions WHERE ContextType = 'object' AND ContextId = :id"
+            )
+            action_count_query.bindValue(":id", obj["id"])
+            action_count_query.exec()
+            if action_count_query.isActive() and action_count_query.next():
+                total_actions += action_count_query.value(0)
+
+        # Build confirmation message
+        suffix_note = ""
+        if time_suffix:
+            suffix_note = f"\n\nNote: Object names will have '{time_suffix}' appended to avoid conflicts."
+
+        ret = QMessageBox.question(
+            self.MainWindow,
+            "Confirm Copy Objects",
+            f"Copy {len(objects_to_copy)} object(s) and {total_actions} action(s) to this view?{suffix_note}",
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+            QtWidgets.QMessageBox.StandardButton.No,
+        )
+
+        if ret != QtWidgets.QMessageBox.StandardButton.Yes:
+            return
+
+        # Copy each object and its actions
+        for obj in objects_to_copy:
+            new_obj_id = get_next_value("Id", "objects", default=0)
+            new_order = get_next_value("RowOrder", "objects", default=0)
+
+            # Apply time suffix if needed
+            new_name = obj["name"]
+            if time_suffix:
+                new_name = f"{obj['name']}_{time_suffix}"
+
+            # Insert the object
+            insert_obj_query = QtSql.QSqlQuery()
+            insert_obj_query.prepare(
+                "INSERT INTO objects (Id, Parent, Name, Left, Top, Width, Height, Visible, Takeable, Draggable, RowOrder) "
+                "VALUES (:id, :parent, :name, :left, :top, :width, :height, :visible, :takeable, :draggable, :roworder)"
+            )
+            insert_obj_query.bindValue(":id", new_obj_id)
+            insert_obj_query.bindValue(":parent", self.parentid)
+            insert_obj_query.bindValue(":name", new_name)
+            insert_obj_query.bindValue(":left", obj["left"])
+            insert_obj_query.bindValue(":top", obj["top"])
+            insert_obj_query.bindValue(":width", obj["width"])
+            insert_obj_query.bindValue(":height", obj["height"])
+            insert_obj_query.bindValue(":visible", obj["visible"])
+            insert_obj_query.bindValue(":takeable", obj["takeable"])
+            insert_obj_query.bindValue(":draggable", obj["draggable"])
+            insert_obj_query.bindValue(":roworder", new_order)
+            insert_obj_query.exec()
+
+            if insert_obj_query.lastError().isValid():
+                log.error(f"Problem in handleObjectsCopy() insert object: {insert_obj_query.lastError().text()}")
+                continue
+
+            # Copy actions for this object
+            actions_query = QtSql.QSqlQuery()
+            actions_query.prepare(
+                "SELECT Condition, Trigger, Action, Enabled FROM actions "
+                "WHERE ContextType = 'object' AND ContextId = :id ORDER BY RowOrder"
+            )
+            actions_query.bindValue(":id", obj["id"])
+            actions_query.exec()
+
+            if actions_query.isActive():
+                while actions_query.next():
+                    new_action_id = get_next_value("Id", "actions", default=0)
+                    new_action_order = get_next_value("RowOrder", "actions", default=0)
+
+                    insert_action_query = QtSql.QSqlQuery()
+                    insert_action_query.prepare(
+                        "INSERT INTO actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder) "
+                        "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
+                    )
+                    insert_action_query.bindValue(":id", new_action_id)
+                    insert_action_query.bindValue(":contexttype", "object")
+                    insert_action_query.bindValue(":contextid", new_obj_id)
+                    insert_action_query.bindValue(":condition", actions_query.value(0))
+                    insert_action_query.bindValue(":trigger", actions_query.value(1))
+                    insert_action_query.bindValue(":action", actions_query.value(2))
+                    insert_action_query.bindValue(":enabled", actions_query.value(3))
+                    insert_action_query.bindValue(":roworder", new_action_order)
+                    insert_action_query.exec()
+
+                    if insert_action_query.lastError().isValid():
+                        log.error(f"Problem in handleObjectsCopy() insert action: {insert_action_query.lastError().text()}")
+
+        # Refresh the object list
+        sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+        self.model.setQuery(sql)
+        if self.model.rowCount() > 0:
+            self.currentrow = self.model.rowCount() - 1
+            self.reinstateViewSelection(self.model.rowCount() - 1)
+            obj_id = self.model.record(self.currentrow).value("Id")
+            self.actionlist.parent_id = obj_id
+            self.actionlist.filterActions()
+            self.loadPicFields()
+
+        mark_db_as_changed()
 
     def editBaseName(self, id, name):
         bn = self.basename.title()

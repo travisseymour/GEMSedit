@@ -151,6 +151,14 @@ class Ui_ObjectsWindow(object):
 
         self.gridLayout_2.addWidget(self.objectDel_toolButton, 1, 4, 1, 1)
 
+        self.objectCopy_toolButton = QToolButton(self.layoutWidget)
+        self.objectCopy_toolButton.setObjectName("objectCopy_toolButton")
+        icon_objcopy = QIcon()
+        icon_objcopy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.objectCopy_toolButton.setIcon(icon_objcopy)
+
+        self.gridLayout_2.addWidget(self.objectCopy_toolButton, 1, 5, 1, 1)
+
         self.object_tableView = QTableView(self.layoutWidget)
         self.object_tableView.setObjectName("object_tableView")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
@@ -174,7 +182,7 @@ class Ui_ObjectsWindow(object):
         self.object_tableView.horizontalHeader().setStretchLastSection(True)
         self.object_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout_2.addWidget(self.object_tableView, 2, 0, 1, 5)
+        self.gridLayout_2.addWidget(self.object_tableView, 2, 0, 1, 6)
 
         self.splitter_2.addWidget(self.layoutWidget)
         self.splitter = QSplitter(self.splitter_2)
@@ -416,6 +424,12 @@ class Ui_ObjectsWindow(object):
         self.label_4.setText(QCoreApplication.translate("ObjectsWindow", "Object List", None))
         self.objectAdd_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.objectDel_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.objectCopy_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Copy all objects from another view", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.objectCopy_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.visible_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Visible? ", None))
         self.takeable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Takeable? ", None))
         self.draggable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Draggable?", None))
