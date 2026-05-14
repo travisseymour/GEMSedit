@@ -754,10 +754,12 @@ class Objects:
 
     def editBaseName(self, id, name):
         bn = self.basename.title()
-        # get list of old names
+        # get list of old names in this view only
         namelist = []
         query = QtSql.QSqlQuery()
-        query.exec("select Name from " + self.basetablename)
+        query.prepare("SELECT Name FROM " + self.basetablename + " WHERE Parent = :parent")
+        query.bindValue(":parent", self.parentid)
+        query.exec()
         if query.isActive():
             while query.next():
                 namelist.append(query.value(0))
@@ -796,6 +798,50 @@ class Objects:
         if ok:
             # change name if it's actually different
             if newname != name:
+                # Check if new name creates a valid link
+                linked_ref = parse_linked_object_name(newname)
+                if linked_ref:
+                    view_id, source_obj_id = linked_ref
+                    linked_info = get_linked_object_info(view_id, source_obj_id)
+                    if linked_info:
+                        # Check if this object has existing actions that will be hidden
+                        action_count_query = QtSql.QSqlQuery()
+                        action_count_query.prepare(
+                            "SELECT COUNT(*) FROM actions WHERE ContextType = 'object' AND ContextId = :id"
+                        )
+                        action_count_query.bindValue(":id", id)
+                        action_count_query.exec()
+                        existing_action_count = 0
+                        if action_count_query.isActive() and action_count_query.next():
+                            existing_action_count = action_count_query.value(0)
+
+                        if existing_action_count > 0:
+                            # Warn user about existing actions being deleted
+                            ret = QMessageBox.warning(
+                                self.MainWindow,
+                                "Link Will Delete Existing Actions",
+                                f"This object currently has {existing_action_count} action(s).\n\n"
+                                f"Creating a link to '{linked_info['object_name']}' in view "
+                                f"'{linked_info['view_name']}' will DELETE these existing actions.\n\n"
+                                "Do you want to proceed?",
+                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                QMessageBox.StandardButton.No,
+                            )
+                            if ret != QMessageBox.StandardButton.Yes:
+                                return  # User cancelled, don't rename
+
+                            # Delete existing actions
+                            delete_query = QtSql.QSqlQuery()
+                            delete_query.prepare(
+                                "DELETE FROM actions WHERE ContextType = 'object' AND ContextId = :id"
+                            )
+                            delete_query.bindValue(":id", id)
+                            delete_query.exec()
+                            if delete_query.lastError().isValid():
+                                log.error(
+                                    f"Problem deleting actions before linking: {delete_query.lastError().text()}"
+                                )
+
                 query = QtSql.QSqlQuery()
                 query.prepare("UPDATE " + self.basetablename + " SET Name = :name WHERE Id = :id")
                 query.bindValue(":id", id)
