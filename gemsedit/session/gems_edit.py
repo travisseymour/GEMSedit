@@ -994,6 +994,10 @@ class GemsViews:
             self.ui.actionDel_toolButton.pressed.disconnect()
         except (TypeError, RuntimeError):
             pass
+        try:
+            self.ui.actionCopy_toolButton.pressed.disconnect()
+        except (TypeError, RuntimeError):
+            pass
         if self.selection_model is not None:
             try:
                 self.selection_model.selectionChanged.disconnect(self.handleSelectionChange)
@@ -1013,6 +1017,7 @@ class GemsViews:
             # setup action_list buttons
             self.ui.actionAdd_toolButton.pressed.connect(self.action_list.handleActionAdd)
             self.ui.actionDel_toolButton.pressed.connect(self.action_list.handleActionDel)
+            self.ui.actionCopy_toolButton.pressed.connect(self.action_list.handleActionCopy)
 
             # handle pic fields
             self.loadPicFields(False)
@@ -1219,6 +1224,7 @@ class GemsViews:
     def enableButtons(self):
         self.ui.actionAdd_toolButton.setEnabled(True)
         self.ui.actionDel_toolButton.setEnabled(True)
+        self.ui.actionCopy_toolButton.setEnabled(True)
         self.ui.bgDel_toolButton.setEnabled(True)
         self.ui.bgOpen_toolButton.setEnabled(True)
         self.ui.fgDel_toolButton.setEnabled(True)
@@ -1233,6 +1239,7 @@ class GemsViews:
     def disableButtons(self):
         self.ui.actionAdd_toolButton.setEnabled(False)
         self.ui.actionDel_toolButton.setEnabled(False)
+        self.ui.actionCopy_toolButton.setEnabled(False)
         self.ui.bgDel_toolButton.setEnabled(False)
         self.ui.bgOpen_toolButton.setEnabled(False)
         self.ui.fgDel_toolButton.setEnabled(False)

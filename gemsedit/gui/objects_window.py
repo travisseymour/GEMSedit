@@ -284,6 +284,14 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_2.addWidget(self.actionDel_toolButton)
 
+        self.actionCopy_toolButton = QToolButton(self.layoutWidget1)
+        self.actionCopy_toolButton.setObjectName("actionCopy_toolButton")
+        icon_copy = QIcon()
+        icon_copy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.actionCopy_toolButton.setIcon(icon_copy)
+
+        self.horizontalLayout_2.addWidget(self.actionCopy_toolButton)
+
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
 
         self.OAL_tableView = QTableView(self.layoutWidget1)
@@ -417,6 +425,12 @@ class Ui_ObjectsWindow(object):
         self.label_3.setText(QCoreApplication.translate("ObjectsWindow", "Object Action List", None))
         self.actionAdd_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.actionDel_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionCopy_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Copy actions from another object", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.actionCopy_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.label_7.setText(QCoreApplication.translate("ObjectsWindow", "Object Pic", None))
         self.drawSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.delSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))

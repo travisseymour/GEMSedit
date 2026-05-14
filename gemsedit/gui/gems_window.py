@@ -332,6 +332,14 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_4.addWidget(self.actionDel_toolButton, 0, 3, 1, 1)
 
+        self.actionCopy_toolButton = QToolButton(self.layoutWidget1)
+        self.actionCopy_toolButton.setObjectName("actionCopy_toolButton")
+        icon_copy = QIcon()
+        icon_copy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.actionCopy_toolButton.setIcon(icon_copy)
+
+        self.gridLayout_4.addWidget(self.actionCopy_toolButton, 0, 4, 1, 1)
+
         self.VAL_tableView = QTableView(self.layoutWidget1)
         self.VAL_tableView.setObjectName("VAL_tableView")
         self.VAL_tableView.setMinimumSize(QSize(622, 192))
@@ -345,7 +353,7 @@ class Ui_ViewsWindow(object):
         self.VAL_tableView.horizontalHeader().setStretchLastSection(True)
         self.VAL_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout_4.addWidget(self.VAL_tableView, 1, 0, 1, 4)
+        self.gridLayout_4.addWidget(self.VAL_tableView, 1, 0, 1, 5)
 
         self.gridLayout_5.addLayout(self.gridLayout_4, 1, 0, 1, 1)
 
@@ -659,6 +667,12 @@ class Ui_ViewsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.actionDel_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionCopy_toolButton.setToolTip(
+            QCoreApplication.translate("ViewsWindow", "Copy actions from another view", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.actionCopy_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         self.label_7.setText(QCoreApplication.translate("ViewsWindow", "Foreground Pic", None))
         # if QT_CONFIG(tooltip)
         self.fgOpen_toolButton.setToolTip(

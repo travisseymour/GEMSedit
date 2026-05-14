@@ -92,6 +92,7 @@ class Objects:
         self.ui.OAL_tableView.clicked.connect(self.handleActionClick)
         self.ui.actionAdd_toolButton.pressed.connect(self.actionlist.handleActionAdd)
         self.ui.actionDel_toolButton.pressed.connect(self.actionlist.handleActionDel)
+        self.ui.actionCopy_toolButton.pressed.connect(self.actionlist.handleActionCopy)
         self.ui.takeable_checkBox.toggled.connect(self.updateTakeable)
         self.ui.draggable_checkBox.toggled.connect(self.updateDraggable)
         self.ui.visible_checkBox.toggled.connect(self.updateVisible)

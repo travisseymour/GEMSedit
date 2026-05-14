@@ -69,6 +69,139 @@ def actionComponentById(component, _id):
         return None
 
 
+class CopyActionsDialog(QtWidgets.QDialog):
+    """Dialog for selecting a source view or object to copy actions from."""
+
+    def __init__(self, action_type: str, current_id: int, parent=None):
+        super().__init__(parent)
+        self.action_type = action_type
+        self.current_id = current_id
+        self.selected_id = None
+
+        if action_type == "view":
+            self.setWindowTitle("Copy Actions From View")
+        else:
+            self.setWindowTitle("Copy Actions From Object")
+
+        self.setMinimumSize(400, 300)
+        self.setup_ui()
+        self.load_items()
+
+    def setup_ui(self):
+        layout = QtWidgets.QVBoxLayout(self)
+
+        if self.action_type == "view":
+            label = QtWidgets.QLabel("Select a view to copy actions from:")
+        else:
+            label = QtWidgets.QLabel("Select an object to copy actions from:")
+        layout.addWidget(label)
+
+        self.tree_widget = QtWidgets.QTreeWidget()
+        self.tree_widget.setHeaderHidden(True)
+        self.tree_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        layout.addWidget(self.tree_widget)
+
+        button_layout = QtWidgets.QHBoxLayout()
+        button_layout.addStretch()
+
+        self.cancel_button = QtWidgets.QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        button_layout.addWidget(self.cancel_button)
+
+        self.select_button = QtWidgets.QPushButton("Select")
+        self.select_button.clicked.connect(self.on_select)
+        self.select_button.setEnabled(False)
+        button_layout.addWidget(self.select_button)
+
+        layout.addLayout(button_layout)
+
+        self.tree_widget.itemSelectionChanged.connect(self.on_selection_changed)
+
+    def load_items(self):
+        self.tree_widget.clear()
+
+        if self.action_type == "view":
+            self._load_views()
+        else:
+            self._load_objects()
+
+    def _load_views(self):
+        query = QtSql.QSqlQuery()
+        query.exec("SELECT Id, Name FROM views ORDER BY RowOrder")
+        if query.isActive():
+            while query.next():
+                view_id = query.value(0)
+                view_name = query.value(1)
+                if view_id != self.current_id:
+                    item = QtWidgets.QTreeWidgetItem([f"{view_name}"])
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, view_id)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "view")
+                    self.tree_widget.addTopLevelItem(item)
+
+    def _load_objects(self):
+        views_query = QtSql.QSqlQuery()
+        views_query.exec("SELECT Id, Name FROM views ORDER BY RowOrder")
+        if views_query.isActive():
+            while views_query.next():
+                view_id = views_query.value(0)
+                view_name = views_query.value(1)
+
+                view_item = QtWidgets.QTreeWidgetItem([f"{view_name}"])
+                view_item.setData(0, QtCore.Qt.ItemDataRole.UserRole, None)
+                view_item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "view_header")
+
+                objects_query = QtSql.QSqlQuery()
+                objects_query.prepare("SELECT Id, Name FROM objects WHERE Parent = :parent ORDER BY RowOrder")
+                objects_query.bindValue(":parent", view_id)
+                objects_query.exec()
+
+                has_objects = False
+                if objects_query.isActive():
+                    while objects_query.next():
+                        obj_id = objects_query.value(0)
+                        obj_name = objects_query.value(1)
+                        if obj_id != self.current_id:
+                            has_objects = True
+                            obj_item = QtWidgets.QTreeWidgetItem([f"  {obj_name}"])
+                            obj_item.setData(0, QtCore.Qt.ItemDataRole.UserRole, obj_id)
+                            obj_item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "object")
+                            view_item.addChild(obj_item)
+
+                if has_objects:
+                    self.tree_widget.addTopLevelItem(view_item)
+                    view_item.setExpanded(True)
+
+    def on_selection_changed(self):
+        items = self.tree_widget.selectedItems()
+        if items:
+            item = items[0]
+            item_type = item.data(0, QtCore.Qt.ItemDataRole.UserRole + 1)
+            item_id = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
+            if self.action_type == "view":
+                self.select_button.setEnabled(item_type == "view" and item_id is not None)
+            else:
+                self.select_button.setEnabled(item_type == "object" and item_id is not None)
+        else:
+            self.select_button.setEnabled(False)
+
+    def on_item_double_clicked(self, item, column):
+        item_type = item.data(0, QtCore.Qt.ItemDataRole.UserRole + 1)
+        item_id = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
+        if self.action_type == "view" and item_type == "view" and item_id is not None:
+            self.selected_id = item_id
+            self.accept()
+        elif self.action_type == "object" and item_type == "object" and item_id is not None:
+            self.selected_id = item_id
+            self.accept()
+
+    def on_select(self):
+        items = self.tree_widget.selectedItems()
+        if items:
+            item = items[0]
+            self.selected_id = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
+            self.accept()
+
+
 class CustomSqlModel2(QtSql.QSqlQueryModel):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -265,6 +398,97 @@ class ActionList:
                     # reset actionview
                     if self.parent_id is not None:
                         self.filterActions()
+        finally:
+            self.add_del_busy = False
+
+    def handleActionCopy(self):
+        """Copy actions from another view or object to the current one."""
+        if self.add_del_busy:
+            return
+
+        if self.parent_id is None:
+            return
+
+        self.add_del_busy = True
+        try:
+            dialog = CopyActionsDialog(self.action_type, self.parent_id)
+            if dialog.exec() != QtWidgets.QDialog.DialogCode.Accepted:
+                return
+
+            source_id = dialog.selected_id
+            if source_id is None:
+                return
+
+            source_query = QtSql.QSqlQuery()
+            source_query.prepare(
+                "SELECT Condition, Trigger, Action, Enabled FROM actions "
+                "WHERE ContextType = :contexttype AND ContextId = :contextid ORDER BY RowOrder"
+            )
+            source_query.bindValue(":contexttype", self.action_type)
+            source_query.bindValue(":contextid", source_id)
+            source_query.exec()
+
+            if source_query.lastError().isValid():
+                log.error(f"Problem in handleActionCopy() source query: {source_query.lastError().text()}")
+                return
+
+            actions_to_copy = []
+            if source_query.isActive():
+                while source_query.next():
+                    actions_to_copy.append({
+                        "condition": source_query.value(0),
+                        "trigger": source_query.value(1),
+                        "action": source_query.value(2),
+                        "enabled": source_query.value(3),
+                    })
+
+            if not actions_to_copy:
+                QMessageBox.information(
+                    None,
+                    "No Actions to Copy",
+                    "The selected source has no actions to copy.",
+                    QMessageBox.StandardButton.Ok,
+                )
+                return
+
+            ret = QMessageBox.question(
+                None,
+                "Confirm Copy Actions",
+                f"Copy {len(actions_to_copy)} action(s) to the current {self.action_type}?\n\n"
+                "This will add the actions to the existing action list.",
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No,
+            )
+
+            if ret != QtWidgets.QMessageBox.StandardButton.Yes:
+                return
+
+            for action_data in actions_to_copy:
+                new_id = get_next_value("Id", "actions", default=0)
+                new_order = get_next_value("RowOrder", "actions", default=0)
+
+                insert_query = QtSql.QSqlQuery()
+                insert_query.prepare(
+                    "INSERT INTO actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder) "
+                    "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
+                )
+                insert_query.bindValue(":id", new_id)
+                insert_query.bindValue(":contexttype", self.action_type)
+                insert_query.bindValue(":contextid", self.parent_id)
+                insert_query.bindValue(":condition", action_data["condition"])
+                insert_query.bindValue(":trigger", action_data["trigger"])
+                insert_query.bindValue(":action", action_data["action"])
+                insert_query.bindValue(":enabled", action_data["enabled"])
+                insert_query.bindValue(":roworder", new_order)
+                insert_query.exec()
+
+                if insert_query.lastError().isValid():
+                    log.error(f"Problem in handleActionCopy() insert: {insert_query.lastError().text()}")
+
+            self.filterActions()
+            self.table_view.scrollToBottom()
+            mark_db_as_changed()
+
         finally:
             self.add_del_busy = False
 
