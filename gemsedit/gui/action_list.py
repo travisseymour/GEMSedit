@@ -214,7 +214,7 @@ class CopyActionsDialog(QtWidgets.QDialog):
                 view_id = query.value(0)
                 view_name = query.value(1)
                 if view_id != self.current_id:
-                    item = QtWidgets.QTreeWidgetItem([f"{view_name}"])
+                    item = QtWidgets.QTreeWidgetItem([f"{view_name} ({view_id})"])
                     item.setData(0, QtCore.Qt.ItemDataRole.UserRole, view_id)
                     item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "view")
                     self.tree_widget.addTopLevelItem(item)
@@ -227,7 +227,7 @@ class CopyActionsDialog(QtWidgets.QDialog):
                 view_id = views_query.value(0)
                 view_name = views_query.value(1)
 
-                view_item = QtWidgets.QTreeWidgetItem([f"{view_name}"])
+                view_item = QtWidgets.QTreeWidgetItem([f"{view_name} ({view_id})"])
                 view_item.setData(0, QtCore.Qt.ItemDataRole.UserRole, None)
                 view_item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "view_header")
 
@@ -243,7 +243,7 @@ class CopyActionsDialog(QtWidgets.QDialog):
                         obj_name = objects_query.value(1)
                         if obj_id != self.current_id:
                             has_objects = True
-                            obj_item = QtWidgets.QTreeWidgetItem([f"  {obj_name}"])
+                            obj_item = QtWidgets.QTreeWidgetItem([f"  {obj_name} ({obj_id})"])
                             obj_item.setData(0, QtCore.Qt.ItemDataRole.UserRole, obj_id)
                             obj_item.setData(0, QtCore.Qt.ItemDataRole.UserRole + 1, "object")
                             view_item.addChild(obj_item)
