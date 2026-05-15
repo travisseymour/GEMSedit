@@ -688,14 +688,11 @@ class ActionList:
     def _configureColumnSizing(self, view):
         header = view.horizontalHeader()
         header.setStretchLastSection(False)
-        # Enabled column: fixed width based on header title with padding
-        fm = header.fontMetrics()
-        enabled_width = fm.horizontalAdvance("Enabled") + 20
-        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeMode.Fixed)
-        header.resizeSection(6, enabled_width)
-        # Condition, Trigger, Action: evenly split remaining space
-        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        # Enabled, Condition, Trigger: fit to widest content
+        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        # Action: fill remaining space
         header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
     def signalActionUpdate(self, index, record_id, value):
