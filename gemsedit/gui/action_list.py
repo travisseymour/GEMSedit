@@ -682,6 +682,8 @@ class ActionList:
         view.hideColumn(2)  # ContextId
         view.hideColumn(7)  # RowOrder
         self._configureColumnSizing(view)
+        # Move Enabled column to the front of the visible columns
+        view.horizontalHeader().moveSection(6, 3)
 
     def _configureColumnSizing(self, view):
         header = view.horizontalHeader()
