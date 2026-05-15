@@ -30,7 +30,6 @@ uninstall:
 format:
 	ruff check gemsedit --fix
 	ruff format gemsedit
-	black gemsedit
 
 build:
 	python -m build
