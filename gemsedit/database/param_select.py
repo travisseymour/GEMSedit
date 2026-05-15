@@ -363,9 +363,9 @@ class ParamSelect:
                     elif type_item == "richtext":
                         delegate.insertRowDelegate(i, genericrowdelegates.RichTextRowDelegate())
                     elif type_item == "viewnum":
-                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(self.view_list))
+                        delegate.insertRowDelegate(i, genericrowdelegates.ViewRowDelegate(self.media_path))
                     elif type_item == "objnum":
-                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(self.obj_list))
+                        delegate.insertRowDelegate(i, genericrowdelegates.ObjectRowDelegate(self.media_path))
                     elif type_item == "key":
                         delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(mykeys.keys))
                     elif type_item == "cursor":

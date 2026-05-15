@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
 )
 
 from gemsedit.gui import richtextlineedit
+from gemsedit.gui.view_chooser import ObjectChooserDialog, ViewChooserDialog
 
 
 class GenericRowDelegate(QStyledItemDelegate):
@@ -415,3 +416,79 @@ class RichTextRowDelegate(QStyledItemDelegate):
 
     def setModelData(self, editor, model, index):
         model.setData(index, editor.toSimpleHtml())
+
+
+class ViewRowDelegate(QStyledItemDelegate):
+    """Delegate that opens a ViewChooserDialog for selecting views with thumbnails."""
+
+    def __init__(self, media_path: str, parent=None):
+        super().__init__(parent)
+        self.media_path = media_path
+        self._selected_view = None
+
+    def createEditor(self, parent, option, index):
+        # Get current value
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+
+        # Show the view chooser dialog
+        result = ViewChooserDialog.choose_view(self.media_path, current_val, parent)
+
+        if result:
+            self._selected_view = result
+        else:
+            self._selected_view = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
+        return editor
+
+    def setEditorData(self, editor, index):
+        if self._selected_view is not None:
+            editor.setText(self._selected_view)
+        else:
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
+
+    def setModelData(self, editor, model, index):
+        if self._selected_view is not None:
+            model.setData(index, self._selected_view)
+        self._selected_view = None  # Reset for next use
+
+
+class ObjectRowDelegate(QStyledItemDelegate):
+    """Delegate that opens an ObjectChooserDialog for selecting objects with thumbnails."""
+
+    def __init__(self, media_path: str, parent=None):
+        super().__init__(parent)
+        self.media_path = media_path
+        self._selected_object = None
+
+    def createEditor(self, parent, option, index):
+        # Get current value
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+
+        # Show the object chooser dialog
+        result = ObjectChooserDialog.choose_object(self.media_path, current_val, parent)
+
+        if result:
+            self._selected_object = result
+        else:
+            self._selected_object = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
+        return editor
+
+    def setEditorData(self, editor, index):
+        if self._selected_object is not None:
+            editor.setText(self._selected_object)
+        else:
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
+
+    def setModelData(self, editor, model, index):
+        if self._selected_object is not None:
+            model.setData(index, self._selected_object)
+        self._selected_object = None  # Reset for next use
