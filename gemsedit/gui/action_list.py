@@ -683,15 +683,18 @@ class ActionList:
         view.hideColumn(7)  # RowOrder
         self._configureColumnSizing(view)
         # Move Enabled column to the front of the visible columns
-        view.horizontalHeader().moveSection(6, 3)
+        header = view.horizontalHeader()
+        if header.visualIndex(6) != 3:
+            header.moveSection(header.visualIndex(6), 3)
 
     def _configureColumnSizing(self, view):
         header = view.horizontalHeader()
         header.setStretchLastSection(False)
-        # Enabled, Condition, Trigger: fit to widest content
-        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        # Enabled, Condition, Trigger: fit to widest content + padding
+        padding = view.fontMetrics().averageCharWidth()
+        for col in (6, 3, 4):
+            view.resizeColumnToContents(col)
+            header.resizeSection(col, header.sectionSize(col) + padding)
         # Action: fill remaining space
         header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
