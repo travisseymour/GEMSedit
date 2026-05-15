@@ -29,6 +29,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QGuiApplication, QMouseEvent
 from PySide6.QtWidgets import QMainWindow, QTableView
 
+import gemsedit
 from gemsedit import log
 from gemsedit.database.connection import mark_db_as_changed
 from gemsedit.gui import helptext, mycolors
@@ -196,6 +197,7 @@ class Settings:
         self.MainWindow = QtWidgets.QDialog()
         self.ui = win.Ui_SettingsDialog()
         self.ui.setupUi(self.MainWindow)
+        gemsedit.scale_widget_fonts(self.MainWindow)
         self.MainWindow.setModal(False)
 
         # Fix dark mode: clear inline stylesheets that override palette colors

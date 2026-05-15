@@ -71,8 +71,9 @@ def main(
     splash.show()
     gemsedit.APPLICATION.processEvents()  # Ensure splash is displayed immediately
 
-    gemsedit.set_app_font(QFont("Arial", 14))
     gemsedit.SETTINGS = QSettings()
+    gemsedit.font_scale = gemsedit.SETTINGS.value("font_scale", defaultValue=1.0, type=float)
+    gemsedit.set_app_font(QFont("Arial", 14))
 
     # Set some global vars
     QCoreApplication.setOrganizationName("TravisSeymour")

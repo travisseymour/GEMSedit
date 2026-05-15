@@ -32,6 +32,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+import gemsedit
+
 
 class ViewItemWidget(QWidget):
     """Custom widget for displaying a view item with thumbnail, ID, and name."""
@@ -57,11 +59,15 @@ class ViewItemWidget(QWidget):
                 self.thumbnail.setPixmap(pixmap)
             else:
                 self.thumbnail.setText("N/A")
-                self.thumbnail.setStyleSheet("border: 1px solid gray; background-color: #333; font-size: 18px;")
+                self.thumbnail.setStyleSheet(
+                    f"border: 1px solid gray; background-color: #333; font-size: {gemsedit.scaled_size(18)}px;"
+                )
                 self.thumbnail.setAlignment(Qt.AlignmentFlag.AlignCenter)
         else:
             self.thumbnail.setText("N/A")
-            self.thumbnail.setStyleSheet("border: 1px solid gray; background-color: #333; font-size: 18px;")
+            self.thumbnail.setStyleSheet(
+                f"border: 1px solid gray; background-color: #333; font-size: {gemsedit.scaled_size(18)}px;"
+            )
             self.thumbnail.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         layout.addWidget(self.thumbnail)
@@ -71,11 +77,11 @@ class ViewItemWidget(QWidget):
         info_layout.setSpacing(4)
 
         id_label = QLabel(f"ID: {view_id}")
-        id_label.setStyleSheet("font-weight: bold; font-size: 18px;")
+        id_label.setStyleSheet(f"font-weight: bold; font-size: {gemsedit.scaled_size(18)}px;")
         info_layout.addWidget(id_label)
 
         name_label = QLabel(view_name)
-        name_label.setStyleSheet("font-size: 20px;")
+        name_label.setStyleSheet(f"font-size: {gemsedit.scaled_size(20)}px;")
         name_label.setWordWrap(True)
         info_layout.addWidget(name_label)
 
@@ -95,11 +101,7 @@ class ViewChooserDialog(QDialog):
         self.setWindowTitle("Choose View")
         self.setMinimumSize(650, 700)
         self.resize(700, 800)
-        self.setWindowFlags(
-            Qt.WindowType.Dialog
-            | Qt.WindowType.WindowTitleHint
-            | Qt.WindowType.WindowCloseButtonHint
-        )
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowCloseButtonHint)
 
         self.setup_ui()
         self.load_views()
@@ -109,7 +111,7 @@ class ViewChooserDialog(QDialog):
 
         # Header label
         header = QLabel("Select a view:")
-        header.setStyleSheet("font-size: 22px; font-weight: bold; margin-bottom: 8px;")
+        header.setStyleSheet(f"font-size: {gemsedit.scaled_size(22)}px; font-weight: bold; margin-bottom: 8px;")
         layout.addWidget(header)
 
         # List widget for views
@@ -124,12 +126,12 @@ class ViewChooserDialog(QDialog):
         button_layout.addStretch()
 
         self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.setStyleSheet("font-size: 18px; padding: 8px 20px;")
+        self.cancel_button.setStyleSheet(f"font-size: {gemsedit.scaled_size(18)}px; padding: 8px 20px;")
         self.cancel_button.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_button)
 
         self.select_button = QPushButton("Select")
-        self.select_button.setStyleSheet("font-size: 18px; padding: 8px 20px;")
+        self.select_button.setStyleSheet(f"font-size: {gemsedit.scaled_size(18)}px; padding: 8px 20px;")
         self.select_button.clicked.connect(self.on_select)
         self.select_button.setEnabled(False)
         self.select_button.setDefault(True)
@@ -256,7 +258,9 @@ class ObjectItemWidget(QWidget):
 
         if not thumbnail_set:
             self.thumbnail.setText("N/A")
-            self.thumbnail.setStyleSheet("border: 1px solid gray; background-color: #333; font-size: 18px;")
+            self.thumbnail.setStyleSheet(
+                f"border: 1px solid gray; background-color: #333; font-size: {gemsedit.scaled_size(18)}px;"
+            )
             self.thumbnail.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         layout.addWidget(self.thumbnail)
@@ -267,11 +271,11 @@ class ObjectItemWidget(QWidget):
 
         # Object info
         obj_id_label = QLabel(f"Object ID: {obj_id}")
-        obj_id_label.setStyleSheet("font-weight: bold; font-size: 18px;")
+        obj_id_label.setStyleSheet(f"font-weight: bold; font-size: {gemsedit.scaled_size(18)}px;")
         info_layout.addWidget(obj_id_label)
 
         obj_name_label = QLabel(obj_name)
-        obj_name_label.setStyleSheet("font-size: 20px;")
+        obj_name_label.setStyleSheet(f"font-size: {gemsedit.scaled_size(20)}px;")
         obj_name_label.setWordWrap(True)
         info_layout.addWidget(obj_name_label)
 
@@ -280,7 +284,7 @@ class ObjectItemWidget(QWidget):
 
         # View info (smaller, secondary)
         view_label = QLabel(f"View {view_id}: {view_name}")
-        view_label.setStyleSheet("font-size: 14px; color: #666;")
+        view_label.setStyleSheet(f"font-size: {gemsedit.scaled_size(14)}px; color: #666;")
         view_label.setWordWrap(True)
         info_layout.addWidget(view_label)
 
@@ -300,11 +304,7 @@ class ObjectChooserDialog(QDialog):
         self.setWindowTitle("Choose Object")
         self.setMinimumSize(700, 750)
         self.resize(750, 850)
-        self.setWindowFlags(
-            Qt.WindowType.Dialog
-            | Qt.WindowType.WindowTitleHint
-            | Qt.WindowType.WindowCloseButtonHint
-        )
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowCloseButtonHint)
 
         self.setup_ui()
         self.load_objects()
@@ -314,7 +314,7 @@ class ObjectChooserDialog(QDialog):
 
         # Header label
         header = QLabel("Select an object:")
-        header.setStyleSheet("font-size: 22px; font-weight: bold; margin-bottom: 8px;")
+        header.setStyleSheet(f"font-size: {gemsedit.scaled_size(22)}px; font-weight: bold; margin-bottom: 8px;")
         layout.addWidget(header)
 
         # List widget for objects
@@ -329,12 +329,12 @@ class ObjectChooserDialog(QDialog):
         button_layout.addStretch()
 
         self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.setStyleSheet("font-size: 18px; padding: 8px 20px;")
+        self.cancel_button.setStyleSheet(f"font-size: {gemsedit.scaled_size(18)}px; padding: 8px 20px;")
         self.cancel_button.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_button)
 
         self.select_button = QPushButton("Select")
-        self.select_button.setStyleSheet("font-size: 18px; padding: 8px 20px;")
+        self.select_button.setStyleSheet(f"font-size: {gemsedit.scaled_size(18)}px; padding: 8px 20px;")
         self.select_button.clicked.connect(self.on_select)
         self.select_button.setEnabled(False)
         self.select_button.setDefault(True)
@@ -399,8 +399,7 @@ class ObjectChooserDialog(QDialog):
 
                 # Create custom widget with bounding box for cropped thumbnail
                 widget = ObjectItemWidget(
-                    obj_id, obj_name, parent_view_id, view_name, fg_pic_path,
-                    obj_left, obj_top, obj_width, obj_height
+                    obj_id, obj_name, parent_view_id, view_name, fg_pic_path, obj_left, obj_top, obj_width, obj_height
                 )
                 self.list_widget.setItemWidget(item, widget)
 

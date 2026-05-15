@@ -442,9 +442,9 @@ if __name__ == "__main__":
     new_yaml_file_xxx = Path(Path(db_file).parent, Path(db_file).stem + ".yaml")
 
     with open(new_yaml_file, "w") as outfile:
-        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float('inf'))
+        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float("inf"))
     with open(new_yaml_file_xxx, "w") as outfile:
-        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float('inf'))
+        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float("inf"))
 
     # test dict_to_sqlite
     new_db_file = Path(Path(db_file).parent, Path(db_file).stem + "_y2s2y.db")

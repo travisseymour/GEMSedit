@@ -22,6 +22,7 @@ from PySide6 import QtCore, QtSql, QtWidgets
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QCloseEvent, QColor, QGuiApplication
 
+import gemsedit
 from gemsedit import log
 from gemsedit.gui import genericrowdelegates, helptext, mycolors, mycursors, mykeys
 import gemsedit.gui.param_select_dlg as win
@@ -132,6 +133,7 @@ class ParamSelect:
         )
         self.ui = win.Ui_parameterSelectDialog()
         self.ui.setupUi(self.ParmSelectWindow)
+        gemsedit.scale_widget_fonts(self.ParmSelectWindow)
 
         # Fix dark mode: clear inline stylesheets that override palette colors
         # These labels had white backgrounds hardcoded in the generated UI file

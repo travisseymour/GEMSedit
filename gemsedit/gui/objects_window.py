@@ -154,7 +154,9 @@ class Ui_ObjectsWindow(object):
         self.objectCopy_toolButton = QToolButton(self.layoutWidget)
         self.objectCopy_toolButton.setObjectName("objectCopy_toolButton")
         icon_objcopy = QIcon()
-        icon_objcopy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon_objcopy.addFile(
+            ":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
         self.objectCopy_toolButton.setIcon(icon_objcopy)
 
         self.gridLayout_2.addWidget(self.objectCopy_toolButton, 1, 5, 1, 1)
@@ -295,7 +297,9 @@ class Ui_ObjectsWindow(object):
         self.actionCopy_toolButton = QToolButton(self.layoutWidget1)
         self.actionCopy_toolButton.setObjectName("actionCopy_toolButton")
         icon_copy = QIcon()
-        icon_copy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon_copy.addFile(
+            ":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
         self.actionCopy_toolButton.setIcon(icon_copy)
 
         self.horizontalLayout_2.addWidget(self.actionCopy_toolButton)

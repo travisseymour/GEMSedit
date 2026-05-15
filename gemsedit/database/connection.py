@@ -173,7 +173,7 @@ class GemsDB:
                 try:
                     with open(self.yaml_file_name, "w") as outfile:
                         # width=inf prevents PyYAML from wrapping long strings with newlines
-                        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float('inf'))
+                        yaml.dump(db_as_dict, outfile, default_flow_style=False, width=float("inf"))
                 except Exception as e:
                     problems.append(f"- Problem saving yaml file to disk: {e}")
 

@@ -22,6 +22,7 @@ from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtWidgets import QApplication
 
+import gemsedit
 from gemsedit import log
 
 
@@ -206,7 +207,7 @@ class ObjectSelect(QtWidgets.QDialog):
             painter.drawPixmap(0, 0, QtGui.QPixmap(self.bgPic))  # for scaled: QPixmap(blah).scaled(size())
 
         if self.msg:
-            painter.setFont(QtGui.QFont("Arial", 14))  # 'Decorative'
+            painter.setFont(QtGui.QFont("Arial", gemsedit.scaled_size(14)))  # 'Decorative'
             font_metrics = painter.fontMetrics()
             ascent = font_metrics.ascent()
             descent = font_metrics.descent()

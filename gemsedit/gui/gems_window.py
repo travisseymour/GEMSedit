@@ -335,7 +335,9 @@ class Ui_ViewsWindow(object):
         self.actionCopy_toolButton = QToolButton(self.layoutWidget1)
         self.actionCopy_toolButton.setObjectName("actionCopy_toolButton")
         icon_copy = QIcon()
-        icon_copy.addFile(":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon_copy.addFile(
+            ":/newPrefix/media/1409970886_circle-arrow-left-48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
         self.actionCopy_toolButton.setIcon(icon_copy)
 
         self.gridLayout_4.addWidget(self.actionCopy_toolButton, 0, 4, 1, 1)

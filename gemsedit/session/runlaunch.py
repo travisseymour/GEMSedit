@@ -22,6 +22,7 @@ from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMessageBox
 
+import gemsedit
 import gemsedit.gui.run_launch_dlg as win
 
 
@@ -30,6 +31,7 @@ class RunLaunch:
         self.MainWindow = QtWidgets.QDialog()
         self.ui = win.Ui_GEMSRunDialog()
         self.ui.setupUi(self.MainWindow)
+        gemsedit.scale_widget_fonts(self.MainWindow)
         self.MainWindow.setModal(True)
 
         self.overwriteGroup = QtWidgets.QButtonGroup()

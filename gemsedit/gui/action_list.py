@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
-from typing import Optional
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QTimer
@@ -31,7 +30,7 @@ from gemsedit.database.sqltools import get_next_value
 import gemsedit.gui.genericcoldelegates as generic_col_delegates
 
 
-def parse_linked_object_name(object_name: str) -> Optional[tuple[int, int]]:
+def parse_linked_object_name(object_name: str) -> tuple[int, int] | None:
     """
     Parse an object name to check if it references another object's actions.
 
@@ -65,7 +64,7 @@ def parse_linked_object_name(object_name: str) -> Optional[tuple[int, int]]:
     return None
 
 
-def get_linked_object_info(view_id: int, object_id: int) -> Optional[dict]:
+def get_linked_object_info(view_id: int, object_id: int) -> dict | None:
     """
     Get information about a linked object.
 
@@ -435,7 +434,7 @@ class ActionList:
         self.add_del_busy: bool = False
 
         # Linked object support - when set, shows another object's actions read-only
-        self.linked_source: Optional[dict] = None
+        self.linked_source: dict | None = None
         self._on_linked_changed_callback = None
 
         # Event filter to intercept editing on linked actions
@@ -448,7 +447,7 @@ class ActionList:
         self.initializeDatabases()
         self.initializeViews()
 
-    def set_linked_mode(self, linked_info: Optional[dict], callback=None):
+    def set_linked_mode(self, linked_info: dict | None, callback=None):
         """
         Set linked mode for this action list.
 
@@ -487,10 +486,7 @@ class ActionList:
         # If linked to another object, show that object's actions instead
         if self.linked_source:
             source_id = self.linked_source["object_id"]
-            sql = (
-                f"select * from actions where ContextType = 'object' "
-                f"and ContextId = '{source_id}' order by RowOrder"
-            )
+            sql = f"select * from actions where ContextType = 'object' and ContextId = '{source_id}' order by RowOrder"
         else:
             sql = (
                 f"select * from actions where ContextType = '{self.action_type}' "
@@ -608,12 +604,14 @@ class ActionList:
             actions_to_copy = []
             if source_query.isActive():
                 while source_query.next():
-                    actions_to_copy.append({
-                        "condition": source_query.value(0),
-                        "trigger": source_query.value(1),
-                        "action": source_query.value(2),
-                        "enabled": source_query.value(3),
-                    })
+                    actions_to_copy.append(
+                        {
+                            "condition": source_query.value(0),
+                            "trigger": source_query.value(1),
+                            "action": source_query.value(2),
+                            "enabled": source_query.value(3),
+                        }
+                    )
 
             if not actions_to_copy:
                 QMessageBox.information(

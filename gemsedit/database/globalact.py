@@ -21,6 +21,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMainWindow
 
+import gemsedit
 from gemsedit.gui import action_list
 import gemsedit.gui.globalact_window as win
 
@@ -125,6 +126,7 @@ class GlobalAct:
         self.MainWindow = QtWidgets.QWidget()
         self.ui = win.Ui_GlobalActionsDialog()
         self.ui.setupUi(self.MainWindow)
+        gemsedit.scale_widget_fonts(self.MainWindow)
 
         self.ui.GAL_tableView.setModel(None)
         self.ui.PAL_tableView.setModel(None)

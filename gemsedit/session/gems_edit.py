@@ -27,9 +27,10 @@ import webbrowser
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtCore import QSettings, QTimer
-from PySide6.QtGui import QCloseEvent, QGuiApplication
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtGui import QAction, QCloseEvent, QGuiApplication, QKeySequence
+from PySide6.QtWidgets import QApplication, QMessageBox
 
+import gemsedit
 from gemsedit import app_long_name, log
 from gemsedit.database import connection, gems_db, globalact
 from gemsedit.database.sqltools import get_next_value
@@ -146,6 +147,22 @@ class GemsViews:
 
         self.MainWindow.setWindowTitle(f"{app_long_name} version {__version__}")
         self._check_for_update()
+
+        # Font scaling menu actions and shortcuts
+        self.ui.menuSettings.addSeparator()
+        act_zoom_in = QAction("Increase Font", self.MainWindow)
+        act_zoom_in.setShortcut(QKeySequence("Ctrl+="))
+        act_zoom_in.triggered.connect(self._zoom_in)
+        self.ui.menuSettings.addAction(act_zoom_in)
+        act_zoom_out = QAction("Decrease Font", self.MainWindow)
+        act_zoom_out.setShortcut(QKeySequence("Ctrl+-"))
+        act_zoom_out.triggered.connect(self._zoom_out)
+        self.ui.menuSettings.addAction(act_zoom_out)
+        act_zoom_reset = QAction("Reset Font", self.MainWindow)
+        act_zoom_reset.setShortcut(QKeySequence("Ctrl+0"))
+        act_zoom_reset.triggered.connect(self._zoom_reset)
+        self.ui.menuSettings.addAction(act_zoom_reset)
+        gemsedit.scale_widget_fonts(self.MainWindow)
 
         self.ui.actionSaveEnv.setIconVisibleInMenu(True)
         self.ui_timer = QTimer()
@@ -266,10 +283,30 @@ class GemsViews:
         self.settings.setValue("prev_db_filename", self.prev_db_filename)
         self.settings.setValue("gems_runner_path", self.gems_runner_path)
         self.settings.setValue("recent_files", self.recent_files)
+        self.settings.setValue("font_scale", gemsedit.font_scale)
 
         # get out of here
         self.MainWindow.close()
         event.accept()
+
+    # --- Font scaling ---
+
+    def _zoom_in(self):
+        gemsedit.font_scale = min(gemsedit.font_scale + 0.1, 3.0)
+        self._apply_font_scale()
+
+    def _zoom_out(self):
+        gemsedit.font_scale = max(gemsedit.font_scale - 0.1, 0.5)
+        self._apply_font_scale()
+
+    def _zoom_reset(self):
+        gemsedit.font_scale = 1.0
+        self._apply_font_scale()
+
+    def _apply_font_scale(self):
+        gemsedit.set_app_font()
+        for widget in QApplication.topLevelWidgets():
+            gemsedit.scale_widget_fonts(widget)
 
     # def locate_gemsrun_OLD_KEEP(self):
     #     # NOTE: We are no longer using this approach, because of our current

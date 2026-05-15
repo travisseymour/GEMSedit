@@ -16,21 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from datetime import datetime
 import os
 import re
-from datetime import datetime
 
 from PySide6 import QtCore, QtGui, QtSql, QtWidgets
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QMessageBox
 
+import gemsedit
 from gemsedit import dialog_font, log
 from gemsedit.database.connection import mark_db_as_changed
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list, object_select_widget as objselect
-from gemsedit.gui.action_list import parse_linked_object_name, get_linked_object_info
+from gemsedit.gui.action_list import get_linked_object_info, parse_linked_object_name
 import gemsedit.gui.objects_window as win
 
 
@@ -133,6 +134,7 @@ class Objects:
         self.MainWindow = QtWidgets.QDialog()
         self.ui = win.Ui_ObjectsWindow()
         self.ui.setupUi(self.MainWindow)
+        gemsedit.scale_widget_fonts(self.MainWindow)
         self.selectionmodel = None
         self.objbox = self.create_box(self.ui.objectLocPic_label, 0, 0, 0, 0, "yellow", "ObjectBox")
 
@@ -388,9 +390,7 @@ class Objects:
                     # Pattern matched but object not found - this is a broken link
                     self.broken_link_ref = (view_id, source_obj_id)
                     self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
-                    log.warning(
-                        f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}"
-                    )
+                    log.warning(f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}")
             else:
                 self.broken_link_ref = None
                 self.actionlist.set_linked_mode(None, self._on_linked_mode_changed)
@@ -607,17 +607,19 @@ class Objects:
         objects_to_copy = []
         if source_query.isActive():
             while source_query.next():
-                objects_to_copy.append({
-                    "id": source_query.value(0),
-                    "name": source_query.value(1),
-                    "left": source_query.value(2),
-                    "top": source_query.value(3),
-                    "width": source_query.value(4),
-                    "height": source_query.value(5),
-                    "visible": source_query.value(6),
-                    "takeable": source_query.value(7),
-                    "draggable": source_query.value(8),
-                })
+                objects_to_copy.append(
+                    {
+                        "id": source_query.value(0),
+                        "name": source_query.value(1),
+                        "left": source_query.value(2),
+                        "top": source_query.value(3),
+                        "width": source_query.value(4),
+                        "height": source_query.value(5),
+                        "visible": source_query.value(6),
+                        "takeable": source_query.value(7),
+                        "draggable": source_query.value(8),
+                    }
+                )
 
         if not objects_to_copy:
             QMessageBox.information(
@@ -650,9 +652,7 @@ class Objects:
         total_actions = 0
         for obj in objects_to_copy:
             action_count_query = QtSql.QSqlQuery()
-            action_count_query.prepare(
-                "SELECT COUNT(*) FROM actions WHERE ContextType = 'object' AND ContextId = :id"
-            )
+            action_count_query.prepare("SELECT COUNT(*) FROM actions WHERE ContextType = 'object' AND ContextId = :id")
             action_count_query.bindValue(":id", obj["id"])
             action_count_query.exec()
             if action_count_query.isActive() and action_count_query.next():
@@ -737,7 +737,9 @@ class Objects:
                     insert_action_query.exec()
 
                     if insert_action_query.lastError().isValid():
-                        log.error(f"Problem in handleObjectsCopy() insert action: {insert_action_query.lastError().text()}")
+                        log.error(
+                            f"Problem in handleObjectsCopy() insert action: {insert_action_query.lastError().text()}"
+                        )
 
         # Refresh the object list
         sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
@@ -832,15 +834,11 @@ class Objects:
 
                             # Delete existing actions
                             delete_query = QtSql.QSqlQuery()
-                            delete_query.prepare(
-                                "DELETE FROM actions WHERE ContextType = 'object' AND ContextId = :id"
-                            )
+                            delete_query.prepare("DELETE FROM actions WHERE ContextType = 'object' AND ContextId = :id")
                             delete_query.bindValue(":id", id)
                             delete_query.exec()
                             if delete_query.lastError().isValid():
-                                log.error(
-                                    f"Problem deleting actions before linking: {delete_query.lastError().text()}"
-                                )
+                                log.error(f"Problem deleting actions before linking: {delete_query.lastError().text()}")
 
                 query = QtSql.QSqlQuery()
                 query.prepare("UPDATE " + self.basetablename + " SET Name = :name WHERE Id = :id")
@@ -1014,9 +1012,7 @@ class Objects:
                 else:
                     # Pattern matched but object not found - this is a broken link
                     self.broken_link_ref = (view_id, source_obj_id)
-                    log.warning(
-                        f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}"
-                    )
+                    log.warning(f"Object '{obj_name}' references non-existent object {source_obj_id} in view {view_id}")
             else:
                 self.broken_link_ref = None
 
