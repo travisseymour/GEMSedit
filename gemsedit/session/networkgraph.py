@@ -49,21 +49,6 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
     # net.add_node('D', label='Delta', image=image, shape='image', title='Live Long and Prosper!')
     # net.add_edge('B', 'E', weight=.87, color='#000000')
 
-    # add views
-    for _id, view in db.Views.items():
-        net.add_node(
-            _id,
-            label=view.Name,
-            shape="image",
-            # vvv direct web ref works!
-            # image="http://images4.fanpop.com/image/photos/14900000/Court-Martial-mr-spock-14948576-200-200.jpg",
-            # vvv local disk reference DOES NOT WORK!?
-            # image=str(Path(media_path, view.Foreground)),
-            image=str(Path(media_path, view.Foreground).as_uri()),
-            # image="https://13thdimension.com/wp-content/uploads/2016/07/xfrtoc70fgzg49ubheth.jpg",
-            title=f"View {_id}: {view.Name}",
-        )
-
     def trigger_color(trigger: str) -> str:
         if trigger.startswith("Nav"):
             return "#66b8f9"
@@ -72,46 +57,52 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
         else:
             return "#000000"
 
-    # add edges
-    for (
-        _id,
-        view,
-    ) in db.Views.items():
-        # check for view actions
+    # Collect edges first so we know which views are connected
+    edges = []
+    portal_room = re.compile(r"PortalTo\((\d+)")
+    for _id, view in db.Views.items():
         if view.Actions:
             for action in view.Actions.values():
                 if "PortalTo" in action.Action:
-                    portal_room = re.compile(r"PortalTo\((\d+)")
                     destination = portal_room.findall(action.Action)
                     if destination:
-                        net.add_edge(
-                            _id,
-                            destination[0],
-                            weight=1.0,
-                            color=trigger_color(action.Trigger),
-                            title=action.Trigger,
-                        )
+                        edges.append((_id, destination[0], 1.0, trigger_color(action.Trigger), action.Trigger))
 
-        # check for view object actions
         if view.Objects:
             for obj in view.Objects.values():
                 if obj.Actions:
                     for action in obj.Actions.values():
                         if "PortalTo" in action.Action:
-                            portal_room = re.compile(r"PortalTo\((\d+)")
                             destination = portal_room.findall(action.Action)
                             if destination:
                                 if action.Trigger == "MouseClick()":
                                     trigger = f"MouseClick({obj.Id}: {obj.Name})"
                                 else:
                                     trigger = action.Trigger
-                                net.add_edge(
-                                    _id,
-                                    destination[0],
-                                    weight=1.5,
-                                    color=trigger_color(action.Trigger),
-                                    title=trigger,
-                                )
+                                edges.append((_id, destination[0], 1.5, trigger_color(action.Trigger), trigger))
+
+    # Only include connected views (unless there is just one view total)
+    connected_ids = set()
+    for src, dst, *_ in edges:
+        connected_ids.add(src)
+        connected_ids.add(dst)
+
+    show_all = len(db.Views) <= 1
+    for _id, view in db.Views.items():
+        if show_all or _id in connected_ids:
+            net.add_node(
+                _id,
+                label=view.Name,
+                shape="image",
+                image=str(Path(media_path, view.Foreground).as_uri()),
+                title=f"View {_id}: {view.Name}",
+                borderWidth=3,
+                shapeProperties={"useBorderWithImage": True},
+                color={"border": "#0000CC"},
+            )
+
+    for src, dst, weight, color, title in edges:
+        net.add_edge(src, dst, weight=weight, color=color, title=title)
 
     return net
 
