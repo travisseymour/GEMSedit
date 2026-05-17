@@ -1055,6 +1055,8 @@ class GemsViews:
             self.ui.actionAdd_toolButton.pressed.connect(self.action_list.handleActionAdd)
             self.ui.actionDel_toolButton.pressed.connect(self.action_list.handleActionDel)
             self.ui.actionCopy_toolButton.pressed.connect(self.action_list.handleActionCopy)
+            self.ui.actionUp_toolButton.pressed.connect(self.action_list.handleActionMoveUp)
+            self.ui.actionDown_toolButton.pressed.connect(self.action_list.handleActionMoveDown)
 
             # handle pic fields
             self.loadPicFields(False)

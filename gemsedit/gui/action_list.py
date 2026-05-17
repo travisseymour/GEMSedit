@@ -663,6 +663,148 @@ class ActionList:
         finally:
             self.add_del_busy = False
 
+    def handleActionMoveUp(self):
+        """Move the selected action up in the execution order."""
+        if self.add_del_busy or self.is_linked() or self.current_id is None:
+            return
+
+        self.add_del_busy = True
+        try:
+            # Get the current action's RowOrder
+            query = QtSql.QSqlQuery()
+            query.prepare("SELECT RowOrder FROM actions WHERE Id = :id")
+            query.bindValue(":id", self.current_id)
+            query.exec()
+            if not query.isActive() or not query.next():
+                return
+            current_row_order = query.value(0)
+
+            # Find the action with the next lower RowOrder in the same context
+            if self.linked_source:
+                source_id = self.linked_source["object_id"]
+                context_type = "object"
+            else:
+                source_id = self.parent_id
+                context_type = self.action_type
+
+            query2 = QtSql.QSqlQuery()
+            query2.prepare(
+                "SELECT Id, RowOrder FROM actions "
+                "WHERE ContextType = :contexttype AND ContextId = :contextid AND RowOrder < :roworder "
+                "ORDER BY RowOrder DESC LIMIT 1"
+            )
+            query2.bindValue(":contexttype", context_type)
+            query2.bindValue(":contextid", source_id)
+            query2.bindValue(":roworder", current_row_order)
+            query2.exec()
+
+            if not query2.isActive() or not query2.next():
+                return  # Already at the top
+
+            swap_id = query2.value(0)
+            swap_row_order = query2.value(1)
+
+            # Swap RowOrder values
+            update1 = QtSql.QSqlQuery()
+            update1.prepare("UPDATE actions SET RowOrder = :roworder WHERE Id = :id")
+            update1.bindValue(":roworder", swap_row_order)
+            update1.bindValue(":id", self.current_id)
+            update1.exec()
+
+            update2 = QtSql.QSqlQuery()
+            update2.prepare("UPDATE actions SET RowOrder = :roworder WHERE Id = :id")
+            update2.bindValue(":roworder", current_row_order)
+            update2.bindValue(":id", swap_id)
+            update2.exec()
+
+            if update1.lastError().isValid() or update2.lastError().isValid():
+                log.error("Problem in handleActionMoveUp(): swap failed")
+                return
+
+            mark_db_as_changed()
+            self.filterActions()
+
+            # Re-select the moved action
+            self._select_action_by_id(self.current_id)
+
+        finally:
+            self.add_del_busy = False
+
+    def handleActionMoveDown(self):
+        """Move the selected action down in the execution order."""
+        if self.add_del_busy or self.is_linked() or self.current_id is None:
+            return
+
+        self.add_del_busy = True
+        try:
+            # Get the current action's RowOrder
+            query = QtSql.QSqlQuery()
+            query.prepare("SELECT RowOrder FROM actions WHERE Id = :id")
+            query.bindValue(":id", self.current_id)
+            query.exec()
+            if not query.isActive() or not query.next():
+                return
+            current_row_order = query.value(0)
+
+            # Find the action with the next higher RowOrder in the same context
+            if self.linked_source:
+                source_id = self.linked_source["object_id"]
+                context_type = "object"
+            else:
+                source_id = self.parent_id
+                context_type = self.action_type
+
+            query2 = QtSql.QSqlQuery()
+            query2.prepare(
+                "SELECT Id, RowOrder FROM actions "
+                "WHERE ContextType = :contexttype AND ContextId = :contextid AND RowOrder > :roworder "
+                "ORDER BY RowOrder ASC LIMIT 1"
+            )
+            query2.bindValue(":contexttype", context_type)
+            query2.bindValue(":contextid", source_id)
+            query2.bindValue(":roworder", current_row_order)
+            query2.exec()
+
+            if not query2.isActive() or not query2.next():
+                return  # Already at the bottom
+
+            swap_id = query2.value(0)
+            swap_row_order = query2.value(1)
+
+            # Swap RowOrder values
+            update1 = QtSql.QSqlQuery()
+            update1.prepare("UPDATE actions SET RowOrder = :roworder WHERE Id = :id")
+            update1.bindValue(":roworder", swap_row_order)
+            update1.bindValue(":id", self.current_id)
+            update1.exec()
+
+            update2 = QtSql.QSqlQuery()
+            update2.prepare("UPDATE actions SET RowOrder = :roworder WHERE Id = :id")
+            update2.bindValue(":roworder", current_row_order)
+            update2.bindValue(":id", swap_id)
+            update2.exec()
+
+            if update1.lastError().isValid() or update2.lastError().isValid():
+                log.error("Problem in handleActionMoveDown(): swap failed")
+                return
+
+            mark_db_as_changed()
+            self.filterActions()
+
+            # Re-select the moved action
+            self._select_action_by_id(self.current_id)
+
+        finally:
+            self.add_del_busy = False
+
+    def _select_action_by_id(self, action_id):
+        """Select the row in the table view that corresponds to the given action ID."""
+        for row in range(self.model.rowCount()):
+            index = self.model.index(row, 0)
+            if self.model.data(index, QtCore.Qt.ItemDataRole.DisplayRole) == action_id:
+                self.table_view.selectRow(row)
+                break
+
     def initializeVALModel(self, model, query):
         model.setQuery(query)
         # (Id INT, Context TEXT, Condition TEXT, Trigger TEXT, Action TEXT, Enabled BOOL, RowOrder INT)

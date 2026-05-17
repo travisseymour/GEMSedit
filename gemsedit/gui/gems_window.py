@@ -342,6 +342,18 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_4.addWidget(self.actionCopy_toolButton, 0, 4, 1, 1)
 
+        self.actionUp_toolButton = QToolButton(self.layoutWidget1)
+        self.actionUp_toolButton.setObjectName("actionUp_toolButton")
+        self.actionUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
+
+        self.gridLayout_4.addWidget(self.actionUp_toolButton, 0, 5, 1, 1)
+
+        self.actionDown_toolButton = QToolButton(self.layoutWidget1)
+        self.actionDown_toolButton.setObjectName("actionDown_toolButton")
+        self.actionDown_toolButton.setArrowType(Qt.ArrowType.DownArrow)
+
+        self.gridLayout_4.addWidget(self.actionDown_toolButton, 0, 6, 1, 1)
+
         self.VAL_tableView = QTableView(self.layoutWidget1)
         self.VAL_tableView.setObjectName("VAL_tableView")
         self.VAL_tableView.setMinimumSize(QSize(622, 192))
@@ -355,7 +367,7 @@ class Ui_ViewsWindow(object):
         self.VAL_tableView.horizontalHeader().setStretchLastSection(True)
         self.VAL_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout_4.addWidget(self.VAL_tableView, 1, 0, 1, 5)
+        self.gridLayout_4.addWidget(self.VAL_tableView, 1, 0, 1, 7)
 
         self.gridLayout_5.addLayout(self.gridLayout_4, 1, 0, 1, 1)
 
@@ -675,6 +687,16 @@ class Ui_ViewsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.actionCopy_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionUp_toolButton.setToolTip(
+            QCoreApplication.translate("ViewsWindow", "Move selected action up (earlier execution)", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        # if QT_CONFIG(tooltip)
+        self.actionDown_toolButton.setToolTip(
+            QCoreApplication.translate("ViewsWindow", "Move selected action down (later execution)", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.label_7.setText(QCoreApplication.translate("ViewsWindow", "Foreground Pic", None))
         # if QT_CONFIG(tooltip)
         self.fgOpen_toolButton.setToolTip(

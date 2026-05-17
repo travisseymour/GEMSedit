@@ -304,6 +304,18 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_2.addWidget(self.actionCopy_toolButton)
 
+        self.actionUp_toolButton = QToolButton(self.layoutWidget1)
+        self.actionUp_toolButton.setObjectName("actionUp_toolButton")
+        self.actionUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
+
+        self.horizontalLayout_2.addWidget(self.actionUp_toolButton)
+
+        self.actionDown_toolButton = QToolButton(self.layoutWidget1)
+        self.actionDown_toolButton.setObjectName("actionDown_toolButton")
+        self.actionDown_toolButton.setArrowType(Qt.ArrowType.DownArrow)
+
+        self.horizontalLayout_2.addWidget(self.actionDown_toolButton)
+
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
 
         self.OAL_tableView = QTableView(self.layoutWidget1)
@@ -449,6 +461,16 @@ class Ui_ObjectsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.actionCopy_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionUp_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Move selected action up (earlier execution)", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        # if QT_CONFIG(tooltip)
+        self.actionDown_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Move selected action down (later execution)", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.label_7.setText(QCoreApplication.translate("ObjectsWindow", "Object Pic", None))
         self.drawSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         self.delSelect_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))

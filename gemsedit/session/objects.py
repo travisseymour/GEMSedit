@@ -171,6 +171,8 @@ class Objects:
         self.ui.actionAdd_toolButton.pressed.connect(self.actionlist.handleActionAdd)
         self.ui.actionDel_toolButton.pressed.connect(self.actionlist.handleActionDel)
         self.ui.actionCopy_toolButton.pressed.connect(self.actionlist.handleActionCopy)
+        self.ui.actionUp_toolButton.pressed.connect(self.actionlist.handleActionMoveUp)
+        self.ui.actionDown_toolButton.pressed.connect(self.actionlist.handleActionMoveDown)
         self.ui.takeable_checkBox.toggled.connect(self.updateTakeable)
         self.ui.draggable_checkBox.toggled.connect(self.updateDraggable)
         self.ui.visible_checkBox.toggled.connect(self.updateVisible)
