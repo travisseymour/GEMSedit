@@ -160,7 +160,7 @@ action_lst:
     Labels: '["ImageFile","Left","Top","Duration","Clickthrough", "WithinObject", "HideTarget", "Stretch"]'
     Name: ShowImageWithin
     Restrictions: viewobject
-    Template: '["picfile","number","number","float","bool","number","bool","bool"]'
+    Template: '["picfile","number","number","float","bool","objnum","bool","bool"]'
   '27':
     Id: 27
     Labels: '["VidFile","Start","WithinObject","Volume","Loop"]'
