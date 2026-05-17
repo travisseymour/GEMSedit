@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from datetime import datetime
+import json
 import os
 import re
 
@@ -27,6 +28,7 @@ from PySide6.QtWidgets import QMessageBox
 import gemsedit
 from gemsedit import dialog_font, log
 from gemsedit.database.connection import mark_db_as_changed
+from gemsedit.utils.polygon_utils import json_to_points, points_to_json, points_to_bounding_rect
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
@@ -213,15 +215,9 @@ class Objects:
                 return
             id = self.model.record(self.currentrow).value("Id")
             query = QtSql.QSqlQuery()
-            sql = (
-                f"UPDATE {self.basetablename}"
-                f" SET Left = :left, Top = :top, Width = :width, Height = :height WHERE Id = :id"
-            )
+            sql = f"UPDATE {self.basetablename} SET Points = :points WHERE Id = :id"
             query.prepare(sql)
-            query.bindValue(":left", 0)
-            query.bindValue(":top", 0)
-            query.bindValue(":width", 0)
-            query.bindValue(":height", 0)
+            query.bindValue(":points", "[]")  # Empty polygon
             query.bindValue(":id", id)
             query.exec()
             if query.lastError().isValid():
@@ -246,17 +242,13 @@ class Objects:
             obj_selector.exec()
             self.MainWindow.show()
             if obj_selector._result:
-                left, top, right, bottom, width, height = obj_selector._result
+                # Result is now a list of polygon points
+                points = obj_selector._result
+                points_json = json.dumps(points)
                 query = QtSql.QSqlQuery()
-                sql = (
-                    f"UPDATE {self.basetablename}"
-                    f" SET Left = :left, Top = :top, Width = :width, Height = :height WHERE Id = :id"
-                )
+                sql = f"UPDATE {self.basetablename} SET Points = :points WHERE Id = :id"
                 query.prepare(sql)
-                query.bindValue(":left", left)
-                query.bindValue(":top", top)
-                query.bindValue(":width", width)
-                query.bindValue(":height", height)
+                query.bindValue(":points", points_json)
                 query.bindValue(":id", id)
                 query.exec()
                 if query.lastError().isValid():
@@ -307,46 +299,91 @@ class Objects:
             self.clearPicFields()
             return
 
-        # get object info
+        # get object info - now using Points column
         id = self.model.record(self.currentrow).value("Id")
-        # Name = self.model.record(self.currentrow).value("Name")
-        # Parent = self.model.record(self.currentrow).value("Parent")
-        left = self.model.record(self.currentrow).value("Left")
-        top = self.model.record(self.currentrow).value("Top")
-        width = self.model.record(self.currentrow).value("Width")
-        height = self.model.record(self.currentrow).value("Height")
-        # Visible = self.model.record(self.currentrow).value("Visible")
-        # Takeable = self.model.record(self.currentrow).value("Takeable")
-        # Draggable = self.model.record(self.currentrow).value("Draggable")
+        points_json = self.model.record(self.currentrow).value("Points") or "[]"
+        points = json_to_points(points_json)
 
-        # show big overview image
+        # Calculate bounding rect from polygon for display purposes
+        left, top, width, height = points_to_bounding_rect(points)
+
+        # show big overview image with polygon overlay
         if os.path.exists(self.parent_fg_pic):
             fg_pixmap = QtGui.QPixmap(self.parent_fg_pic)
-            self.ui.objectLocPic_label.setPixmap(fg_pixmap)
+
+            # Create a copy to draw polygon on
+            if points:
+                display_pixmap = fg_pixmap.copy()
+                painter = QtGui.QPainter(display_pixmap)
+                painter.setPen(QtGui.QPen(QtGui.QColor("yellow"), 3))
+                polygon = QtGui.QPolygon([QtCore.QPoint(p[0], p[1]) for p in points])
+                painter.drawPolygon(polygon)
+                painter.end()
+                self.ui.objectLocPic_label.setPixmap(display_pixmap)
+            else:
+                self.ui.objectLocPic_label.setPixmap(fg_pixmap)
+
             self.ui.objectLocPic_label.setScaledContents(True)
+
+            # Update objbox to show bounding rect (for backward compatibility)
             label_width = self.ui.objectLocPic_label.width()
             label_height = self.ui.objectLocPic_label.height()
-            xl = float(left) / float(fg_pixmap.width())
-            xt = float(top) / float(fg_pixmap.height())
-            xw = float(width) / float(fg_pixmap.width())
-            xh = float(height) / float(fg_pixmap.height())
-            self.objbox.setGeometry(
-                int(xl * label_width),
-                int(xt * label_height),
-                int(xw * label_width),
-                int(xh * label_height),
-            )
+            if width > 0 and height > 0:
+                xl = float(left) / float(fg_pixmap.width())
+                xt = float(top) / float(fg_pixmap.height())
+                xw = float(width) / float(fg_pixmap.width())
+                xh = float(height) / float(fg_pixmap.height())
+                self.objbox.setGeometry(
+                    int(xl * label_width),
+                    int(xt * label_height),
+                    int(xw * label_width),
+                    int(xh * label_height),
+                )
+            else:
+                self.objbox.setGeometry(0, 0, 0, 0)
         else:
-            self.ui.objectLocPic_label.clear()  # .setPixmap(None)
+            self.ui.objectLocPic_label.clear()
 
-        # show object image
-        if os.path.exists(self.parent_fg_pic):
-            obj_pixmap = QtGui.QPixmap(self.parent_fg_pic).copy(left, top, width, height)
-            self.ui.objectPic_label.clear()  # .setPixmap(None)
+        # show object image (polygon-clipped thumbnail)
+        if os.path.exists(self.parent_fg_pic) and width > 0 and height > 0:
+            obj_pixmap = self._create_polygon_thumbnail(self.parent_fg_pic, points)
+            self.ui.objectPic_label.clear()
             self.ui.objectPic_label.setPixmap(obj_pixmap)
             self.ui.objectPic_label.setScaledContents(True)
         else:
-            self.ui.objectPic_label.clear()  # .setPixmap(None)
+            self.ui.objectPic_label.clear()
+
+    def _create_polygon_thumbnail(self, image_path: str, points: list) -> QtGui.QPixmap:
+        """Create a thumbnail cropped and masked to the polygon shape."""
+        source = QtGui.QPixmap(image_path)
+        if not points or source.isNull():
+            return QtGui.QPixmap()
+
+        left, top, width, height = points_to_bounding_rect(points)
+        if width <= 0 or height <= 0:
+            return QtGui.QPixmap()
+
+        # Create result pixmap with transparency
+        result = QtGui.QPixmap(width, height)
+        result.fill(QtCore.Qt.GlobalColor.transparent)
+
+        # Create painter path for clipping
+        path = QtGui.QPainterPath()
+        # Translate points to local coordinates
+        local_points = [[p[0] - left, p[1] - top] for p in points]
+        if local_points:
+            path.moveTo(local_points[0][0], local_points[0][1])
+            for p in local_points[1:]:
+                path.lineTo(p[0], p[1])
+            path.closeSubpath()
+
+        painter = QtGui.QPainter(result)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, source, left, top, width, height)
+        painter.end()
+
+        return result
 
     # Note: connected to listview *after* list is filled from db
     def handleSelectionChange(self, selected, deselected):
@@ -490,17 +527,14 @@ class Objects:
             query = QtSql.QSqlQuery()
             query.prepare(
                 "INSERT INTO "
-                "objects (Id, Parent, Name, Left, Top, Width, Height, Visible, Takeable, Draggable, RowOrder) "
+                "objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, RowOrder) "
                 "VALUES "
-                "(:id, :parent, :name, :left, :top, :width, :height, :visible, :takeable, :draggable, :roworder)"
+                "(:id, :parent, :name, :points, :visible, :takeable, :draggable, :roworder)"
             )
             query.bindValue(":id", newid)
             query.bindValue(":parent", self.parentid)
             query.bindValue(":name", newname)
-            query.bindValue(":left", 0)
-            query.bindValue(":top", 0)
-            query.bindValue(":width", 1)
-            query.bindValue(":height", 1)
+            query.bindValue(":points", "[]")  # Empty polygon initially
             query.bindValue(":visible", 1)
             query.bindValue(":takeable", 0)
             query.bindValue(":draggable", 0)
@@ -594,7 +628,7 @@ class Objects:
         # Get all objects from the source view
         source_query = QtSql.QSqlQuery()
         source_query.prepare(
-            "SELECT Id, Name, Left, Top, Width, Height, Visible, Takeable, Draggable "
+            "SELECT Id, Name, Points, Visible, Takeable, Draggable "
             "FROM objects WHERE Parent = :parent ORDER BY RowOrder"
         )
         source_query.bindValue(":parent", source_view_id)
@@ -611,13 +645,10 @@ class Objects:
                     {
                         "id": source_query.value(0),
                         "name": source_query.value(1),
-                        "left": source_query.value(2),
-                        "top": source_query.value(3),
-                        "width": source_query.value(4),
-                        "height": source_query.value(5),
-                        "visible": source_query.value(6),
-                        "takeable": source_query.value(7),
-                        "draggable": source_query.value(8),
+                        "points": source_query.value(2) or "[]",
+                        "visible": source_query.value(3),
+                        "takeable": source_query.value(4),
+                        "draggable": source_query.value(5),
                     }
                 )
 
@@ -687,16 +718,13 @@ class Objects:
             # Insert the object
             insert_obj_query = QtSql.QSqlQuery()
             insert_obj_query.prepare(
-                "INSERT INTO objects (Id, Parent, Name, Left, Top, Width, Height, Visible, Takeable, Draggable, RowOrder) "
-                "VALUES (:id, :parent, :name, :left, :top, :width, :height, :visible, :takeable, :draggable, :roworder)"
+                "INSERT INTO objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, RowOrder) "
+                "VALUES (:id, :parent, :name, :points, :visible, :takeable, :draggable, :roworder)"
             )
             insert_obj_query.bindValue(":id", new_obj_id)
             insert_obj_query.bindValue(":parent", self.parentid)
             insert_obj_query.bindValue(":name", new_name)
-            insert_obj_query.bindValue(":left", obj["left"])
-            insert_obj_query.bindValue(":top", obj["top"])
-            insert_obj_query.bindValue(":width", obj["width"])
-            insert_obj_query.bindValue(":height", obj["height"])
+            insert_obj_query.bindValue(":points", obj["points"])
             insert_obj_query.bindValue(":visible", obj["visible"])
             insert_obj_query.bindValue(":takeable", obj["takeable"])
             insert_obj_query.bindValue(":draggable", obj["draggable"])
@@ -921,28 +949,22 @@ class Objects:
         model.setHeaderData(0, QtCore.Qt.Orientation.Horizontal, "Id")
         model.setHeaderData(1, QtCore.Qt.Orientation.Horizontal, "Parent")
         model.setHeaderData(2, QtCore.Qt.Orientation.Horizontal, "Name")
-        model.setHeaderData(3, QtCore.Qt.Orientation.Horizontal, "Left")
-        model.setHeaderData(4, QtCore.Qt.Orientation.Horizontal, "Top")
-        model.setHeaderData(5, QtCore.Qt.Orientation.Horizontal, "Width")
-        model.setHeaderData(6, QtCore.Qt.Orientation.Horizontal, "Height")
-        model.setHeaderData(7, QtCore.Qt.Orientation.Horizontal, "Visible")
-        model.setHeaderData(8, QtCore.Qt.Orientation.Horizontal, "Takeable")
-        model.setHeaderData(9, QtCore.Qt.Orientation.Horizontal, "Draggable")
-        model.setHeaderData(10, QtCore.Qt.Orientation.Horizontal, "RowOrder")
+        model.setHeaderData(3, QtCore.Qt.Orientation.Horizontal, "Points")
+        model.setHeaderData(4, QtCore.Qt.Orientation.Horizontal, "Visible")
+        model.setHeaderData(5, QtCore.Qt.Orientation.Horizontal, "Takeable")
+        model.setHeaderData(6, QtCore.Qt.Orientation.Horizontal, "Draggable")
+        model.setHeaderData(7, QtCore.Qt.Orientation.Horizontal, "RowOrder")
 
     def connectBaseModelToTableView(self, model, view):
         view.setModel(model)
         view.hideColumn(0)  # Id
         view.hideColumn(1)  # Parent
-        # view.hideColumn(2) #Name
-        view.hideColumn(3)  # Left
-        view.hideColumn(4)  # Top
-        view.hideColumn(5)  # Width
-        view.hideColumn(6)  # Height
-        view.hideColumn(7)  # Visible
-        view.hideColumn(8)  # Takeable
-        view.hideColumn(9)  # Draggable
-        view.hideColumn(10)  # RowOrder
+        # view.hideColumn(2)  # Name - visible
+        view.hideColumn(3)  # Points (JSON string, not human-readable)
+        view.hideColumn(4)  # Visible
+        view.hideColumn(5)  # Takeable
+        view.hideColumn(6)  # Draggable
+        view.hideColumn(7)  # RowOrder
         view.resizeColumnsToContents()
 
     def getParentInfo(self):

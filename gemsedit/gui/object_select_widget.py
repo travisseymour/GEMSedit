@@ -24,6 +24,12 @@ from PySide6.QtWidgets import QApplication
 
 import gemsedit
 from gemsedit import log
+from gemsedit.utils.polygon_utils import (
+    json_to_points,
+    points_to_json,
+    polygon_centroid,
+    is_point_near,
+)
 
 
 class ObjectSelect(QtWidgets.QDialog):
@@ -37,31 +43,32 @@ class ObjectSelect(QtWidgets.QDialog):
         media_path=None,
     ):
         super().__init__(parent)
-        self.x1 = 0
-        self.y1 = 0
-        self.x2 = 0
-        self.y2 = 0
         self.current_view = current_view
         self.current_obj = current_obj
         self.allow_selection = allow_selection
         self.view_pic = view_pic
         self.media_path = media_path
         self.clicks_allowed = False
-        self.other_objects = []
+        self.other_objects = []  # List of (name, points_json, visible, takeable, draggable)
         self.bgPic = None
-        self._result: tuple = ()
+        self._result: list = []  # Result is now a list of [x, y] points
         self._keep_result = False
-        self.is_dragging = False
+
+        # Polygon drawing state
+        self.points: list[list[int]] = []  # Current polygon being drawn
+        self.is_drawing = False  # True when actively placing points
+        self.hover_point: list[int] | None = None  # Mouse position for preview
+        self.close_threshold = 15  # Pixels to detect closing polygon
+        self.shift_held = False  # For constrained drawing
+
         self.msg = "Press ENTER to close this window."
         self.msg_position = QPoint(20, 20)
-        # self.resize(640, 480)
-        # self.move(1000, 500)
 
         if self.allow_selection:
-            self.msg = "Drag to (re)select an object region. Press ENTER to submit."
+            self.msg = "Click to place polygon points. Double-click or click near start to close."
         else:
             self.msg = "Press ENTER to close."
-        # self.setStyleSheet("background-color: rgb(0, 0, 0);")
+
         QtCore.QTimer.singleShot(1000, self.allow_clicks)  # Avoids ghost click from objects ui
 
     def allow_clicks(self):
@@ -70,10 +77,9 @@ class ObjectSelect(QtWidgets.QDialog):
 
     def showEvent(self, event):
         # Set bgPic
-        # (Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT)
         if self.current_view is not None:
             query = QtSql.QSqlQuery()
-            query.prepare("SELECT * FROM views where Id = :viewid" + " order by RowOrder")
+            query.prepare("SELECT * FROM views where Id = :viewid order by RowOrder")
             query.bindValue(":viewid", self.current_view)
             query.exec()
             if query.isActive():
@@ -91,110 +97,113 @@ class ObjectSelect(QtWidgets.QDialog):
                     log.error("Error in objects.showEvent(): viewpic is invalid or associated file is unreadable.")
                     return
 
-        # Load Object Coordinates
+        # Load Object Coordinates - now using Points column
         query = QtSql.QSqlQuery()
-        query.prepare("SELECT * FROM objects where Parent = :viewid" + " order by RowOrder")
+        query.prepare("SELECT Id, Name, Points, Visible, Takeable, Draggable FROM objects WHERE Parent = :viewid ORDER BY RowOrder")
         query.bindValue(":viewid", self.current_view)
         query.exec()
         if query.isActive():
-            try:
-                while next(query):
-                    _id = query.value(0)
-                    parent = query.value(1)
-                    name = query.value(2)
-                    left = query.value(3)
-                    top = query.value(4)
-                    width = query.value(5)
-                    height = query.value(6)
-                    visible = query.value(7)
-                    takeable = query.value(8)
-                    draggable = query.value(9)
-                    if _id == self.current_obj:
-                        self.x1 = left
-                        self.y1 = top
-                        self.x2 = left + width
-                        self.y2 = top + height
-                    else:
-                        self.other_objects.append(
-                            (
-                                name,
-                                left,
-                                top,
-                                width,
-                                height,
-                                visible,
-                                takeable,
-                                draggable,
-                            )
-                        )
-            except:
-                pass
+            while query.next():
+                _id = query.value(0)
+                name = query.value(1)
+                points_json = query.value(2) or "[]"
+                visible = query.value(3)
+                takeable = query.value(4)
+                draggable = query.value(5)
+
+                if _id == self.current_obj:
+                    # Load current object's polygon
+                    self.points = json_to_points(points_json)
+                else:
+                    self.other_objects.append((name, points_json, visible, takeable, draggable))
 
         super().showEvent(event)
 
     def closeEvent(self, event):
         if not self._keep_result:
-            self.x1 = self.y1 = self.x2 = self.y2 = None
-        if self.x1 is None or self.x2 is None or self.y1 is None or self.y2 is None:
-            self._result = ()
+            self._result = []
         else:
-            self._result = (
-                self.x1,
-                self.y1,
-                self.x2,
-                self.y2,
-                self.x2 - self.x1,
-                self.y2 - self.y1,
-            )
+            # Only return valid polygons (3+ points)
+            self._result = self.points.copy() if len(self.points) >= 3 else []
         self._keep_result = False
         super().closeEvent(event)
 
-    def mouseReleaseEvent(self, event):
-        if self.allow_selection and self.is_dragging:
-            self.x2 = event.pos().x()
-            self.y2 = event.pos().y()
-            if self.x2 < self.x1:
-                self.x1, self.x2 = self.x2, self.x1
-            if self.y2 < self.y1:
-                self.y1, self.y2 = self.y2, self.y1
-            self.msg = "Drag to (re)select an object region. Press ENTER to submit."
-            self.is_dragging = False
-            self.setMouseTracking(False)
-            self.update()
+    def _is_near_first_point(self, pos: list[int]) -> bool:
+        """Check if position is near the first point of the polygon."""
+        if not self.points:
+            return False
+        return is_point_near(pos, self.points[0], self.close_threshold)
 
-        super().mouseReleaseEvent(event)
+    def _constrain_point(self, pos: list[int]) -> list[int]:
+        """Constrain point to horizontal or vertical from last point."""
+        if not self.points:
+            return pos
+        last = self.points[-1]
+        dx, dy = abs(pos[0] - last[0]), abs(pos[1] - last[1])
+        if dx > dy:
+            return [pos[0], last[1]]  # Horizontal
+        else:
+            return [last[0], pos[1]]  # Vertical
+
+    def _close_polygon(self):
+        """Finalize the current polygon."""
+        self.is_drawing = False
+        self.setMouseTracking(False)
+        self.hover_point = None
+        self.msg = "Polygon complete. Press ENTER to confirm, ESC to cancel, or click to start new polygon."
+        self.update()
 
     def mousePressEvent(self, event):
-        if self.allow_selection and self.clicks_allowed:
-            self.is_dragging = True
-            self.setMouseTracking(True)
-            self.x1 = event.pos().x()
-            self.y1 = event.pos().y()
-            self.x2 = None
-            self.y2 = None
-            self.msg = "Drag to (re)select an object region. Release to finish."
+        if not self.allow_selection or not self.clicks_allowed:
+            return super().mousePressEvent(event)
+
+        pos = [event.pos().x(), event.pos().y()]
+
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            if not self.is_drawing:
+                # Start new polygon
+                self.points = [pos]
+                self.is_drawing = True
+                self.setMouseTracking(True)
+                self.msg = "Click to add points. Double-click or click near start to close. Right-click to undo."
+            else:
+                # Check if closing polygon (click near first point)
+                if len(self.points) >= 3 and self._is_near_first_point(pos):
+                    self._close_polygon()
+                else:
+                    # Apply shift constraint if held
+                    if self.shift_held and len(self.points) > 0:
+                        pos = self._constrain_point(pos)
+                    self.points.append(pos)
             self.update()
+
+        elif event.button() == QtCore.Qt.MouseButton.RightButton:
+            # Undo last point
+            if self.is_drawing and len(self.points) > 1:
+                self.points.pop()
+                self.update()
+            elif self.is_drawing and len(self.points) == 1:
+                # Cancel drawing
+                self.points = []
+                self.is_drawing = False
+                self.setMouseTracking(False)
+                self.msg = "Click to start drawing polygon."
+                self.update()
 
         super().mousePressEvent(event)
 
-    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        # handle obj selection
-        if self.allow_selection and self.is_dragging:
-            # selection being updated, save xy2
-            self.x2 = event.pos().x()
-            self.y2 = event.pos().y()
-            if self.x2 < self.x1:
-                a = self.x1
-                b = self.x2
-                self.x2 = a
-                self.x1 = b
-            if self.y2 < self.y1:
-                a = self.y1
-                b = self.y2
-                self.y2 = a
-                self.y1 = b
-            self.update()
+    def mouseDoubleClickEvent(self, event):
+        if self.allow_selection and self.is_drawing and len(self.points) >= 3:
+            self._close_polygon()
+        super().mouseDoubleClickEvent(event)
 
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        if self.allow_selection and self.is_drawing:
+            pos = [event.pos().x(), event.pos().y()]
+            if self.shift_held and len(self.points) > 0:
+                pos = self._constrain_point(pos)
+            self.hover_point = pos
+            self.update()
         super().mouseMoveEvent(event)
 
     def paintEvent(self, event):
@@ -204,10 +213,11 @@ class ObjectSelect(QtWidgets.QDialog):
 
         # draw image
         if self.bgPic:
-            painter.drawPixmap(0, 0, QtGui.QPixmap(self.bgPic))  # for scaled: QPixmap(blah).scaled(size())
+            painter.drawPixmap(0, 0, QtGui.QPixmap(self.bgPic))
 
+        # draw message
         if self.msg:
-            painter.setFont(QtGui.QFont("Arial", gemsedit.scaled_size(14)))  # 'Decorative'
+            painter.setFont(QtGui.QFont("Arial", gemsedit.scaled_size(14)))
             font_metrics = painter.fontMetrics()
             ascent = font_metrics.ascent()
             descent = font_metrics.descent()
@@ -222,14 +232,19 @@ class ObjectSelect(QtWidgets.QDialog):
             painter.setPen(QtGui.QPen(QtGui.QColor("black")))
             painter.drawText(self.msg_position, self.msg)
 
-        # draw other objects
+        # draw other objects as polygons
         if len(self.other_objects):
             line_width = 3
             font_size = QApplication.instance().font().pointSize()
-            for param_list in self.other_objects:
-                name, left, top, width, height, visible, takeable, draggable = param_list
+            painter.setFont(QtGui.QFont("Arial", font_size))
 
-                # Draw box
+            for param_list in self.other_objects:
+                name, points_json, visible, takeable, draggable = param_list
+                points = json_to_points(points_json)
+                if not points:
+                    continue
+
+                # Set style based on properties
                 if takeable:
                     line_color = QtGui.QColor("green")
                 else:
@@ -244,60 +259,94 @@ class ObjectSelect(QtWidgets.QDialog):
 
                 painter.setPen(QtGui.QPen(line_color, line_width, line_type))
 
-                # not available in PySide6!? trying the setAlpha method above ^^^
-                # painter.setBackgroundMode(QtCore.Qt.MaskMode.TransparentMode)
+                # Draw polygon
+                polygon = QtGui.QPolygon([QtCore.QPoint(p[0], p[1]) for p in points])
+                painter.drawPolygon(polygon)
 
-                painter.setFont(QtGui.QFont("Arial", font_size))  # 'Decorative'
-
-                rect = QtCore.QRect()
-                rect.setRect(left, top, width, height)
-
-                painter.drawRect(rect)
-
-                # Draw Text
-                painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.white, line_width))
-                # painter.drawText(rect, QtCore.Qt.AlignmentFlag.AlignLeft,Name)
-                tp = top - line_width
-                if tp < font_size:
-                    tp = top + height + (line_width * 2)
-
+                # Draw object name at centroid
+                centroid = polygon_centroid(points)
                 painter.setPen(QtCore.Qt.GlobalColor.black)
                 painter.setBackground(QtGui.QBrush(QtCore.Qt.GlobalColor.white))
+                painter.drawText(centroid[0], centroid[1], name)
 
-                # not available in PySide6!
-                # painter.setBackgroundMode(QtCore.Qt.MaskMode.OpaqueMode)
-                line_color.setAlpha(255)
-
-                painter.drawText(left + line_width, tp, name)
-
-        super().paintEvent(event)
-
-        # handle selection
-        if self.x1 and self.y1 and self.x2 and self.y2:
+        # Draw current polygon selection
+        if self.points:
+            # Draw completed edges
             painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow, 4))
-            rect = QtCore.QRect()
-            rect.setRect(self.x1, self.y1, self.x2 - self.x1, self.y2 - self.y1)
-            painter.drawRect(rect)
+            for i in range(len(self.points) - 1):
+                p1, p2 = self.points[i], self.points[i + 1]
+                painter.drawLine(p1[0], p1[1], p2[0], p2[1])
+
+            # Draw preview line to hover point (while drawing)
+            if self.is_drawing and self.hover_point:
+                # Line from last point to hover
+                painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow, 2, QtCore.Qt.PenStyle.DashLine))
+                last = self.points[-1]
+                painter.drawLine(last[0], last[1], self.hover_point[0], self.hover_point[1])
+
+                # Draw dashed closing line preview (from hover to first point)
+                if len(self.points) >= 2:
+                    first = self.points[0]
+                    painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.cyan, 2, QtCore.Qt.PenStyle.DotLine))
+                    painter.drawLine(self.hover_point[0], self.hover_point[1], first[0], first[1])
+
+            # Draw vertices as circles
+            painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow, 2))
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.GlobalColor.yellow))
+            for i, p in enumerate(self.points):
+                radius = 8 if i == 0 else 5  # First point larger
+                painter.drawEllipse(p[0] - radius, p[1] - radius, radius * 2, radius * 2)
+
+            # If closed polygon (not drawing), draw closing edge
+            if not self.is_drawing and len(self.points) >= 3:
+                painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow, 4))
+                painter.drawLine(
+                    self.points[-1][0], self.points[-1][1],
+                    self.points[0][0], self.points[0][1]
+                )
 
         # shutdown painter
         painter.end()
 
+        super().paintEvent(event)
+
     def keyPressEvent(self, event):
-        # a = (event.type())
-        # b = (event.key())
-        # c = (QtCore.QEvent.Type.KeyPress)
-        # log.debug(f"{a=}, {b=}, {c=}")
+        # Track shift key for constrained drawing
+        if event.key() == QtCore.Qt.Key.Key_Shift:
+            self.shift_held = True
+            return
+
+        if event.key() == QtCore.Qt.Key.Key_Backspace:
+            # Undo last point (same as right-click)
+            if self.is_drawing and len(self.points) > 1:
+                self.points.pop()
+                self.update()
+            elif self.is_drawing and len(self.points) == 1:
+                self.points = []
+                self.is_drawing = False
+                self.setMouseTracking(False)
+                self.msg = "Click to start drawing polygon."
+                self.update()
+            return
+
         if event.key() in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter):
-            self.update()
-            self._keep_result = True
+            if len(self.points) >= 3:
+                self._keep_result = True
+                self._result = self.points.copy()
             self.close()
             return
+
         if event.key() == QtCore.Qt.Key.Key_Escape:
-            # cancel selection and close without changes
-            self.x1 = self.y1 = self.x2 = self.y2 = None
-            self._result = ()
+            # Cancel selection and close without changes
+            self.points = []
+            self._result = []
             self._keep_result = False
             self.close()
             return
 
         super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key.Key_Shift:
+            self.shift_held = False
+        super().keyReleaseEvent(event)

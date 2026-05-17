@@ -124,6 +124,19 @@ class GemsDB:
                     QMessageBox.StandardButton.Ok,
                 )
                 mark_db_as_changed()
+
+            if migration_info.get("polygon_migrated", 0) > 0:
+                count = migration_info["polygon_migrated"]
+                QMessageBox.information(
+                    None,
+                    "Object Bounds Updated",
+                    f"{count} object(s) with rectangular bounds (Left, Top, Width, Height) have been "
+                    f"automatically converted to the new polygon format.\n\n"
+                    f"Please save the environment file to store these changes.",
+                    QMessageBox.StandardButton.Ok,
+                )
+                mark_db_as_changed()
+
             return True
         else:
             self.close_db(offer_to_save_changes=False)

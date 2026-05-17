@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
-from PySide6 import QtCore, QtSql
+from PySide6 import QtCore, QtGui, QtSql
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
@@ -33,6 +33,7 @@ from PySide6.QtWidgets import (
 )
 
 import gemsedit
+from gemsedit.utils.polygon_utils import json_to_points, points_to_bounding_rect
 
 
 class ViewItemWidget(QWidget):
@@ -224,10 +225,7 @@ class ObjectItemWidget(QWidget):
         view_id: int,
         view_name: str,
         fg_pic_path: str,
-        obj_left: int,
-        obj_top: int,
-        obj_width: int,
-        obj_height: int,
+        points_json: str,
         parent=None,
     ):
         super().__init__(parent)
@@ -247,14 +245,18 @@ class ObjectItemWidget(QWidget):
         self.thumbnail.setStyleSheet("border: 1px solid gray; background-color: #333;")
 
         thumbnail_set = False
-        if fg_pic_path and os.path.exists(fg_pic_path) and obj_width > 0 and obj_height > 0:
-            pixmap = QPixmap(fg_pic_path)
-            if not pixmap.isNull():
-                # Crop to object bounding box
-                cropped = pixmap.copy(obj_left, obj_top, obj_width, obj_height)
-                if not cropped.isNull():
-                    self.thumbnail.setPixmap(cropped)
-                    thumbnail_set = True
+        if fg_pic_path and os.path.exists(fg_pic_path) and points_json:
+            points = json_to_points(points_json)
+            if points:
+                left, top, width, height = points_to_bounding_rect(points)
+                if width > 0 and height > 0:
+                    pixmap = QPixmap(fg_pic_path)
+                    if not pixmap.isNull():
+                        # Create polygon-clipped thumbnail
+                        cropped = self._create_polygon_crop(pixmap, points, left, top, width, height)
+                        if not cropped.isNull():
+                            self.thumbnail.setPixmap(cropped)
+                            thumbnail_set = True
 
         if not thumbnail_set:
             self.thumbnail.setText("N/A")
@@ -290,6 +292,29 @@ class ObjectItemWidget(QWidget):
 
         info_layout.addStretch()
         layout.addLayout(info_layout, 1)
+
+    def _create_polygon_crop(
+        self, source: QPixmap, points: list, left: int, top: int, width: int, height: int
+    ) -> QPixmap:
+        """Create a polygon-masked crop of the source image."""
+        result = QPixmap(width, height)
+        result.fill(Qt.GlobalColor.transparent)
+
+        path = QtGui.QPainterPath()
+        local_points = [[p[0] - left, p[1] - top] for p in points]
+        if local_points:
+            path.moveTo(local_points[0][0], local_points[0][1])
+            for p in local_points[1:]:
+                path.lineTo(p[0], p[1])
+            path.closeSubpath()
+
+        painter = QtGui.QPainter(result)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, source, left, top, width, height)
+        painter.end()
+
+        return result
 
 
 class ObjectChooserDialog(QDialog):
@@ -367,9 +392,9 @@ class ObjectChooserDialog(QDialog):
                 view_names[vid] = vname
                 view_fg_pics[vid] = vfg
 
-        # Query objects ordered by view then object (include bounding box for thumbnail cropping)
+        # Query objects ordered by view then object (include Points for polygon thumbnail)
         query = QtSql.QSqlQuery()
-        query.exec("SELECT Id, Parent, Name, Left, Top, Width, Height FROM objects ORDER BY Parent, RowOrder")
+        query.exec("SELECT Id, Parent, Name, Points FROM objects ORDER BY Parent, RowOrder")
 
         select_index = -1
         index = 0
@@ -379,10 +404,7 @@ class ObjectChooserDialog(QDialog):
                 obj_id = query.value(0)
                 parent_view_id = query.value(1)
                 obj_name = query.value(2)
-                obj_left = query.value(3) or 0
-                obj_top = query.value(4) or 0
-                obj_width = query.value(5) or 0
-                obj_height = query.value(6) or 0
+                points_json = query.value(3) or "[]"
 
                 view_name = view_names.get(parent_view_id, "Unknown")
                 fg_pic = view_fg_pics.get(parent_view_id, "")
@@ -397,9 +419,9 @@ class ObjectChooserDialog(QDialog):
                 item.setData(Qt.ItemDataRole.UserRole, f"{obj_id}:{view_name}:{obj_name}")
                 item.setSizeHint(QtCore.QSize(0, 200))
 
-                # Create custom widget with bounding box for cropped thumbnail
+                # Create custom widget with polygon points for cropped thumbnail
                 widget = ObjectItemWidget(
-                    obj_id, obj_name, parent_view_id, view_name, fg_pic_path, obj_left, obj_top, obj_width, obj_height
+                    obj_id, obj_name, parent_view_id, view_name, fg_pic_path, points_json
                 )
                 self.list_widget.setItemWidget(item, widget)
 

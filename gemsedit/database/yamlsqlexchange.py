@@ -22,6 +22,8 @@ import sqlite_utils
 from sqlite_utils import Database
 import yaml
 
+from gemsedit.utils.polygon_utils import rect_to_points, points_to_json, json_to_points, points_to_bounding_rect
+
 
 def _version_less_than(version_str: str, target: str) -> bool:
     """Compare version strings. Returns True if version_str < target."""
@@ -242,6 +244,19 @@ def sqlite_to_dict(db_file: Path | str, env_name: str | None = None) -> dict:
             if "Draggable" not in obj:
                 obj["Draggable"] = obj["Takeable"]
 
+            # Migrate from rectangular bounds to polygon points if needed (for old SQLite databases)
+            if "Points" not in obj or obj.get("Points") is None:
+                left = obj.get("Left", 0) or 0
+                top = obj.get("Top", 0) or 0
+                width = obj.get("Width", 0) or 0
+                height = obj.get("Height", 0) or 0
+                points = rect_to_points(left, top, width, height)
+                obj["Points"] = points_to_json(points)
+
+            # Remove old columns if present
+            for key in ("Left", "Top", "Width", "Height"):
+                obj.pop(key, None)
+
             # add view object actions
             obj["Actions"] = {}
             for action in db["actions"].rows_where(f'ContextType == "object" and ContextId == {obj["Id"]}'):
@@ -301,6 +316,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     # Track migrations that occurred
     migration_info = {
         "portalto_migrated": 0,
+        "polygon_migrated": 0,
     }
 
     """
@@ -315,7 +331,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     """
 
     schema_commands = [
-        "CREATE TABLE objects(Id INT PRIMARY KEY UNIQUE, Parent INT, Name TEXT, Left INT, Top INT, Width INT, Height INT, Visible INT, Takeable INT, Draggable INT, RowOrder INT);",
+        "CREATE TABLE objects(Id INT PRIMARY KEY UNIQUE, Parent INT, Name TEXT, Points TEXT, Visible INT, Takeable INT, Draggable INT, RowOrder INT);",
         "CREATE TABLE actions(Id INT PRIMARY KEY UNIQUE, ContextType TEXT, ContextId INT, Condition TEXT, Trigger TEXT, Action TEXT, Enabled boolean, RowOrder INT);",
         "CREATE TABLE views(Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT, RowOrder INT);",
         "CREATE TABLE options(Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,  Roomtransition TEXT, Preloadresources INT, Globaloverlay TEXT, Version TEXT, StageColor TEXT, DisplayType TEXT, ObjectHover TEXT, Volume REAL, TransitionDuration INT);",
@@ -385,6 +401,22 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
                 del obj["Actions"]
             except KeyError:
                 ...
+
+            # Migrate from rectangular bounds to polygon points if needed
+            if "Points" not in obj or obj.get("Points") is None:
+                # Old format with Left/Top/Width/Height - convert to Points
+                left = obj.get("Left", 0) or 0
+                top = obj.get("Top", 0) or 0
+                width = obj.get("Width", 0) or 0
+                height = obj.get("Height", 0) or 0
+                points = rect_to_points(left, top, width, height)
+                obj["Points"] = points_to_json(points)
+                migration_info["polygon_migrated"] += 1
+
+            # Remove old columns if present
+            for key in ("Left", "Top", "Width", "Height"):
+                obj.pop(key, None)
+
             objects.append(obj)
     sql_db["objects"].insert_all(objects)
 
