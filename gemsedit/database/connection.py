@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -55,6 +56,7 @@ class GemsDB:
         self.yaml_file_name = None
         self.ui_list_yaml_file = None
         self.validation_result: ValidationResult | None = None
+        self._backup_made: bool = False  # Track if backup was made this session
 
     def __del__(self):
         try:
@@ -182,6 +184,17 @@ class GemsDB:
                 except Exception as e:
                     problems.append(f"- Problem updating GEMSedit version number before save: {e}")
 
+                # create backup on first save of session
+                if not self._backup_made:
+                    try:
+                        yaml_path = Path(self.yaml_file_name)
+                        if yaml_path.exists():
+                            backup_path = yaml_path.with_suffix(".bak")
+                            shutil.copy2(yaml_path, backup_path)
+                            self._backup_made = True
+                    except Exception as e:
+                        problems.append(f"- Problem creating backup file: {e}")
+
                 # save it now
                 try:
                     with open(self.yaml_file_name, "w") as outfile:
@@ -216,6 +229,7 @@ class GemsDB:
         self.ui_list_yaml_file = None
         self.db = None
         self.validation_result = None
+        self._backup_made = False  # Reset for next session
 
     def has_validation_issues(self) -> bool:
         """Check if the current environment has validation issues."""
