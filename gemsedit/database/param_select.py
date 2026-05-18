@@ -362,6 +362,8 @@ class ParamSelect:
                         delegate.insertRowDelegate(i, genericrowdelegates.FloatRowDelegate(0.0, 1.0))
                     elif type_item == "value":
                         delegate.insertRowDelegate(i, genericrowdelegates.PlainTextRowDelegate())
+                    elif type_item == "varname":
+                        delegate.insertRowDelegate(i, genericrowdelegates.VariableNameRowDelegate())
                     elif type_item == "richtext":
                         delegate.insertRowDelegate(i, genericrowdelegates.RichTextRowDelegate())
                     elif type_item == "viewnum":

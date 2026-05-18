@@ -10,9 +10,11 @@
 # the GNU General Public License for more details.
 
 import os  # only needed for fileio delegates
+import re
 
 from PySide6.QtCore import QDate, QSize, Qt
 from PySide6.QtGui import QColor, QIcon, QPixmap, QTextDocument
+from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -492,3 +494,66 @@ class ObjectRowDelegate(QStyledItemDelegate):
         if self._selected_object is not None:
             model.setData(index, self._selected_object)
         self._selected_object = None  # Reset for next use
+
+
+class VariableNameRowDelegate(QStyledItemDelegate):
+    """Delegate with an editable combobox showing existing variable names from the environment."""
+
+    # Patterns to extract variable names from actions/conditions
+    # SetVariable("varname","value"), InputDialog("prompt","varname"), VarIncrease("varname"), etc.
+    VARNAME_PATTERNS = [
+        (r'SetVariable\("([^"]+)"', 1),  # First arg is varname
+        (r'InputDialog\("[^"]*","([^"]+)"', 1),  # Second arg is varname
+        (r'VarIncrease\("([^"]+)"', 1),  # First arg is varname
+        (r'VarDecrease\("([^"]+)"', 1),  # First arg is varname
+        (r'DelVariable\("([^"]+)"', 1),  # First arg is varname
+        (r'VarValueIs\("([^"]+)"', 1),  # First arg is varname (condition)
+        (r'VarValueIsNot\("([^"]+)"', 1),  # First arg is varname (condition)
+        (r'VarExists\("([^"]+)"', 1),  # First arg is varname (condition)
+    ]
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def _get_existing_varnames(self) -> list[str]:
+        """Query the database for all variable names used in actions and conditions."""
+        varnames = set()
+
+        query = QSqlQuery()
+        # Get all Action and Condition strings from the actions table
+        query.exec("SELECT Action, Condition FROM actions")
+
+        while query.next():
+            action_str = query.value(0) or ""
+            condition_str = query.value(1) or ""
+
+            for text in (action_str, condition_str):
+                for pattern, _group in self.VARNAME_PATTERNS:
+                    match = re.search(pattern, text)
+                    if match:
+                        varnames.add(match.group(1))
+
+        # Return sorted list of unique variable names
+        return sorted(varnames, key=str.lower)
+
+    def createEditor(self, parent, option, index):
+        combo = QComboBox(parent)
+        combo.setEditable(True)  # Allow typing new variable names
+
+        # Populate with existing variable names
+        existing_names = self._get_existing_varnames()
+        combo.addItems(existing_names)
+
+        # Set placeholder text to guide the user
+        combo.lineEdit().setPlaceholderText("Select or type variable name")
+
+        return combo
+
+    def setEditorData(self, editor, index):
+        value = str(index.model().data(index, Qt.ItemDataRole.DisplayRole) or "")
+        editor.setCurrentText(value)
+
+    def setModelData(self, editor, model, index):
+        # Get the text from the combo (either selected or typed)
+        value = editor.currentText().strip()
+        model.setData(index, value)
