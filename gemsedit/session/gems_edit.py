@@ -20,6 +20,8 @@ from functools import partial
 import os
 from pathlib import Path
 import platform
+import re
+import shutil
 import subprocess
 import threading
 import time
@@ -245,6 +247,7 @@ class GemsViews:
         self.ui.bgCopy_toolButton.pressed.connect(lambda: self.handlePicEdit("Background", mode="copy"))
 
         self.ui.actionNetwork_Graph.triggered.connect(self.handle_network_graph)
+        self.ui.actionClean_Media_Folder.triggered.connect(self.handle_clean_media_folder)
         self.ui.actionOpen.triggered.connect(self.open_environment)
         self.ui.actionClose.triggered.connect(self.closeEnv)
         self.ui.actionNew.triggered.connect(self.new_environment)
@@ -597,6 +600,142 @@ class GemsViews:
                 self.MainWindow,
                 "Network Graph Unavailable",
                 "You must load or create an environment first.",
+                QMessageBox.StandardButton.Ok,
+            )
+
+    def handle_clean_media_folder(self):
+        """Move unused media files from _media folder to _unused folder."""
+        if not self.connection.db_opened():
+            QMessageBox.information(
+                self.MainWindow,
+                "Clean Media Folder Unavailable",
+                "You must load or create an environment first.",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Get confirmation from user
+        reply = QMessageBox.question(
+            self.MainWindow,
+            "Clean Media Folder",
+            "This will move all unused media files to the _unused folder.\n\nDo you want to proceed?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        # Files to ignore (system files)
+        ignored_files = {"pocket.png", "nav_panel.png", "env_graph.html", "vis.css", "vis-network.min.js"}
+
+        # Collect all used media files
+        used_files = set()
+
+        # 1. Get files from views table (Foreground, Background, Overlay)
+        query = QtSql.QSqlQuery()
+        query.exec("SELECT Foreground, Background, Overlay FROM views")
+        while query.next():
+            for i in range(3):
+                filename = query.value(i)
+                if filename:
+                    used_files.add(filename)
+
+        # 2. Get files from actions table (extract from action strings)
+        # Patterns for extracting filenames from actions
+        file_patterns = [
+            # Sound files
+            (r'PlaySound\("([^"]+)"', 1),
+            (r'StopSound\("([^"]+)"', 1),
+            (r'PlayBackgroundMusic\("([^"]+)"', 1),
+            # Video files
+            (r'PlayVideo\("([^"]+)"', 1),
+            (r'PlayVideoWithin\("([^"]+)"', 1),
+            (r'StopVideo\("([^"]+)"', 1),
+            # Image files
+            (r'ShowImage\("([^"]+)"', 1),
+            (r'ShowImageWithin\("([^"]+)"', 1),
+            # ChangeViewImages has two image files
+            (r'ChangeViewImages\([^,]+,"([^"]+)","([^"]+)"', 2),
+        ]
+
+        query.exec("SELECT Action FROM actions")
+        while query.next():
+            action_str = query.value(0) or ""
+            for pattern, num_groups in file_patterns:
+                if num_groups == 1:
+                    match = re.search(pattern, action_str)
+                    if match:
+                        used_files.add(match.group(1))
+                else:
+                    match = re.search(pattern, action_str)
+                    if match:
+                        for g in range(1, num_groups + 1):
+                            if match.group(g):
+                                used_files.add(match.group(g))
+
+        # Get all files in the media folder
+        media_path = Path(self.media_path)
+        if not media_path.exists():
+            QMessageBox.warning(
+                self.MainWindow,
+                "Media Folder Not Found",
+                f"The media folder does not exist:\n{media_path}",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Create the _unused folder path
+        env_stem = Path(self.db_filename).stem
+        unused_path = media_path.parent / f"{env_stem}_unused"
+
+        # Find unused files
+        all_media_files = set()
+        for item in media_path.iterdir():
+            if item.is_file():
+                all_media_files.add(item.name)
+
+        unused_files = all_media_files - used_files - ignored_files
+
+        if not unused_files:
+            QMessageBox.information(
+                self.MainWindow,
+                "Clean Media Folder",
+                "No unused media files found.",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Create unused folder if it doesn't exist
+        unused_path.mkdir(exist_ok=True)
+
+        # Move unused files
+        moved_count = 0
+        errors = []
+        for filename in unused_files:
+            src = media_path / filename
+            dst = unused_path / filename
+            try:
+                shutil.move(str(src), str(dst))
+                moved_count += 1
+            except Exception as e:
+                errors.append(f"{filename}: {e}")
+
+        # Report results
+        if errors:
+            error_text = "\n".join(errors[:10])  # Show first 10 errors
+            if len(errors) > 10:
+                error_text += f"\n... and {len(errors) - 10} more errors"
+            QMessageBox.warning(
+                self.MainWindow,
+                "Clean Media Folder - Partial Success",
+                f"Moved {moved_count} files to:\n{unused_path}\n\nErrors occurred:\n{error_text}",
+                QMessageBox.StandardButton.Ok,
+            )
+        else:
+            QMessageBox.information(
+                self.MainWindow,
+                "Clean Media Folder Complete",
+                f"Moved {moved_count} unused files to:\n{unused_path}",
                 QMessageBox.StandardButton.Ok,
             )
 

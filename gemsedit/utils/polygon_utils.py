@@ -39,10 +39,10 @@ def rect_to_points(left: int, top: int, width: int, height: int) -> Polygon:
     if width <= 0 or height <= 0:
         return []
     return [
-        [left, top],                    # top-left
-        [left + width, top],            # top-right
-        [left + width, top + height],   # bottom-right
-        [left, top + height],           # bottom-left
+        [left, top],  # top-left
+        [left + width, top],  # top-right
+        [left + width, top + height],  # bottom-right
+        [left, top + height],  # bottom-left
     ]
 
 

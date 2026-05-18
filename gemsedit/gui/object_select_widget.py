@@ -25,10 +25,9 @@ from PySide6.QtWidgets import QApplication
 import gemsedit
 from gemsedit import log
 from gemsedit.utils.polygon_utils import (
-    json_to_points,
-    points_to_json,
-    polygon_centroid,
     is_point_near,
+    json_to_points,
+    polygon_centroid,
 )
 
 
@@ -99,7 +98,9 @@ class ObjectSelect(QtWidgets.QDialog):
 
         # Load Object Coordinates - now using Points column
         query = QtSql.QSqlQuery()
-        query.prepare("SELECT Id, Name, Points, Visible, Takeable, Draggable FROM objects WHERE Parent = :viewid ORDER BY RowOrder")
+        query.prepare(
+            "SELECT Id, Name, Points, Visible, Takeable, Draggable FROM objects WHERE Parent = :viewid ORDER BY RowOrder"
+        )
         query.bindValue(":viewid", self.current_view)
         query.exec()
         if query.isActive():
@@ -300,10 +301,7 @@ class ObjectSelect(QtWidgets.QDialog):
             # If closed polygon (not drawing), draw closing edge
             if not self.is_drawing and len(self.points) >= 3:
                 painter.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.yellow, 4))
-                painter.drawLine(
-                    self.points[-1][0], self.points[-1][1],
-                    self.points[0][0], self.points[0][1]
-                )
+                painter.drawLine(self.points[-1][0], self.points[-1][1], self.points[0][0], self.points[0][1])
 
         # shutdown painter
         painter.end()

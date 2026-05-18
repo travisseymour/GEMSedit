@@ -28,13 +28,13 @@ from PySide6.QtWidgets import QMessageBox
 import gemsedit
 from gemsedit import dialog_font, log
 from gemsedit.database.connection import mark_db_as_changed
-from gemsedit.utils.polygon_utils import json_to_points, points_to_json, points_to_bounding_rect
 
 # Todo: when entering actions, sometimes the object list selection goes somewhere else.
 from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list, object_select_widget as objselect
 from gemsedit.gui.action_list import get_linked_object_info, parse_linked_object_name
 import gemsedit.gui.objects_window as win
+from gemsedit.utils.polygon_utils import json_to_points, points_to_bounding_rect
 
 
 class ClickEventFilter(QtCore.QObject):

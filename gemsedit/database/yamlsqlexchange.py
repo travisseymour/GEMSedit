@@ -22,7 +22,7 @@ import sqlite_utils
 from sqlite_utils import Database
 import yaml
 
-from gemsedit.utils.polygon_utils import rect_to_points, points_to_json, json_to_points, points_to_bounding_rect
+from gemsedit.utils.polygon_utils import points_to_json, rect_to_points
 
 
 def _version_less_than(version_str: str, target: str) -> bool:

@@ -16,8 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import shutil
 from pathlib import Path
+import shutil
 from tempfile import TemporaryDirectory
 
 from PySide6.QtSql import QSqlDatabase

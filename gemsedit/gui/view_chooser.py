@@ -420,9 +420,7 @@ class ObjectChooserDialog(QDialog):
                 item.setSizeHint(QtCore.QSize(0, 200))
 
                 # Create custom widget with polygon points for cropped thumbnail
-                widget = ObjectItemWidget(
-                    obj_id, obj_name, parent_view_id, view_name, fg_pic_path, points_json
-                )
+                widget = ObjectItemWidget(obj_id, obj_name, parent_view_id, view_name, fg_pic_path, points_json)
                 self.list_widget.setItemWidget(item, widget)
 
                 # Track if this matches current selection
