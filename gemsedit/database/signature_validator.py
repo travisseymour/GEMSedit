@@ -23,7 +23,11 @@ from tempfile import TemporaryDirectory
 from typing import Literal
 import webbrowser
 
-from gemsedit.database.yamlsqlexchange import migrate_old_playvideo, migrate_old_portalto
+from gemsedit.database.yamlsqlexchange import (
+    migrate_old_playvideo,
+    migrate_old_portalto,
+    migrate_showimagewithin,
+)
 
 
 class IssueType(Enum):
@@ -280,6 +284,8 @@ def validate_database(db_dict: dict) -> ValidationResult:
         migrated, _ = migrate_old_portalto(action_str)
         # Apply PlayVideo migration
         migrated, _ = migrate_old_playvideo(migrated, env_version)
+        # Apply ShowImageWithin migration (remove Left, Top, Stretch parameters)
+        migrated, _ = migrate_showimagewithin(migrated)
         return migrated
 
     def check_action(action: dict, context: dict):

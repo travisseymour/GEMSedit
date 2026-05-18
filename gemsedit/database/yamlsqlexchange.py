@@ -127,6 +127,70 @@ def migrate_old_playvideo(action_str: str, env_version: str) -> tuple[str, bool]
     return action_str, False
 
 
+def migrate_showimagewithin(action_str: str) -> tuple[str, bool]:
+    """
+    Migrate old ShowImageWithin actions to the new format without Left, Top, and Stretch parameters.
+
+    Old format (8 params): ShowImageWithin("file.jpg",0,0,0.0,False,7,False,True)
+                           [ImageFile, Left, Top, Duration, Clickthrough, WithinObject, HideTarget, Stretch]
+    Old format (7 params): ShowImageWithin("file.jpg",0,0,0.0,False,7,False)
+                           [ImageFile, Left, Top, Duration, Clickthrough, WithinObject, HideTarget]
+    New format (5 params): ShowImageWithin("file.jpg",0.0,False,7,False)
+                           [ImageFile, Duration, Clickthrough, WithinObject, HideTarget]
+
+    Returns: (migrated_action_str, was_migrated)
+    """
+    if not isinstance(action_str, str):
+        return action_str, False
+
+    if not action_str.startswith("ShowImageWithin("):
+        return action_str, False
+
+    try:
+        # Parse function-call format
+        paren_start = action_str.index("(")
+        paren_end = action_str.rindex(")")
+        args_str = action_str[paren_start + 1 : paren_end]
+
+        # Parse arguments carefully handling quoted strings
+        args = []
+        current_arg = ""
+        in_quote = False
+        quote_char = None
+
+        for char in args_str:
+            if char in ('"', "'") and not in_quote:
+                in_quote = True
+                quote_char = char
+                current_arg += char
+            elif char == quote_char and in_quote:
+                in_quote = False
+                quote_char = None
+                current_arg += char
+            elif char == "," and not in_quote:
+                args.append(current_arg.strip())
+                current_arg = ""
+            else:
+                current_arg += char
+
+        if current_arg.strip():
+            args.append(current_arg.strip())
+
+        # Check if migration is needed (7 or 8 params means old format)
+        if len(args) in (7, 8):
+            # Old format: [ImageFile, Left, Top, Duration, Clickthrough, WithinObject, HideTarget, Stretch?]
+            # New format: [ImageFile, Duration, Clickthrough, WithinObject, HideTarget]
+            # Keep indices 0, 3, 4, 5, 6 - remove 1 (Left), 2 (Top), and 7 (Stretch) if present
+            new_args = [args[0], args[3], args[4], args[5], args[6]]
+            new_action = f"ShowImageWithin({','.join(new_args)})"
+            return new_action, True
+
+    except (ValueError, IndexError):
+        pass
+
+    return action_str, False
+
+
 def un_string_lists(text: str) -> str:
     if not isinstance(text, str):
         return text
@@ -317,6 +381,7 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     migration_info = {
         "portalto_migrated": 0,
         "polygon_migrated": 0,
+        "showimagewithin_migrated": 0,
     }
 
     """
@@ -360,6 +425,12 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
         # Apply migration for old PlayVideo signature
         migrated_action, should_disable = migrate_old_playvideo(current_action, env_version)
         enabled = 0 if should_disable else action["Enabled"]
+        current_action = migrated_action
+
+        # Apply migration for ShowImageWithin (remove deprecated Left, Top, Stretch parameters)
+        migrated_action, showimagewithin_was_migrated = migrate_showimagewithin(current_action)
+        if showimagewithin_was_migrated:
+            migration_info["showimagewithin_migrated"] += 1
 
         return {
             "Id": action["Id"],

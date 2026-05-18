@@ -139,6 +139,19 @@ class GemsDB:
                 )
                 mark_db_as_changed()
 
+            if migration_info.get("showimagewithin_migrated", 0) > 0:
+                count = migration_info["showimagewithin_migrated"]
+                QMessageBox.information(
+                    None,
+                    "ShowImageWithin Actions Updated",
+                    f"{count} ShowImageWithin action(s) had deprecated parameters removed "
+                    f"(Left, Top, Stretch).\n\n"
+                    f"Images are now automatically warped to fit the target object's polygon bounds.\n\n"
+                    f"Please save the environment file to store these changes.",
+                    QMessageBox.StandardButton.Ok,
+                )
+                mark_db_as_changed()
+
             return True
         else:
             self.close_db(offer_to_save_changes=False)
