@@ -144,10 +144,14 @@ class ViewChooserDialog(QDialog):
         self.list_widget.clear()
 
         # Parse current value to find matching ID
+        # Supports both "id:name" format and plain "id" format
         current_id = None
-        if self.current_value and ":" in self.current_value:
+        if self.current_value:
             try:
-                current_id = int(self.current_value.split(":")[0])
+                if ":" in self.current_value:
+                    current_id = int(self.current_value.split(":")[0])
+                else:
+                    current_id = int(self.current_value)
             except ValueError:
                 pass
 
@@ -371,11 +375,14 @@ class ObjectChooserDialog(QDialog):
         self.list_widget.clear()
 
         # Parse current value to find matching object ID
-        # Format is "obj_id:view_name:obj_name"
+        # Supports both "obj_id:view_name:obj_name" format and plain "obj_id" format
         current_obj_id = None
-        if self.current_value and ":" in self.current_value:
+        if self.current_value:
             try:
-                current_obj_id = int(self.current_value.split(":")[0])
+                if ":" in self.current_value:
+                    current_obj_id = int(self.current_value.split(":")[0])
+                else:
+                    current_obj_id = int(self.current_value)
             except ValueError:
                 pass
 
