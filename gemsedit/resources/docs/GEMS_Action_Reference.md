@@ -372,6 +372,23 @@ ObjectIsHiddenByName(Name: value)
 
 ---
 
+### VarHasString
+
+```
+VarHasString(Variable: varname, SubString: value)
+```
+
+**Description:** Returns true if the specified variable exists and its string value contains the given substring.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to check
+- `SubString` (value): Substring to search for within the variable's value
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ## Actions
 
 Actions are commands that modify the environment state or trigger effects.
@@ -730,6 +747,23 @@ VarDecrease(Variable: varname)
 **Parameters:**
 
 - `Variable` (varname): Name of the variable to decrement
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarAppend
+
+```
+VarAppend(Variable: varname, Text: value)
+```
+
+**Description:** Appends the specified text to the string value of the variable. If the variable does not exist, it will be created with the text as its value.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to append to
+- `Text` (value): Text to append to the variable's value
 
 **Restrictions:** view, object, global, pocket
 

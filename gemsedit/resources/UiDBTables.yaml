@@ -209,6 +209,12 @@ action_lst:
     Name: ChangeViewImages
     Restrictions: viewobjectglobalpocket
     Template: '["viewnum","picfile","picfile"]'
+  '35':
+    Id: 35
+    Labels: '["Variable","Text"]'
+    Name: VarAppend
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value"]'
 condition_lst:
   '0':
     Id: 0
@@ -294,6 +300,12 @@ condition_lst:
     Name: ObjectIsHiddenByName
     Restrictions: viewobjectglobalpocket
     Template: '["value"]'
+  '14':
+    Id: 14
+    Labels: '["Variable","SubString"]'
+    Name: VarHasString
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value"]'
 trigger_lst:
   '0':
     Id: 0

@@ -33,6 +33,7 @@ condition_desc = {
     "ObjectInPocketByName": "<b>ObjectInPocketByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently in one of the pockets, regardless of its ID.",
     "ObjectIsHiddenByID": "<b>ObjectIsHiddenByID</b>(Object) : This condition returns <i>true</i> if the object with the specified <b><i>Object</i></b> ID is currently hidden (not visible) in the current view.",
     "ObjectIsHiddenByName": "<b>ObjectIsHiddenByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently hidden (not visible) in the current view.",
+    "VarHasString": "<b>VarHasString</b>(Variable,SubString) : This condition returns <i>true</i> if the user-created token <b><i>Variable</i></b> exists and its string value contains <b><i>SubString</i></b>. Returns <i>false</i> if the variable does not exist or the substring is not found.",
 }
 
 trigger_desc = {
@@ -73,6 +74,7 @@ action_desc = {
     "DelVariable": "<b>DelVariable</b>(Variable) : This action removes the user-created token <b><i>Variable</i></b>.",
     "VarIncrease": "<b>VarIncrease</b>(Variable) : This action increases the value of <b><i>Variable</i></b> by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 1.",
     "VarDecrease": "<b>VarDecrease</b>(Variable) : This action decreases the value of <b><i>Variable</i></b> by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 0.",
+    "VarAppend": "<b>VarAppend</b>(Variable,Text) : This action appends <b><i>Text</i></b> to the string value of <b><i>Variable</i></b>. If <b><i>Variable</i></b> does not exist, it will be created with <b><i>Text</i></b> as its value.",
     "ClearKeyBuffer": "<b>ClearKeyBuffer</b>() : This action clears all characters in the keyboard buffer.",
     "Quit": "<b>Quit</b>() : This action terminates the current GEMS environment.",
     "HideMouse": "<b>HideMouse</b>() : This action hides the mouse cursor.",
