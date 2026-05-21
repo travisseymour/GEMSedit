@@ -33,7 +33,7 @@ condition_desc = {
     "ObjectInPocketByName": "<b>ObjectInPocketByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently in one of the pockets, regardless of its ID.",
     "ObjectIsHiddenByID": "<b>ObjectIsHiddenByID</b>(Object) : This condition returns <i>true</i> if the object with the specified <b><i>Object</i></b> ID is currently hidden (not visible) in the current view.",
     "ObjectIsHiddenByName": "<b>ObjectIsHiddenByName</b>(Name) : This condition returns <i>true</i> if any object with the specified <b><i>Name</i></b> is currently hidden (not visible) in the current view.",
-    "VarHasString": "<b>VarHasString</b>(Variable,SubString) : This condition returns <i>true</i> if the user-created token <b><i>Variable</i></b> exists and its string value contains <b><i>SubString</i></b>. Returns <i>false</i> if the variable does not exist or the substring is not found.",
+    "VarHasString": '<b>VarHasString</b>(Variable,SubString,Logic,CaseSensitive) : This condition returns <i>true</i> if the user-created token <b><i>Variable</i></b> exists and its string value contains <b><i>SubString</i></b>. <b><i>SubString</i></b> may be comma-separated to check for multiple substrings. <b><i>Logic</i></b> (default "or") determines whether <i>any</i> (or) or <i>all</i> (and) substrings must be found. <b><i>CaseSensitive</i></b> (default True) controls whether the comparison is case-sensitive. Returns <i>false</i> if the variable does not exist or the substring criteria are not met.',
 }
 
 trigger_desc = {

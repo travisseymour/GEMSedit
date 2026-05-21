@@ -23,35 +23,35 @@ Actions, conditions, and triggers can be restricted to specific contexts:
 
 Triggers define events that initiate script execution.
 
-### ViewTimePassed
+### DroppedOn
 
 ```
-ViewTimePassed(Seconds: float)
+DroppedOn(Object: objnum)
 ```
 
-**Description:** Fires when the specified number of seconds has elapsed since entering the current view.
+**Description:** Fires when a specific object is dropped onto this object or pocket.
 
 **Parameters:**
 
-- `Seconds` (float): Time in seconds to wait before triggering
+- `Object` (objnum): The ID of the object that must be dropped
 
-**Restrictions:** view
+**Restrictions:** object, pocket
 
 ---
 
-### TotalTimePassed
+### KeyPress
 
 ```
-TotalTimePassed(Seconds: float)
+KeyPress(Key: key)
 ```
 
-**Description:** Fires when the specified number of seconds has elapsed since the environment started running.
+**Description:** Fires when the specified key is pressed.
 
 **Parameters:**
 
-- `Seconds` (float): Total elapsed time in seconds
+- `Key` (key): The key to listen for
 
-**Restrictions:** global
+**Restrictions:** view, global
 
 ---
 
@@ -66,6 +66,20 @@ MouseClick()
 **Parameters:** None
 
 **Restrictions:** object, pocket
+
+---
+
+### NavBottom
+
+```
+NavBottom()
+```
+
+**Description:** Fires when the user clicks in the bottom navigation area of the view.
+
+**Parameters:** None
+
+**Restrictions:** view
 
 ---
 
@@ -111,185 +125,41 @@ NavTop()
 
 ---
 
-### NavBottom
+### TotalTimePassed
 
 ```
-NavBottom()
+TotalTimePassed(Seconds: float)
 ```
 
-**Description:** Fires when the user clicks in the bottom navigation area of the view.
-
-**Parameters:** None
-
-**Restrictions:** view
-
----
-
-### DroppedOn
-
-```
-DroppedOn(Object: objnum)
-```
-
-**Description:** Fires when a specific object is dropped onto this object or pocket.
+**Description:** Fires when the specified number of seconds has elapsed since the environment started running.
 
 **Parameters:**
 
-- `Object` (objnum): The ID of the object that must be dropped
+- `Seconds` (float): Total elapsed time in seconds
 
-**Restrictions:** object, pocket
-
----
-
-### KeyPress
-
-```
-KeyPress(Key: key)
-```
-
-**Description:** Fires when the specified key is pressed.
-
-**Parameters:**
-
-- `Key` (key): The key to listen for
-
-**Restrictions:** view, global
-
----
-
-## Conditions
-
-Conditions are evaluated to determine whether associated actions should execute.
-
-### VarValueIs
-
-```
-VarValueIs(Variable: varname, Value: value)
-```
-
-**Description:** Returns true if the specified variable exists and equals the given value.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to check
-- `Value` (value): Value to compare against
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarValueIsNot
-
-```
-VarValueIsNot(Variable: varname, Value: value)
-```
-
-**Description:** Returns true if the specified variable does not equal the given value (or doesn't exist).
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to check
-- `Value` (value): Value to compare against
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarExists
-
-```
-VarExists(Variable: varname)
-```
-
-**Description:** Returns true if the specified variable exists.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to check
-
-**Restrictions:** view, object, global, pocket
+**Restrictions:** global
 
 ---
 
 ### ViewTimePassed
 
 ```
-ViewTimePassed(Seconds: number)
+ViewTimePassed(Seconds: float)
 ```
 
-**Description:** Returns true if the specified time has passed since entering the current view.
+**Description:** Fires when the specified number of seconds has elapsed since entering the current view.
 
 **Parameters:**
 
-- `Seconds` (number): Time in seconds
+- `Seconds` (float): Time in seconds to wait before triggering
 
-**Restrictions:** view, object
-
----
-
-### TotalTimePassed
-
-```
-TotalTimePassed(Seconds: number)
-```
-
-**Description:** Returns true if the specified time has passed since the environment started.
-
-**Parameters:**
-
-- `Seconds` (number): Time in seconds
-
-**Restrictions:** view, object, global, pocket
+**Restrictions:** view
 
 ---
 
-### VarCountEq
+## Conditions
 
-```
-VarCountEq(Count: number)
-```
-
-**Description:** Returns true if the total number of variables equals the specified count.
-
-**Parameters:**
-
-- `Count` (number): Expected variable count
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarCountGtEq
-
-```
-VarCountGtEq(Count: number)
-```
-
-**Description:** Returns true if the total number of variables is greater than or equal to the specified count.
-
-**Parameters:**
-
-- `Count` (number): Minimum variable count
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarCountLtEq
-
-```
-VarCountLtEq(Count: number)
-```
-
-**Description:** Returns true if the total number of variables is less than or equal to the specified count.
-
-**Parameters:**
-
-- `Count` (number): Maximum variable count
-
-**Restrictions:** view, object, global, pocket
-
----
+Conditions are evaluated to determine whether associated actions should execute.
 
 ### KeyBufferContains
 
@@ -372,20 +242,159 @@ ObjectIsHiddenByName(Name: value)
 
 ---
 
-### VarHasString
+### TotalTimePassed
 
 ```
-VarHasString(Variable: varname, SubString: value)
+TotalTimePassed(Seconds: number)
 ```
 
-**Description:** Returns true if the specified variable exists and its string value contains the given substring.
+**Description:** Returns true if the specified time has passed since the environment started.
+
+**Parameters:**
+
+- `Seconds` (number): Time in seconds
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarCountEq
+
+```
+VarCountEq(Count: number)
+```
+
+**Description:** Returns true if the total number of variables equals the specified count.
+
+**Parameters:**
+
+- `Count` (number): Expected variable count
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarCountGtEq
+
+```
+VarCountGtEq(Count: number)
+```
+
+**Description:** Returns true if the total number of variables is greater than or equal to the specified count.
+
+**Parameters:**
+
+- `Count` (number): Minimum variable count
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarCountLtEq
+
+```
+VarCountLtEq(Count: number)
+```
+
+**Description:** Returns true if the total number of variables is less than or equal to the specified count.
+
+**Parameters:**
+
+- `Count` (number): Maximum variable count
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarExists
+
+```
+VarExists(Variable: varname)
+```
+
+**Description:** Returns true if the specified variable exists.
 
 **Parameters:**
 
 - `Variable` (varname): Name of the variable to check
-- `SubString` (value): Substring to search for within the variable's value
 
 **Restrictions:** view, object, global, pocket
+
+---
+
+### VarHasString
+
+```
+VarHasString(Variable: varname, SubString: value, Logic: orand, CaseSensitive: bool)
+```
+
+**Description:** Returns true if the specified variable exists and its string value contains the given substring. SubString may be a comma-separated list of substrings to check for multiple values at once.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to check
+- `SubString` (value): Substring to search for within the variable's value. Use commas to specify multiple substrings (e.g., `"apple, banana, cherry"`)
+- `Logic` (orand): Determines how multiple substrings are evaluated. `"or"` (default) returns true if the variable contains **any** of the substrings. `"and"` returns true only if the variable contains **all** of the substrings
+- `CaseSensitive` (bool): If `True` (default), the comparison is case-sensitive. If `False`, the comparison is case-insensitive
+
+**Restrictions:** view, object, global, pocket
+
+**Examples:**
+
+- `VarHasString("Inventory", "sword")` — true if Inventory contains "sword" (case-sensitive)
+- `VarHasString("Inventory", "sword, shield", "or")` — true if Inventory contains "sword" or "shield"
+- `VarHasString("Inventory", "sword, shield", "and")` — true only if Inventory contains both "sword" and "shield"
+- `VarHasString("Inventory", "Sword", "or", False)` — true if Inventory contains "sword", "Sword", "SWORD", etc.
+
+---
+
+### VarValueIs
+
+```
+VarValueIs(Variable: varname, Value: value)
+```
+
+**Description:** Returns true if the specified variable exists and equals the given value.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to check
+- `Value` (value): Value to compare against
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### VarValueIsNot
+
+```
+VarValueIsNot(Variable: varname, Value: value)
+```
+
+**Description:** Returns true if the specified variable does not equal the given value (or doesn't exist).
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to check
+- `Value` (value): Value to compare against
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### ViewTimePassed
+
+```
+ViewTimePassed(Seconds: number)
+```
+
+**Description:** Returns true if the specified time has passed since entering the current view.
+
+**Parameters:**
+
+- `Seconds` (number): Time in seconds
+
+**Restrictions:** view, object
 
 ---
 
@@ -393,20 +402,35 @@ VarHasString(Variable: varname, SubString: value)
 
 Actions are commands that modify the environment state or trigger effects.
 
-### PortalTo
+### AllowTake
 
 ```
-PortalTo(View: viewnum, VidFile: vidfile = "")
+AllowTake(Object: objnum)
 ```
 
-**Description:** Navigates to the specified view. If a video file is provided, plays it as a fullscreen transition before changing views. Right-clicking the video skips to the destination view immediately.
+**Description:** Allows an object to be picked up and placed in a pocket.
 
 **Parameters:**
 
-- `View` (viewnum): ID of the destination view
-- `VidFile` (vidfile): Optional video file for transition effect
+- `Object` (objnum): ID of the object
 
 **Restrictions:** view, object, global, pocket
+
+---
+
+### ChangeCursor
+
+```
+ChangeCursor(Cursor: cursor)
+```
+
+**Description:** Changes the mouse cursor to the specified style.
+
+**Parameters:**
+
+- `Cursor` (cursor): Cursor style identifier
+
+**Restrictions:** (no restrictions)
 
 ---
 
@@ -428,20 +452,108 @@ ChangeViewImages(View: viewnum, Foreground: picfile = "", Background: picfile = 
 
 ---
 
-### PlaySound
+### ClearKeyBuffer
 
 ```
-PlaySound(SoundFile: sndfile, Asynchronous: bool = True, Volume: 01float = 1.0, Loop: bool = False)
+ClearKeyBuffer()
 ```
 
-**Description:** Plays the specified audio file. Asynchronous playback (the default) returns control immediately; synchronous playback blocks until complete.
+**Description:** Clears all accumulated keystrokes from the key buffer.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### DelVariable
+
+```
+DelVariable(Variable: varname)
+```
+
+**Description:** Deletes the specified variable.
 
 **Parameters:**
 
-- `SoundFile` (sndfile): Path to the audio file
-- `Asynchronous` (bool): If true (default), plays without blocking
-- `Volume` (01float): Volume level (0.0 to 1.0), default 1.0
-- `Loop` (bool): If true, loops the audio continuously (default false)
+- `Variable` (varname): Name of the variable to delete
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### DisallowTake
+
+```
+DisallowTake(Object: objnum)
+```
+
+**Description:** Prevents an object from being picked up.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### HideMouse
+
+```
+HideMouse()
+```
+
+**Description:** Hides the mouse cursor.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### HideObject
+
+```
+HideObject(Object: objnum)
+```
+
+**Description:** Hides a visible object.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object to hide
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### HidePockets
+
+```
+HidePockets()
+```
+
+**Description:** Hides all pocket UI elements.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### InputDialog
+
+```
+InputDialog(Prompt: value, Variable: varname)
+```
+
+**Description:** Displays a dialog prompting the user for input. The entered value is stored in the specified variable.
+
+**Parameters:**
+
+- `Prompt` (value): Text prompt to display
+- `Variable` (varname): Variable to store the input
 
 **Restrictions:** view, object, global, pocket
 
@@ -465,45 +577,20 @@ PlayBackgroundMusic(SoundFile: sndfile, Volume: 01float, Loop: bool)
 
 ---
 
-### StopBackgroundMusic
+### PlaySound
 
 ```
-StopBackgroundMusic()
+PlaySound(SoundFile: sndfile, Asynchronous: bool = True, Volume: 01float = 1.0, Loop: bool = False)
 ```
 
-**Description:** Stops the currently playing background music.
-
-**Parameters:** None
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### StopSound
-
-```
-StopSound(SoundFile: sndfile)
-```
-
-**Description:** Stops playback of the specified sound file if currently playing.
+**Description:** Plays the specified audio file. Asynchronous playback (the default) returns control immediately; synchronous playback blocks until complete.
 
 **Parameters:**
 
-- `SoundFile` (sndfile): Path to the audio file to stop
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### StopAllSounds
-
-```
-StopAllSounds()
-```
-
-**Description:** Stops all currently playing sound effects. Does not affect background music.
-
-**Parameters:** None
+- `SoundFile` (sndfile): Path to the audio file
+- `Asynchronous` (bool): If true (default), plays without blocking
+- `Volume` (01float): Volume level (0.0 to 1.0), default 1.0
+- `Loop` (bool): If true, loops the audio continuously (default false)
 
 **Restrictions:** view, object, global, pocket
 
@@ -550,31 +637,82 @@ PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 0
 
 ---
 
-### StopVideo
+### PortalTo
 
 ```
-StopVideo(VideoFile: vidfile)
+PortalTo(View: viewnum, VidFile: vidfile = "")
 ```
 
-**Description:** Stops playback of the specified video file.
+**Description:** Navigates to the specified view. If a video file is provided, plays it as a fullscreen transition before changing views. Right-clicking the video skips to the destination view immediately.
 
 **Parameters:**
 
-- `VideoFile` (vidfile): Path to the video file to stop
+- `View` (viewnum): ID of the destination view
+- `VidFile` (vidfile): Optional video file for transition effect
 
 **Restrictions:** view, object, global, pocket
 
 ---
 
-### StopAllVideos
+### Quit
 
 ```
-StopAllVideos()
+Quit()
 ```
 
-**Description:** Stops all currently playing videos.
+**Description:** Terminates the GEMS environment.
 
 **Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### RunProgram
+
+```
+RunProgram(Application: exefile, Parameters: value)
+```
+
+**Description:** Launches an external application with the specified parameters.
+
+**Parameters:**
+
+- `Application` (exefile): Path to the executable
+- `Parameters` (value): Command-line parameters
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### SayText
+
+```
+SayText(Message: value)
+```
+
+**Description:** Uses text-to-speech to speak the specified message.
+
+**Parameters:**
+
+- `Message` (value): Text to speak
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### SetVariable
+
+```
+SetVariable(Variable: varname, Value: value)
+```
+
+**Description:** Creates or updates a variable with the specified value.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable
+- `Value` (value): Value to assign
 
 **Restrictions:** view, object, global, pocket
 
@@ -623,6 +761,20 @@ ShowImageWithin(ImageFile: picfile, Left: number, Top: number, Duration: float, 
 
 ---
 
+### ShowMouse
+
+```
+ShowMouse()
+```
+
+**Description:** Shows the mouse cursor if hidden.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ### ShowObject
 
 ```
@@ -639,145 +791,105 @@ ShowObject(Object: objnum)
 
 ---
 
-### HideObject
+### ShowPockets
 
 ```
-HideObject(Object: objnum)
+ShowPockets()
 ```
 
-**Description:** Hides a visible object.
-
-**Parameters:**
-
-- `Object` (objnum): ID of the object to hide
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### AllowTake
-
-```
-AllowTake(Object: objnum)
-```
-
-**Description:** Allows an object to be picked up and placed in a pocket.
-
-**Parameters:**
-
-- `Object` (objnum): ID of the object
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### DisallowTake
-
-```
-DisallowTake(Object: objnum)
-```
-
-**Description:** Prevents an object from being picked up.
-
-**Parameters:**
-
-- `Object` (objnum): ID of the object
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### SetVariable
-
-```
-SetVariable(Variable: varname, Value: value)
-```
-
-**Description:** Creates or updates a variable with the specified value.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable
-- `Value` (value): Value to assign
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### DelVariable
-
-```
-DelVariable(Variable: varname)
-```
-
-**Description:** Deletes the specified variable.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to delete
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarIncrease
-
-```
-VarIncrease(Variable: varname)
-```
-
-**Description:** Increases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 1.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to increment
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarDecrease
-
-```
-VarDecrease(Variable: varname)
-```
-
-**Description:** Decreases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 0.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to decrement
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### VarAppend
-
-```
-VarAppend(Variable: varname, Text: value)
-```
-
-**Description:** Appends the specified text to the string value of the variable. If the variable does not exist, it will be created with the text as its value.
-
-**Parameters:**
-
-- `Variable` (varname): Name of the variable to append to
-- `Text` (value): Text to append to the variable's value
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### ClearKeyBuffer
-
-```
-ClearKeyBuffer()
-```
-
-**Description:** Clears all accumulated keystrokes from the key buffer.
+**Description:** Shows all pocket UI elements.
 
 **Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### ShowURL
+
+```
+ShowURL(URL: value)
+```
+
+**Description:** Opens the specified URL in the default web browser.
+
+**Parameters:**
+
+- `URL` (value): URL to open
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### StopAllSounds
+
+```
+StopAllSounds()
+```
+
+**Description:** Stops all currently playing sound effects. Does not affect background music.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### StopAllVideos
+
+```
+StopAllVideos()
+```
+
+**Description:** Stops all currently playing videos.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### StopBackgroundMusic
+
+```
+StopBackgroundMusic()
+```
+
+**Description:** Stops the currently playing background music.
+
+**Parameters:** None
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### StopSound
+
+```
+StopSound(SoundFile: sndfile)
+```
+
+**Description:** Stops playback of the specified sound file if currently playing.
+
+**Parameters:**
+
+- `SoundFile` (sndfile): Path to the audio file to stop
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### StopVideo
+
+```
+StopVideo(VideoFile: vidfile)
+```
+
+**Description:** Stops playback of the specified video file.
+
+**Parameters:**
+
+- `VideoFile` (vidfile): Path to the video file to stop
 
 **Restrictions:** view, object, global, pocket
 
@@ -822,153 +934,50 @@ TextDialog(Message: value)
 
 ---
 
-### InputDialog
+### VarAppend
 
 ```
-InputDialog(Prompt: value, Variable: varname)
+VarAppend(Variable: varname, Text: value)
 ```
 
-**Description:** Displays a dialog prompting the user for input. The entered value is stored in the specified variable.
+**Description:** Appends the specified text to the string value of the variable. If the variable does not exist, it will be created with the text as its value.
 
 **Parameters:**
 
-- `Prompt` (value): Text prompt to display
-- `Variable` (varname): Variable to store the input
+- `Variable` (varname): Name of the variable to append to
+- `Text` (value): Text to append to the variable's value
 
 **Restrictions:** view, object, global, pocket
 
 ---
 
-### SayText
+### VarDecrease
 
 ```
-SayText(Message: value)
+VarDecrease(Variable: varname)
 ```
 
-**Description:** Uses text-to-speech to speak the specified message.
+**Description:** Decreases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 0.
 
 **Parameters:**
 
-- `Message` (value): Text to speak
+- `Variable` (varname): Name of the variable to decrement
 
 **Restrictions:** view, object, global, pocket
 
 ---
 
-### ShowURL
+### VarIncrease
 
 ```
-ShowURL(URL: value)
+VarIncrease(Variable: varname)
 ```
 
-**Description:** Opens the specified URL in the default web browser.
+**Description:** Increases the value of the specified variable by 1. If the variable does not exist or has a non-numeric value, it will be created and set to 1.
 
 **Parameters:**
 
-- `URL` (value): URL to open
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### RunProgram
-
-```
-RunProgram(Application: exefile, Parameters: value)
-```
-
-**Description:** Launches an external application with the specified parameters.
-
-**Parameters:**
-
-- `Application` (exefile): Path to the executable
-- `Parameters` (value): Command-line parameters
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### ChangeCursor
-
-```
-ChangeCursor(Cursor: cursor)
-```
-
-**Description:** Changes the mouse cursor to the specified style.
-
-**Parameters:**
-
-- `Cursor` (cursor): Cursor style identifier
-
-**Restrictions:** (no restrictions)
-
----
-
-### HideMouse
-
-```
-HideMouse()
-```
-
-**Description:** Hides the mouse cursor.
-
-**Parameters:** None
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### ShowMouse
-
-```
-ShowMouse()
-```
-
-**Description:** Shows the mouse cursor if hidden.
-
-**Parameters:** None
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### HidePockets
-
-```
-HidePockets()
-```
-
-**Description:** Hides all pocket UI elements.
-
-**Parameters:** None
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### ShowPockets
-
-```
-ShowPockets()
-```
-
-**Description:** Shows all pocket UI elements.
-
-**Parameters:** None
-
-**Restrictions:** view, object, global, pocket
-
----
-
-### Quit
-
-```
-Quit()
-```
-
-**Description:** Terminates the GEMS environment.
-
-**Parameters:** None
+- `Variable` (varname): Name of the variable to increment
 
 **Restrictions:** view, object, global, pocket
 
@@ -976,22 +985,23 @@ Quit()
 
 ## Parameter Types
 
-| Type       | Description               |
-| ---------- | ------------------------- |
-| `viewnum`  | View ID selector          |
-| `objnum`   | Object ID selector        |
-| `value`    | Text string               |
-| `varname`  | Variable name             |
-| `number`   | Integer value             |
-| `float`    | Decimal number            |
-| `01float`  | Float between 0.0 and 1.0 |
-| `bool`     | Boolean (True/False)      |
-| `sndfile`  | Audio file path           |
-| `vidfile`  | Video file path           |
-| `picfile`  | Image file path           |
-| `exefile`  | Executable file path      |
-| `fgcolor`  | Foreground color          |
-| `bgcolor`  | Background color          |
-| `fontsize` | Font size                 |
-| `cursor`   | Cursor style              |
-| `key`      | Keyboard key              |
+| Type       | Description                          |
+| ---------- | ------------------------------------ |
+| `bool`     | Boolean (True/False)                 |
+| `bgcolor`  | Background color                     |
+| `cursor`   | Cursor style                         |
+| `exefile`  | Executable file path                 |
+| `fgcolor`  | Foreground color                     |
+| `float`    | Decimal number                       |
+| `fontsize` | Font size                            |
+| `key`      | Keyboard key                         |
+| `number`   | Integer value                        |
+| `objnum`   | Object ID selector                   |
+| `01float`  | Float between 0.0 and 1.0           |
+| `orand`    | Logic operator ("or" or "and")       |
+| `picfile`  | Image file path                      |
+| `sndfile`  | Audio file path                      |
+| `value`    | Text string                          |
+| `varname`  | Variable name                        |
+| `vidfile`  | Video file path                      |
+| `viewnum`  | View ID selector                     |

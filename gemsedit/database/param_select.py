@@ -306,6 +306,8 @@ class ParamSelect:
                             value_item = "False"
                         elif type_item in ("booltrue",):
                             value_item = "True"
+                        elif type_item in ("orand",):
+                            value_item = "or"
                         elif type_item in ("color",):
                             value_item = "['Black',0,0,0,255]"
                         elif type_item in ("fgcolor",):
@@ -382,6 +384,9 @@ class ParamSelect:
                             i,
                             genericrowdelegates.ComboRowColoredDelegate(self.color_list),
                         )
+                    elif type_item == "orand":
+                        logic_ops = ["or", "and"]
+                        delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(logic_ops))
                     elif type_item in ("bool", "booltrue"):
                         onoff = ["False", "True"]
                         delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(onoff))
