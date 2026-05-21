@@ -206,7 +206,7 @@ class Ui_ViewsWindow(object):
         self.label_6.setPixmap(QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico"))
         self.label_6.setScaledContents(True)
 
-        self.gridLayout_3.addWidget(self.label_6, 0, 3, 1, 2)
+        self.gridLayout_3.addWidget(self.label_6, 0, 3, 1, 4)
 
         self.viewDel_toolButton = QToolButton(self.layoutWidget)
         self.viewDel_toolButton.setObjectName("viewDel_toolButton")
@@ -221,6 +221,18 @@ class Ui_ViewsWindow(object):
         self.viewAdd_toolButton.setIcon(icon1)
 
         self.gridLayout_3.addWidget(self.viewAdd_toolButton, 1, 3, 1, 1)
+
+        self.viewUp_toolButton = QToolButton(self.layoutWidget)
+        self.viewUp_toolButton.setObjectName("viewUp_toolButton")
+        self.viewUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
+
+        self.gridLayout_3.addWidget(self.viewUp_toolButton, 1, 5, 1, 1)
+
+        self.viewDown_toolButton = QToolButton(self.layoutWidget)
+        self.viewDown_toolButton.setObjectName("viewDown_toolButton")
+        self.viewDown_toolButton.setArrowType(Qt.ArrowType.DownArrow)
+
+        self.gridLayout_3.addWidget(self.viewDown_toolButton, 1, 6, 1, 1)
 
         self.labelAppName = QLabel(self.layoutWidget)
         self.labelAppName.setObjectName("labelAppName")
@@ -256,7 +268,7 @@ class Ui_ViewsWindow(object):
         self.view_tableView.horizontalHeader().setStretchLastSection(True)
         self.view_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout_3.addWidget(self.view_tableView, 2, 0, 1, 5)
+        self.gridLayout_3.addWidget(self.view_tableView, 2, 0, 1, 7)
 
         self.horizontalSpacer_6 = QSpacerItem(90, 28, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
 
@@ -671,6 +683,14 @@ class Ui_ViewsWindow(object):
         self.viewAdd_toolButton.setToolTip(QCoreApplication.translate("ViewsWindow", "Add a new view", None))
         # endif // QT_CONFIG(tooltip)
         self.viewAdd_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.viewUp_toolButton.setToolTip(QCoreApplication.translate("ViewsWindow", "Move selected view up", None))
+        # endif // QT_CONFIG(tooltip)
+        self.viewUp_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.viewDown_toolButton.setToolTip(QCoreApplication.translate("ViewsWindow", "Move selected view down", None))
+        # endif // QT_CONFIG(tooltip)
+        self.viewDown_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         self.labelAppName.setText(QCoreApplication.translate("ViewsWindow", "GEMS Editor", None))
         self.label.setText(QCoreApplication.translate("ViewsWindow", "Current GEMS Environment: ", None))
         self.dbfilename_Label.setText(QCoreApplication.translate("ViewsWindow", "...", None))

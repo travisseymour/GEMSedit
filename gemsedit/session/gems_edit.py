@@ -229,6 +229,8 @@ class GemsViews:
         self.ui.view_tableView.doubleClicked.connect(self.handleBaseDoubleClick)
         self.ui.viewAdd_toolButton.pressed.connect(self.handleBaseAdd)
         self.ui.viewDel_toolButton.pressed.connect(self.handleBaseDel)
+        self.ui.viewUp_toolButton.pressed.connect(self.handleViewMoveUp)
+        self.ui.viewDown_toolButton.pressed.connect(self.handleViewMoveDown)
         self.ui.VAL_tableView.clicked.connect(self.handleActionClick)
         self.ui.objectsButton.pressed.connect(self.launchObjectsWindow)
 
@@ -1085,6 +1087,120 @@ class GemsViews:
 
                 connection.mark_db_as_changed()
 
+    def handleViewMoveUp(self):
+        """Move the selected view up in the view list."""
+        if self.current_row is None:
+            return
+
+        _id = self.model.record(self.current_row).value("Id")
+
+        # Get the current view's RowOrder
+        query = QtSql.QSqlQuery()
+        query.prepare("SELECT RowOrder FROM views WHERE Id = :id")
+        query.bindValue(":id", _id)
+        query.exec()
+        if not query.isActive() or not query.next():
+            return
+        current_row_order = query.value(0)
+
+        # Find the view with the next lower RowOrder
+        query2 = QtSql.QSqlQuery()
+        query2.prepare(
+            "SELECT Id, RowOrder FROM views "
+            "WHERE RowOrder < :roworder "
+            "ORDER BY RowOrder DESC LIMIT 1"
+        )
+        query2.bindValue(":roworder", current_row_order)
+        query2.exec()
+
+        if not query2.isActive() or not query2.next():
+            return  # Already at the top
+
+        swap_id = query2.value(0)
+        swap_row_order = query2.value(1)
+
+        # Swap RowOrder values
+        update1 = QtSql.QSqlQuery()
+        update1.prepare("UPDATE views SET RowOrder = :roworder WHERE Id = :id")
+        update1.bindValue(":roworder", swap_row_order)
+        update1.bindValue(":id", _id)
+        update1.exec()
+
+        update2 = QtSql.QSqlQuery()
+        update2.prepare("UPDATE views SET RowOrder = :roworder WHERE Id = :id")
+        update2.bindValue(":roworder", current_row_order)
+        update2.bindValue(":id", swap_id)
+        update2.exec()
+
+        if update1.lastError().isValid() or update2.lastError().isValid():
+            log.error("Problem in handleViewMoveUp(): swap failed")
+            return
+
+        connection.mark_db_as_changed()
+        self.model.setQuery(f"select * from {self.base_table_name} order by RowOrder")
+        self._select_view_by_id(_id)
+
+    def handleViewMoveDown(self):
+        """Move the selected view down in the view list."""
+        if self.current_row is None:
+            return
+
+        _id = self.model.record(self.current_row).value("Id")
+
+        # Get the current view's RowOrder
+        query = QtSql.QSqlQuery()
+        query.prepare("SELECT RowOrder FROM views WHERE Id = :id")
+        query.bindValue(":id", _id)
+        query.exec()
+        if not query.isActive() or not query.next():
+            return
+        current_row_order = query.value(0)
+
+        # Find the view with the next higher RowOrder
+        query2 = QtSql.QSqlQuery()
+        query2.prepare(
+            "SELECT Id, RowOrder FROM views "
+            "WHERE RowOrder > :roworder "
+            "ORDER BY RowOrder ASC LIMIT 1"
+        )
+        query2.bindValue(":roworder", current_row_order)
+        query2.exec()
+
+        if not query2.isActive() or not query2.next():
+            return  # Already at the bottom
+
+        swap_id = query2.value(0)
+        swap_row_order = query2.value(1)
+
+        # Swap RowOrder values
+        update1 = QtSql.QSqlQuery()
+        update1.prepare("UPDATE views SET RowOrder = :roworder WHERE Id = :id")
+        update1.bindValue(":roworder", swap_row_order)
+        update1.bindValue(":id", _id)
+        update1.exec()
+
+        update2 = QtSql.QSqlQuery()
+        update2.prepare("UPDATE views SET RowOrder = :roworder WHERE Id = :id")
+        update2.bindValue(":roworder", current_row_order)
+        update2.bindValue(":id", swap_id)
+        update2.exec()
+
+        if update1.lastError().isValid() or update2.lastError().isValid():
+            log.error("Problem in handleViewMoveDown(): swap failed")
+            return
+
+        connection.mark_db_as_changed()
+        self.model.setQuery(f"select * from {self.base_table_name} order by RowOrder")
+        self._select_view_by_id(_id)
+
+    def _select_view_by_id(self, view_id):
+        """Select the row in the view table that corresponds to the given view ID."""
+        for row in range(self.model.rowCount()):
+            if self.model.record(row).value("Id") == view_id:
+                self.current_row = row
+                self.ui.view_tableView.selectRow(row)
+                return
+
     def editBaseName(self, _id, name):
         bn = self.basename.title()
         # get list of old names
@@ -1411,6 +1527,8 @@ class GemsViews:
         self.ui.olOpen_toolButton.setEnabled(True)
         self.ui.viewAdd_toolButton.setEnabled(True)
         self.ui.viewDel_toolButton.setEnabled(True)
+        self.ui.viewUp_toolButton.setEnabled(True)
+        self.ui.viewDown_toolButton.setEnabled(True)
         self.ui.fgCopy_toolButton.setEnabled(True)
         self.ui.bgCopy_toolButton.setEnabled(True)
 
@@ -1426,6 +1544,8 @@ class GemsViews:
         self.ui.olOpen_toolButton.setEnabled(False)
         self.ui.viewAdd_toolButton.setEnabled(False)
         self.ui.viewDel_toolButton.setEnabled(False)
+        self.ui.viewUp_toolButton.setEnabled(False)
+        self.ui.viewDown_toolButton.setEnabled(False)
         self.ui.fgCopy_toolButton.setEnabled(False)
         self.ui.bgCopy_toolButton.setEnabled(False)
 
