@@ -167,6 +167,8 @@ class Objects:
         self.ui.objectAdd_toolButton.pressed.connect(self.handleBaseAdd)
         self.ui.objectDel_toolButton.pressed.connect(self.handleBaseDel)
         self.ui.objectCopy_toolButton.pressed.connect(self.handleObjectsCopy)
+        self.ui.objectUp_toolButton.pressed.connect(self.handleObjectMoveUp)
+        self.ui.objectDown_toolButton.pressed.connect(self.handleObjectMoveDown)
         self.ui.OAL_tableView.clicked.connect(self.handleActionClick)
         self.ui.actionAdd_toolButton.pressed.connect(self.actionlist.handleActionAdd)
         self.ui.actionDel_toolButton.pressed.connect(self.actionlist.handleActionDel)
@@ -783,6 +785,109 @@ class Objects:
             self.loadPicFields()
 
         mark_db_as_changed()
+
+    def handleObjectMoveUp(self):
+        if self.currentrow is None:
+            return
+        _id = self.model.record(self.currentrow).value("Id")
+        query = QtSql.QSqlQuery()
+        query.prepare("SELECT RowOrder FROM objects WHERE Id = :id")
+        query.bindValue(":id", _id)
+        query.exec()
+        if not query.isActive() or not query.next():
+            return
+        current_row_order = query.value(0)
+
+        query2 = QtSql.QSqlQuery()
+        query2.prepare(
+            "SELECT Id, RowOrder FROM objects "
+            "WHERE Parent = :parent AND RowOrder < :roworder "
+            "ORDER BY RowOrder DESC LIMIT 1"
+        )
+        query2.bindValue(":parent", self.parentid)
+        query2.bindValue(":roworder", current_row_order)
+        query2.exec()
+        if not query2.isActive() or not query2.next():
+            return  # already at top
+
+        swap_id = query2.value(0)
+        swap_row_order = query2.value(1)
+
+        update1 = QtSql.QSqlQuery()
+        update1.prepare("UPDATE objects SET RowOrder = :roworder WHERE Id = :id")
+        update1.bindValue(":roworder", swap_row_order)
+        update1.bindValue(":id", _id)
+        update1.exec()
+
+        update2 = QtSql.QSqlQuery()
+        update2.prepare("UPDATE objects SET RowOrder = :roworder WHERE Id = :id")
+        update2.bindValue(":roworder", current_row_order)
+        update2.bindValue(":id", swap_id)
+        update2.exec()
+
+        if update1.lastError().isValid() or update2.lastError().isValid():
+            log.error("Problem in handleObjectMoveUp(): swap failed")
+            return
+
+        mark_db_as_changed()
+        sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+        self.model.setQuery(sql)
+        self._select_object_by_id(_id)
+
+    def handleObjectMoveDown(self):
+        if self.currentrow is None:
+            return
+        _id = self.model.record(self.currentrow).value("Id")
+        query = QtSql.QSqlQuery()
+        query.prepare("SELECT RowOrder FROM objects WHERE Id = :id")
+        query.bindValue(":id", _id)
+        query.exec()
+        if not query.isActive() or not query.next():
+            return
+        current_row_order = query.value(0)
+
+        query2 = QtSql.QSqlQuery()
+        query2.prepare(
+            "SELECT Id, RowOrder FROM objects "
+            "WHERE Parent = :parent AND RowOrder > :roworder "
+            "ORDER BY RowOrder ASC LIMIT 1"
+        )
+        query2.bindValue(":parent", self.parentid)
+        query2.bindValue(":roworder", current_row_order)
+        query2.exec()
+        if not query2.isActive() or not query2.next():
+            return  # already at bottom
+
+        swap_id = query2.value(0)
+        swap_row_order = query2.value(1)
+
+        update1 = QtSql.QSqlQuery()
+        update1.prepare("UPDATE objects SET RowOrder = :roworder WHERE Id = :id")
+        update1.bindValue(":roworder", swap_row_order)
+        update1.bindValue(":id", _id)
+        update1.exec()
+
+        update2 = QtSql.QSqlQuery()
+        update2.prepare("UPDATE objects SET RowOrder = :roworder WHERE Id = :id")
+        update2.bindValue(":roworder", current_row_order)
+        update2.bindValue(":id", swap_id)
+        update2.exec()
+
+        if update1.lastError().isValid() or update2.lastError().isValid():
+            log.error("Problem in handleObjectMoveDown(): swap failed")
+            return
+
+        mark_db_as_changed()
+        sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+        self.model.setQuery(sql)
+        self._select_object_by_id(_id)
+
+    def _select_object_by_id(self, obj_id):
+        for row in range(self.model.rowCount()):
+            if self.model.record(row).value("Id") == obj_id:
+                self.currentrow = row
+                self.ui.object_tableView.selectRow(row)
+                return
 
     def editBaseName(self, id, name):
         bn = self.basename.title()

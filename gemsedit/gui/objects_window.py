@@ -117,7 +117,7 @@ class Ui_ObjectsWindow(object):
         self.label_6.setPixmap(QPixmap(":/newPrefix/media/Antialiasfactory-Jewelry-Agate.ico"))
         self.label_6.setScaledContents(True)
 
-        self.gridLayout_2.addWidget(self.label_6, 0, 3, 1, 2)
+        self.gridLayout_2.addWidget(self.label_6, 0, 3, 1, 5)
 
         self.label_4 = QLabel(self.layoutWidget)
         self.label_4.setObjectName("label_4")
@@ -161,6 +161,18 @@ class Ui_ObjectsWindow(object):
 
         self.gridLayout_2.addWidget(self.objectCopy_toolButton, 1, 5, 1, 1)
 
+        self.objectUp_toolButton = QToolButton(self.layoutWidget)
+        self.objectUp_toolButton.setObjectName("objectUp_toolButton")
+        self.objectUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
+
+        self.gridLayout_2.addWidget(self.objectUp_toolButton, 1, 6, 1, 1)
+
+        self.objectDown_toolButton = QToolButton(self.layoutWidget)
+        self.objectDown_toolButton.setObjectName("objectDown_toolButton")
+        self.objectDown_toolButton.setArrowType(Qt.ArrowType.DownArrow)
+
+        self.gridLayout_2.addWidget(self.objectDown_toolButton, 1, 7, 1, 1)
+
         self.object_tableView = QTableView(self.layoutWidget)
         self.object_tableView.setObjectName("object_tableView")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
@@ -184,7 +196,7 @@ class Ui_ObjectsWindow(object):
         self.object_tableView.horizontalHeader().setStretchLastSection(True)
         self.object_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout_2.addWidget(self.object_tableView, 2, 0, 1, 6)
+        self.gridLayout_2.addWidget(self.object_tableView, 2, 0, 1, 8)
 
         self.splitter_2.addWidget(self.layoutWidget)
         self.splitter = QSplitter(self.splitter_2)
@@ -446,6 +458,16 @@ class Ui_ObjectsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.objectCopy_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.objectUp_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Move selected object up", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        # if QT_CONFIG(tooltip)
+        self.objectDown_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Move selected object down", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.visible_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Visible? ", None))
         self.takeable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Takeable? ", None))
         self.draggable_checkBox.setText(QCoreApplication.translate("ObjectsWindow", "Draggable?", None))
