@@ -714,6 +714,47 @@ def _hex_to_rgb(h: str) -> tuple[int, int, int]:
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
+def _luminance(rgb: tuple[int, int, int]) -> float:
+    """Calculate perceived luminance (0-255) using standard weights."""
+    return 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]
+
+
+def _is_light_color(hexval: str, threshold: float = 128.0) -> bool:
+    """Return True if the color is light (needs dark text for readability)."""
+    return _luminance(_hex_to_rgb(hexval)) >= threshold
+
+
+# Split colors into light (readable with dark text) and dark (readable with light text)
+all_light_colors = {name: hexval for name, hexval in all_colors.items() if _is_light_color(hexval)}
+all_dark_colors = {name: hexval for name, hexval in all_colors.items() if not _is_light_color(hexval)}
+
+
+def is_dark_mode() -> bool:
+    """Check if the application is running in dark mode based on window background luminance."""
+    try:
+        from PySide6.QtGui import QPalette
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if not isinstance(app, QApplication):
+            return False
+        palette = app.palette()
+        window_color = palette.color(QPalette.ColorRole.Window)
+        # If window background luminance is low, we're in dark mode
+        return _luminance((window_color.red(), window_color.green(), window_color.blue())) < 128
+    except Exception:
+        return False
+
+
+def get_colors_for_mode() -> dict[str, str]:
+    """Return the appropriate color set for the current system color mode.
+
+    In dark mode, returns dark colors (readable with light/white text).
+    In light mode, returns light colors (readable with dark/black text).
+    """
+    return all_dark_colors if is_dark_mode() else all_light_colors
+
+
 def _rgb_distance(rgb1: tuple[int, int, int], rgb2: tuple[int, int, int]) -> float:
     return ((rgb1[0] - rgb2[0]) ** 2 + (rgb1[1] - rgb2[1]) ** 2 + (rgb1[2] - rgb2[2]) ** 2) ** 0.5
 
@@ -733,7 +774,7 @@ def _build_deduplicated(source: dict[str, str], threshold: float = 35.0) -> dict
     return {name: hexval for name, hexval, _ in kept}
 
 
-deduplicated_colors = _build_deduplicated(all_colors, 50)
+deduplicated_colors = _build_deduplicated(get_colors_for_mode(), 50)
 
 
 def _build_max_spaced(source: dict[str, str]) -> dict[str, str]:
@@ -786,6 +827,9 @@ def _build_ultra_spaced(source: dict[str, str], lookback: int = 10) -> dict[str,
         ordered.append((best_name, remaining.pop(best_name)))
 
     return {name: source[name] for name, _ in ordered}
+
+
+ultra_spaced_colors = _build_ultra_spaced(deduplicated_colors)
 
 
 if __name__ == "__main__":
@@ -846,7 +890,6 @@ if __name__ == "__main__":
     window.resize(2000, 800)
 
     max_spaced_colors = _build_max_spaced(deduplicated_colors)
-    ultra_spaced_colors = _build_ultra_spaced(deduplicated_colors)
 
     for title, cdict in [
         ("All Colors", all_colors),

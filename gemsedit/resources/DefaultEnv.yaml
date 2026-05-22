@@ -42,12 +42,14 @@ Views:
         Name: HEREword
         Parent: 0
         RowOrder: 1
+        Tag: ''
         Takeable: 0
         Top: 143
         Visible: 1
         Width: 208
     Overlay: DefaultOverview.jpg
     RowOrder: 0
+    Tag: ''
   '1':
     Actions: {}
     Background: DefaultEnd.jpg
@@ -73,9 +75,11 @@ Views:
         Name: WavePicture
         Parent: 1
         RowOrder: 2
+        Tag: ''
         Takeable: 0
         Top: 239
         Visible: 1
         Width: 240
     Overlay: ''
     RowOrder: 1
+    Tag: ''

@@ -396,9 +396,9 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
     """
 
     schema_commands = [
-        "CREATE TABLE objects(Id INT PRIMARY KEY UNIQUE, Parent INT, Name TEXT, Points TEXT, Visible INT, Takeable INT, Draggable INT, RowOrder INT);",
+        "CREATE TABLE objects(Id INT PRIMARY KEY UNIQUE, Parent INT, Name TEXT, Points TEXT, Visible INT, Takeable INT, Draggable INT, Tag TEXT, RowOrder INT);",
         "CREATE TABLE actions(Id INT PRIMARY KEY UNIQUE, ContextType TEXT, ContextId INT, Condition TEXT, Trigger TEXT, Action TEXT, Enabled boolean, RowOrder INT);",
-        "CREATE TABLE views(Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT, RowOrder INT);",
+        "CREATE TABLE views(Id INT PRIMARY KEY UNIQUE, Name TEXT UNIQUE, Foreground TEXT, Background TEXT, Overlay TEXT, Tag TEXT, RowOrder INT);",
         "CREATE TABLE options(Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,  Roomtransition TEXT, Preloadresources INT, Globaloverlay TEXT, Version TEXT, StageColor TEXT, DisplayType TEXT, ObjectHover TEXT, Volume REAL, TransitionDuration INT);",
         "CREATE TABLE condition_lst(Id INT PRIMARY KEY UNIQUE, Name TEXT, Template TEXT, Labels TEXT, Restrictions TEXT );",
         "CREATE TABLE trigger_lst(Id INT PRIMARY KEY UNIQUE, Name TEXT, Template TEXT, Labels TEXT, Restrictions TEXT );",
@@ -488,6 +488,9 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
             for key in ("Left", "Top", "Width", "Height"):
                 obj.pop(key, None)
 
+            # Ensure Tag column exists (missing in old YAML files)
+            obj.setdefault("Tag", "")
+
             objects.append(obj)
     sql_db["objects"].insert_all(objects)
 
@@ -500,6 +503,8 @@ def dict_to_sqlite_file(db: dict, db_file_name: str | Path, overwrite: bool = Fa
             del view["Objects"]
         except KeyError:
             ...
+        # Ensure Tag column exists (missing in old YAML files)
+        view.setdefault("Tag", "")
         views.append(view)
     sql_db["views"].insert_all(views)
 

@@ -34,6 +34,7 @@ from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list, object_select_widget as objselect
 from gemsedit.gui.action_list import get_linked_object_info, parse_linked_object_name
 import gemsedit.gui.objects_window as win
+from gemsedit.gui.tagged_model import TaggedSqlModel, build_tag_color_map
 from gemsedit.utils.polygon_utils import json_to_points, points_to_bounding_rect
 
 
@@ -164,6 +165,8 @@ class Objects:
 
     def connectSlots(self):
         self.ui.object_tableView.doubleClicked.connect(self.handleBaseDoubleClick)
+        self.ui.object_tableView.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+        self.ui.object_tableView.customContextMenuRequested.connect(self._object_tag_context_menu)
         self.ui.objectAdd_toolButton.pressed.connect(self.handleBaseAdd)
         self.ui.objectDel_toolButton.pressed.connect(self.handleBaseDel)
         self.ui.objectCopy_toolButton.pressed.connect(self.handleObjectsCopy)
@@ -531,9 +534,9 @@ class Objects:
             query = QtSql.QSqlQuery()
             query.prepare(
                 "INSERT INTO "
-                "objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, RowOrder) "
+                "objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, Tag, RowOrder) "
                 "VALUES "
-                "(:id, :parent, :name, :points, :visible, :takeable, :draggable, :roworder)"
+                "(:id, :parent, :name, :points, :visible, :takeable, :draggable, :tag, :roworder)"
             )
             query.bindValue(":id", newid)
             query.bindValue(":parent", self.parentid)
@@ -542,6 +545,7 @@ class Objects:
             query.bindValue(":visible", 1)
             query.bindValue(":takeable", 0)
             query.bindValue(":draggable", 0)
+            query.bindValue(":tag", "")
             query.bindValue(":roworder", neworder)
             query.exec()
             self.currentrow = None
@@ -632,7 +636,7 @@ class Objects:
         # Get all objects from the source view
         source_query = QtSql.QSqlQuery()
         source_query.prepare(
-            "SELECT Id, Name, Points, Visible, Takeable, Draggable "
+            "SELECT Id, Name, Points, Visible, Takeable, Draggable, Tag "
             "FROM objects WHERE Parent = :parent ORDER BY RowOrder"
         )
         source_query.bindValue(":parent", source_view_id)
@@ -653,6 +657,7 @@ class Objects:
                         "visible": source_query.value(3),
                         "takeable": source_query.value(4),
                         "draggable": source_query.value(5),
+                        "tag": source_query.value(6) or "",
                     }
                 )
 
@@ -722,8 +727,8 @@ class Objects:
             # Insert the object
             insert_obj_query = QtSql.QSqlQuery()
             insert_obj_query.prepare(
-                "INSERT INTO objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, RowOrder) "
-                "VALUES (:id, :parent, :name, :points, :visible, :takeable, :draggable, :roworder)"
+                "INSERT INTO objects (Id, Parent, Name, Points, Visible, Takeable, Draggable, Tag, RowOrder) "
+                "VALUES (:id, :parent, :name, :points, :visible, :takeable, :draggable, :tag, :roworder)"
             )
             insert_obj_query.bindValue(":id", new_obj_id)
             insert_obj_query.bindValue(":parent", self.parentid)
@@ -732,6 +737,7 @@ class Objects:
             insert_obj_query.bindValue(":visible", obj["visible"])
             insert_obj_query.bindValue(":takeable", obj["takeable"])
             insert_obj_query.bindValue(":draggable", obj["draggable"])
+            insert_obj_query.bindValue(":tag", obj.get("tag", ""))
             insert_obj_query.bindValue(":roworder", new_order)
             insert_obj_query.exec()
 
@@ -1051,6 +1057,91 @@ class Objects:
 
             mark_db_as_changed()
 
+    # ── Tag management ──────────────────────────────────────────────
+
+    def _refresh_tag_colors(self):
+        if isinstance(self.model, TaggedSqlModel):
+            self.model.set_tag_color_map(build_tag_color_map())
+
+    def _get_existing_tags(self) -> list[str]:
+        tags: set[str] = set()
+        query = QtSql.QSqlQuery()
+        query.exec("SELECT DISTINCT Tag FROM views WHERE Tag IS NOT NULL AND Tag != ''")
+        while query.next():
+            tags.add(str(query.value(0)).strip())
+        query.exec("SELECT DISTINCT Tag FROM objects WHERE Tag IS NOT NULL AND Tag != ''")
+        while query.next():
+            tags.add(str(query.value(0)).strip())
+        return sorted(tags)
+
+    def _object_tag_context_menu(self, pos):
+        index = self.ui.object_tableView.indexAt(pos)
+        if not index.isValid():
+            return
+
+        row = index.row()
+        _id = self.model.record(row).value("Id")
+        current_tag = self.model.record(row).value("Tag") or ""
+
+        menu = QtWidgets.QMenu(self.MainWindow)
+        set_action = menu.addAction("Set Tag...")
+        remove_action = menu.addAction("Remove Tag")
+        remove_action.setEnabled(bool(str(current_tag).strip()))
+
+        chosen = menu.exec(self.ui.object_tableView.viewport().mapToGlobal(pos))
+
+        if chosen == set_action:
+            self._set_object_tag(_id, str(current_tag).strip())
+        elif chosen == remove_action:
+            self._remove_object_tag(_id)
+
+    def _set_object_tag(self, obj_id: int, current_tag: str):
+        existing_tags = self._get_existing_tags()
+        current_index = existing_tags.index(current_tag) if current_tag in existing_tags else 0
+
+        tag, ok = QtWidgets.QInputDialog.getItem(
+            self.MainWindow,
+            "Set Tag",
+            "Choose or enter a tag:",
+            existing_tags,
+            current_index,
+            True,
+        )
+
+        if ok and tag.strip():
+            query = QtSql.QSqlQuery()
+            query.prepare("UPDATE objects SET Tag = :tag WHERE Id = :id")
+            query.bindValue(":tag", tag.strip())
+            query.bindValue(":id", obj_id)
+            query.exec()
+            if query.lastError().isValid():
+                log.error(f"Problem setting tag: {query.lastError().text()}")
+                return
+
+            sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+            self.model.setQuery(sql)
+            self._refresh_tag_colors()
+            self._select_object_by_id(obj_id)
+            mark_db_as_changed()
+
+    def _remove_object_tag(self, obj_id: int):
+        query = QtSql.QSqlQuery()
+        query.prepare("UPDATE objects SET Tag = :tag WHERE Id = :id")
+        query.bindValue(":tag", "")
+        query.bindValue(":id", obj_id)
+        query.exec()
+        if query.lastError().isValid():
+            log.error(f"Problem removing tag: {query.lastError().text()}")
+            return
+
+        sql = f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder"
+        self.model.setQuery(sql)
+        self._refresh_tag_colors()
+        self._select_object_by_id(obj_id)
+        mark_db_as_changed()
+
+    # ── Model setup ──────────────────────────────────────────────
+
     def initializeBaseModel(self, model, query):
         model.setQuery(query)
         model.setHeaderData(0, QtCore.Qt.Orientation.Horizontal, "Id")
@@ -1060,7 +1151,8 @@ class Objects:
         model.setHeaderData(4, QtCore.Qt.Orientation.Horizontal, "Visible")
         model.setHeaderData(5, QtCore.Qt.Orientation.Horizontal, "Takeable")
         model.setHeaderData(6, QtCore.Qt.Orientation.Horizontal, "Draggable")
-        model.setHeaderData(7, QtCore.Qt.Orientation.Horizontal, "RowOrder")
+        model.setHeaderData(7, QtCore.Qt.Orientation.Horizontal, "Tag")
+        model.setHeaderData(8, QtCore.Qt.Orientation.Horizontal, "RowOrder")
 
     def connectBaseModelToTableView(self, model, view):
         view.setModel(model)
@@ -1071,7 +1163,8 @@ class Objects:
         view.hideColumn(4)  # Visible
         view.hideColumn(5)  # Takeable
         view.hideColumn(6)  # Draggable
-        view.hideColumn(7)  # RowOrder
+        view.hideColumn(7)  # Tag
+        view.hideColumn(8)  # RowOrder
         view.resizeColumnsToContents()
 
     def getParentInfo(self):
@@ -1104,14 +1197,13 @@ class Objects:
             return  # was quit()...why?
 
     def initializeDatabases(self):
-        self.model = QtSql.QSqlQueryModel()  # CustomSqlModel()
+        self.model = TaggedSqlModel(tag_column_index=7)
         self.initializeBaseModel(
             self.model,
             f"select * from {self.basetablename} where Parent = {self.parentid} order by RowOrder",
         )
         self.connectBaseModelToTableView(self.model, self.ui.object_tableView)
-        # from gemsedit import log
-        # self.model.dataChanged.connect(lambda x: partial(log.debug, "objects 514 data changed"))
+        self._refresh_tag_colors()
 
     def initializeViews(self):
         # if there is anything in the base list, select the first one

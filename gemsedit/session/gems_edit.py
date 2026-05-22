@@ -38,6 +38,7 @@ from gemsedit.database import connection, gems_db, globalact
 from gemsedit.database.sqltools import get_next_value
 from gemsedit.gui import action_list
 import gemsedit.gui.gems_window as win
+from gemsedit.gui.tagged_model import TaggedSqlModel, build_tag_color_map
 from gemsedit.session import objects, settings
 from gemsedit.session.networkgraph import show_gems_network_graph
 from gemsedit.session.version import __version__, check_latest_github_version, version_less_than
@@ -227,6 +228,8 @@ class GemsViews:
 
     def connectSlots(self):
         self.ui.view_tableView.doubleClicked.connect(self.handleBaseDoubleClick)
+        self.ui.view_tableView.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+        self.ui.view_tableView.customContextMenuRequested.connect(self._view_tag_context_menu)
         self.ui.viewAdd_toolButton.pressed.connect(self.handleBaseAdd)
         self.ui.viewDel_toolButton.pressed.connect(self.handleBaseDel)
         self.ui.viewUp_toolButton.pressed.connect(self.handleViewMoveUp)
@@ -920,14 +923,15 @@ class GemsViews:
 
             query = QtSql.QSqlQuery()
             query.prepare(
-                "INSERT INTO views (Id, Name, Foreground, Background, Overlay, RowOrder) "
-                "VALUES (:id, :name, :fg, :bg, :ov, :ro)"
+                "INSERT INTO views (Id, Name, Foreground, Background, Overlay, Tag, RowOrder) "
+                "VALUES (:id, :name, :fg, :bg, :ov, :tag, :ro)"
             )
             query.bindValue(":id", new_id)
             query.bindValue(":name", newname)
             query.bindValue(":fg", "")
             query.bindValue(":bg", "")
             query.bindValue(":ov", "")
+            query.bindValue(":tag", "")
             query.bindValue(":ro", new_order)
             query.exec()
             if query.lastError().isValid():
@@ -1105,11 +1109,7 @@ class GemsViews:
 
         # Find the view with the next lower RowOrder
         query2 = QtSql.QSqlQuery()
-        query2.prepare(
-            "SELECT Id, RowOrder FROM views "
-            "WHERE RowOrder < :roworder "
-            "ORDER BY RowOrder DESC LIMIT 1"
-        )
+        query2.prepare("SELECT Id, RowOrder FROM views WHERE RowOrder < :roworder ORDER BY RowOrder DESC LIMIT 1")
         query2.bindValue(":roworder", current_row_order)
         query2.exec()
 
@@ -1158,11 +1158,7 @@ class GemsViews:
 
         # Find the view with the next higher RowOrder
         query2 = QtSql.QSqlQuery()
-        query2.prepare(
-            "SELECT Id, RowOrder FROM views "
-            "WHERE RowOrder > :roworder "
-            "ORDER BY RowOrder ASC LIMIT 1"
-        )
+        query2.prepare("SELECT Id, RowOrder FROM views WHERE RowOrder > :roworder ORDER BY RowOrder ASC LIMIT 1")
         query2.bindValue(":roworder", current_row_order)
         query2.exec()
 
@@ -1251,15 +1247,98 @@ class GemsViews:
 
                 connection.mark_db_as_changed()
 
+    # ── Tag management ──────────────────────────────────────────────
+
+    def _refresh_tag_colors(self):
+        if isinstance(self.model, TaggedSqlModel):
+            self.model.set_tag_color_map(build_tag_color_map())
+
+    def _get_existing_tags(self) -> list[str]:
+        tags: set[str] = set()
+        query = QtSql.QSqlQuery()
+        query.exec("SELECT DISTINCT Tag FROM views WHERE Tag IS NOT NULL AND Tag != ''")
+        while query.next():
+            tags.add(str(query.value(0)).strip())
+        query.exec("SELECT DISTINCT Tag FROM objects WHERE Tag IS NOT NULL AND Tag != ''")
+        while query.next():
+            tags.add(str(query.value(0)).strip())
+        return sorted(tags)
+
+    def _view_tag_context_menu(self, pos):
+        index = self.ui.view_tableView.indexAt(pos)
+        if not index.isValid():
+            return
+
+        row = index.row()
+        _id = self.model.record(row).value("Id")
+        current_tag = self.model.record(row).value("Tag") or ""
+
+        menu = QtWidgets.QMenu(self.MainWindow)
+        set_action = menu.addAction("Set Tag...")
+        remove_action = menu.addAction("Remove Tag")
+        remove_action.setEnabled(bool(str(current_tag).strip()))
+
+        chosen = menu.exec(self.ui.view_tableView.viewport().mapToGlobal(pos))
+
+        if chosen == set_action:
+            self._set_view_tag(_id, str(current_tag).strip())
+        elif chosen == remove_action:
+            self._remove_view_tag(_id)
+
+    def _set_view_tag(self, view_id: int, current_tag: str):
+        existing_tags = self._get_existing_tags()
+        current_index = existing_tags.index(current_tag) if current_tag in existing_tags else 0
+
+        tag, ok = QtWidgets.QInputDialog.getItem(
+            self.MainWindow,
+            "Set Tag",
+            "Choose or enter a tag:",
+            existing_tags,
+            current_index,
+            True,
+        )
+
+        if ok and tag.strip():
+            query = QtSql.QSqlQuery()
+            query.prepare(f"UPDATE {self.base_table_name} SET Tag = :tag WHERE Id = :id")
+            query.bindValue(":tag", tag.strip())
+            query.bindValue(":id", view_id)
+            query.exec()
+            if query.lastError().isValid():
+                log.error(f"Problem setting tag: {query.lastError().text()}")
+                return
+
+            self.model.setQuery(f"select * from {self.base_table_name} order by RowOrder")
+            self._refresh_tag_colors()
+            self._select_view_by_id(view_id)
+            connection.mark_db_as_changed()
+
+    def _remove_view_tag(self, view_id: int):
+        query = QtSql.QSqlQuery()
+        query.prepare(f"UPDATE {self.base_table_name} SET Tag = :tag WHERE Id = :id")
+        query.bindValue(":tag", "")
+        query.bindValue(":id", view_id)
+        query.exec()
+        if query.lastError().isValid():
+            log.error(f"Problem removing tag: {query.lastError().text()}")
+            return
+
+        self.model.setQuery(f"select * from {self.base_table_name} order by RowOrder")
+        self._refresh_tag_colors()
+        self._select_view_by_id(view_id)
+        connection.mark_db_as_changed()
+
+    # ── Model setup ──────────────────────────────────────────────
+
     def initializeBaseModel(self, model, query):
         model.setQuery(query)
-        # (Id INT, Name TEXT, Foreground BLOB, Background BLOB, Overlay BLOB)
         model.setHeaderData(0, QtCore.Qt.Orientation.Horizontal, "Id")
         model.setHeaderData(1, QtCore.Qt.Orientation.Horizontal, "Name")
         model.setHeaderData(2, QtCore.Qt.Orientation.Horizontal, "Foreground")
         model.setHeaderData(3, QtCore.Qt.Orientation.Horizontal, "Background")
         model.setHeaderData(4, QtCore.Qt.Orientation.Horizontal, "Overlay")
-        model.setHeaderData(5, QtCore.Qt.Orientation.Horizontal, "RowOrder")
+        model.setHeaderData(5, QtCore.Qt.Orientation.Horizontal, "Tag")
+        model.setHeaderData(6, QtCore.Qt.Orientation.Horizontal, "RowOrder")
 
     def connectBaseModelToTableView(self, model, view):
         view.setModel(model)
@@ -1268,13 +1347,15 @@ class GemsViews:
         view.hideColumn(2)  # Foreground
         view.hideColumn(3)  # Background
         view.hideColumn(4)  # Overlay
-        view.hideColumn(5)  # RowOrder
+        view.hideColumn(5)  # Tag
+        view.hideColumn(6)  # RowOrder
         view.resizeColumnsToContents()
 
     def initializeDatabases(self):
-        self.model = QtSql.QSqlQueryModel()
+        self.model = TaggedSqlModel(tag_column_index=5)
         self.initializeBaseModel(self.model, "select * from " + self.base_table_name + " order by RowOrder")
         self.connectBaseModelToTableView(self.model, self.ui.view_tableView)
+        self._refresh_tag_colors()
 
     def initializeViews(self):
         # disconnect any previous signal connections to avoid duplicate signals
