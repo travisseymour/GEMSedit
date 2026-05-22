@@ -219,7 +219,7 @@ class GemsViews:
         spacer.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         self.ui.toolBar.addWidget(spacer)
 
-        update_btn = QtWidgets.QPushButton(f"New version {latest_version} available!\nRun:  uv tool upgrade gemsedit")
+        update_btn = QtWidgets.QPushButton(f"New version {latest_version} available!\nRun: uv tool upgrade gemsedit gemsrun")
         update_btn.setFlat(True)
         # 1a73e8
         update_btn.setStyleSheet("QPushButton { color: #ba55d3; font-weight: bold; padding: 4px 10px; }")
