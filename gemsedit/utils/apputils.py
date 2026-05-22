@@ -18,12 +18,71 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from importlib.resources import as_file, files
 from pathlib import Path
+import os
 import platform
 import shlex
+import shutil
 import subprocess
 import sys
 
 OS = platform.system()
+
+
+def _get_expanded_env() -> dict[str, str] | None:
+    """
+    Return an environment dict with expanded PATH for subprocess calls.
+
+    On macOS, GUI apps don't inherit the user's shell PATH, so we need to
+    manually add common binary locations where tools like GEMSrun may be installed.
+
+    Returns None on non-macOS platforms to use the default environment.
+    """
+    if OS != "Darwin":
+        return None
+
+    env = os.environ.copy()
+    current_path = env.get("PATH", "")
+
+    # Common locations for user-installed binaries on macOS
+    extra_paths = [
+        os.path.expanduser("~/.local/bin"),  # pipx default
+        "/opt/homebrew/bin",  # Homebrew on Apple Silicon
+        "/usr/local/bin",  # Homebrew on Intel, also common for other tools
+        os.path.expanduser("~/Library/Python/3.11/bin"),  # pip --user
+        os.path.expanduser("~/Library/Python/3.12/bin"),
+        os.path.expanduser("~/Library/Python/3.13/bin"),
+    ]
+
+    # Add paths that exist and aren't already in PATH
+    paths_to_add = [p for p in extra_paths if os.path.isdir(p) and p not in current_path]
+
+    if paths_to_add:
+        env["PATH"] = ":".join(paths_to_add) + ":" + current_path
+
+    return env
+
+
+def _resolve_executable(app_name: str) -> str:
+    """
+    Resolve the full path to an executable, checking expanded PATH on macOS.
+
+    Returns the full path if found, otherwise returns the original app_name
+    to let subprocess raise the appropriate error.
+    """
+    # First try the standard which
+    found = shutil.which(app_name)
+    if found:
+        return found
+
+    # On macOS, try with expanded PATH
+    if OS == "Darwin":
+        env = _get_expanded_env()
+        if env:
+            found = shutil.which(app_name, path=env.get("PATH"))
+            if found:
+                return found
+
+    return app_name
 
 
 def frozen() -> bool:
@@ -74,7 +133,9 @@ def start_external_app(app_name: str, params: list[str] | None = None, wait: boo
     Returns:
         List of stdout lines (strings) if wait is True, otherwise an empty list.
     """
-    command = [app_name]
+    # Resolve the executable path (handles macOS PATH issues for GUI apps)
+    resolved_app = _resolve_executable(app_name)
+    command = [resolved_app]
 
     if params:
         command += [str(param) for param in params]
@@ -88,6 +149,7 @@ def start_external_app(app_name: str, params: list[str] | None = None, wait: boo
         stderr=subprocess.PIPE,
         text=True,
         start_new_session=True,
+        env=_get_expanded_env(),  # Use expanded PATH on macOS
     )
     if wait:
         process.wait()
