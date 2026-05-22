@@ -268,15 +268,134 @@ def _macos_create_icns(resources_path: Path) -> None:
         raise RuntimeError("iconutil failed")
 
 
+def _macos_is_in_dock() -> bool:
+    """Check if the application is already in the macOS Dock."""
+    try:
+        result = subprocess.run(
+            ["defaults", "read", "com.apple.dock", "persistent-apps"],
+            capture_output=True,
+            text=True,
+        )
+        return result.returncode == 0 and APP_NAME in result.stdout
+    except Exception:
+        return False
+
+
+def _macos_add_to_dock(app_path: Path) -> tuple[bool, str]:
+    """Add the application to the macOS Dock."""
+    try:
+        # Check if already in Dock to avoid duplicates
+        if _macos_is_in_dock():
+            return True, "Already in Dock."
+
+        # Build the plist entry for the Dock
+        dock_entry = f"""<dict>
+    <key>tile-data</key>
+    <dict>
+        <key>file-data</key>
+        <dict>
+            <key>_CFURLString</key>
+            <string>{app_path}</string>
+            <key>_CFURLStringType</key>
+            <integer>0</integer>
+        </dict>
+    </dict>
+</dict>"""
+
+        # Add to Dock persistent-apps
+        result = subprocess.run(
+            ["defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", dock_entry],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            return False, f"Failed to add to Dock: {result.stderr}"
+
+        # Restart the Dock to apply changes
+        subprocess.run(["killall", "Dock"], capture_output=True)
+
+        return True, "Added to Dock successfully."
+
+    except Exception as e:
+        return False, f"Failed to add to Dock: {e}"
+
+
+def _macos_remove_from_dock() -> tuple[bool, str]:
+    """Remove the application from the macOS Dock if present."""
+    try:
+        # Read current Dock persistent-apps
+        result = subprocess.run(
+            ["defaults", "read", "com.apple.dock", "persistent-apps"],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0 or APP_NAME not in result.stdout:
+            return True, "Application was not in the Dock."
+
+        # Use PlistBuddy to find and remove the entry
+        # First, find which index contains our app
+        app_path_str = str(_macos_get_app_path())
+
+        # Get the count of persistent apps
+        count_result = subprocess.run(
+            ["/usr/libexec/PlistBuddy", "-c", "Print :persistent-apps", os.path.expanduser("~/Library/Preferences/com.apple.dock.plist")],
+            capture_output=True,
+            text=True,
+        )
+
+        if count_result.returncode != 0:
+            return True, "Could not read Dock preferences."
+
+        # Find and remove entries containing our app path
+        # We need to iterate in reverse to avoid index shifting
+        lines = count_result.stdout.split("\n")
+        indices_to_remove = []
+        current_index = -1
+
+        for line in lines:
+            if "Dict {" in line:
+                current_index += 1
+            if app_path_str in line or APP_NAME in line:
+                if current_index >= 0:
+                    indices_to_remove.append(current_index)
+
+        # Remove in reverse order
+        for idx in sorted(set(indices_to_remove), reverse=True):
+            subprocess.run(
+                ["/usr/libexec/PlistBuddy", "-c", f"Delete :persistent-apps:{idx}",
+                 os.path.expanduser("~/Library/Preferences/com.apple.dock.plist")],
+                capture_output=True,
+            )
+
+        if indices_to_remove:
+            # Restart the Dock to apply changes
+            subprocess.run(["killall", "Dock"], capture_output=True)
+            return True, "Removed from Dock successfully."
+
+        return True, "Application was not in the Dock."
+
+    except Exception as e:
+        return False, f"Failed to remove from Dock: {e}"
+
+
 def _macos_uninstall() -> tuple[bool, str]:
     """Uninstall application stub on macOS."""
     app_path = _macos_get_app_path()
+    messages = []
+
+    # Try to remove from Dock first
+    dock_success, dock_message = _macos_remove_from_dock()
+    messages.append(dock_message)
 
     if app_path.exists():
         shutil.rmtree(app_path)
-        return True, f"Application removed successfully.\n  Removed: {app_path}"
+        messages.append(f"Application removed successfully.\n  Removed: {app_path}")
+        return True, "\n".join(messages)
     else:
-        return True, f"Application not found: {app_path}"
+        messages.append(f"Application not found: {app_path}")
+        return True, "\n".join(messages)
 
 
 # =============================================================================
@@ -391,6 +510,13 @@ def install():
         success, message = _linux_install()
     elif system == "Darwin":
         success, message = _macos_install()
+        if success:
+            app_path = _macos_get_app_path()
+            dock_success, dock_message = _macos_add_to_dock(app_path)
+            if dock_success:
+                message += f"\n  {dock_message}"
+            else:
+                typer.echo(f"Warning: {dock_message}", err=True)
     elif system == "Windows":
         success, message = _windows_install()
     else:
@@ -400,6 +526,32 @@ def install():
     if success:
         typer.echo(message)
         typer.echo(f"\n{APP_NAME} launcher installed successfully!")
+    else:
+        typer.echo(message, err=True)
+        raise typer.Exit(1)
+
+
+@launcher_app.command("add-to-dock")
+def add_to_dock():
+    """Add GEMSedit to the macOS Dock (macOS only)."""
+    system = platform.system()
+
+    if system != "Darwin":
+        typer.echo("This command is only available on macOS.", err=True)
+        raise typer.Exit(1)
+
+    app_path = _macos_get_app_path()
+    if not app_path.exists():
+        typer.echo(
+            f"GEMSedit app not found at {app_path}.\n"
+            "Please run 'gemsedit launcher install' first.",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    success, message = _macos_add_to_dock(app_path)
+    if success:
+        typer.echo(message)
     else:
         typer.echo(message, err=True)
         raise typer.Exit(1)
