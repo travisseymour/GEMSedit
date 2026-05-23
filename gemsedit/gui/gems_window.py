@@ -435,7 +435,7 @@ class Ui_ViewsWindow(object):
         self.fgPic_plainTextEdit = QPlainTextEdit(self.layoutWidget2)
         self.fgPic_plainTextEdit.setObjectName("fgPic_plainTextEdit")
         self.fgPic_plainTextEdit.setMinimumSize(QSize(285, 0))
-        self.fgPic_plainTextEdit.setMaximumSize(QSize(16777215, 60))
+        self.fgPic_plainTextEdit.setMaximumSize(QSize(16777215, 75))
         self.fgPic_plainTextEdit.setFont(font)
         self.fgPic_plainTextEdit.setReadOnly(True)
 
@@ -488,7 +488,7 @@ class Ui_ViewsWindow(object):
         self.bgPic_plainTextEdit = QPlainTextEdit(self.layoutWidget2)
         self.bgPic_plainTextEdit.setObjectName("bgPic_plainTextEdit")
         self.bgPic_plainTextEdit.setMinimumSize(QSize(285, 0))
-        self.bgPic_plainTextEdit.setMaximumSize(QSize(16777215, 60))
+        self.bgPic_plainTextEdit.setMaximumSize(QSize(16777215, 75))
         self.bgPic_plainTextEdit.setFont(font)
         self.bgPic_plainTextEdit.setReadOnly(True)
 
@@ -531,7 +531,7 @@ class Ui_ViewsWindow(object):
         self.olPic_plainTextEdit = QPlainTextEdit(self.layoutWidget2)
         self.olPic_plainTextEdit.setObjectName("olPic_plainTextEdit")
         self.olPic_plainTextEdit.setMinimumSize(QSize(286, 0))
-        self.olPic_plainTextEdit.setMaximumSize(QSize(16777215, 60))
+        self.olPic_plainTextEdit.setMaximumSize(QSize(16777215, 75))
         self.olPic_plainTextEdit.setFont(font)
         self.olPic_plainTextEdit.setReadOnly(True)
 
