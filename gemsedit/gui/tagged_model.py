@@ -51,23 +51,38 @@ class TaggedSqlModel(QtSql.QSqlQueryModel):
 
 def build_tag_color_map() -> dict[str, QtGui.QColor]:
     """Query all unique non-empty tags from views and objects,
-    assign each a color from ultra_spaced_colors."""
-    tags: set[str] = set()
+    assign each a color from ultra_spaced_colors.
+
+    Tags are ordered by their first occurrence (minimum Id) so that
+    the first tag created gets the first color, second tag gets the
+    second color, etc. This ensures colors remain stable when new
+    tags are added.
+    """
     query = QtSql.QSqlQuery()
 
-    query.exec("SELECT DISTINCT Tag FROM views WHERE Tag IS NOT NULL AND Tag != ''")
-    while query.next():
-        tags.add(str(query.value(0)).strip())
+    # Get tags ordered by their first occurrence (minimum Id across both tables)
+    query.exec("""
+        SELECT Tag FROM (
+            SELECT Tag, MIN(first_id) as first_id FROM (
+                SELECT Tag, MIN(Id) as first_id FROM views
+                WHERE Tag IS NOT NULL AND Tag != '' GROUP BY Tag
+                UNION ALL
+                SELECT Tag, MIN(Id) as first_id FROM objects
+                WHERE Tag IS NOT NULL AND Tag != '' GROUP BY Tag
+            ) GROUP BY Tag
+        ) ORDER BY first_id
+    """)
 
-    query.exec("SELECT DISTINCT Tag FROM objects WHERE Tag IS NOT NULL AND Tag != ''")
+    ordered_tags: list[str] = []
     while query.next():
-        tags.add(str(query.value(0)).strip())
+        tag = str(query.value(0)).strip()
+        if tag and tag not in ordered_tags:
+            ordered_tags.append(tag)
 
-    sorted_tags = sorted(tags)
     color_values = list(ultra_spaced_colors.values())
 
     color_map: dict[str, QtGui.QColor] = {}
-    for i, tag in enumerate(sorted_tags):
+    for i, tag in enumerate(ordered_tags):
         hex_color = color_values[i % len(color_values)]
         color_map[tag] = QtGui.QColor(hex_color)
 
