@@ -260,6 +260,7 @@ class GemsViews:
 
         self.ui.actionNetwork_Graph.triggered.connect(self.handle_network_graph)
         self.ui.actionClean_Media_Folder.triggered.connect(self.handle_clean_media_folder)
+        self.ui.actionClear_Media_Cache.triggered.connect(self.handle_clear_media_cache)
         self.ui.actionOpen.triggered.connect(self.open_environment)
         self.ui.actionClose.triggered.connect(self.closeEnv)
         self.ui.actionNew.triggered.connect(self.new_environment)
@@ -749,6 +750,77 @@ class GemsViews:
                 self.MainWindow,
                 "Clean Media Folder Complete",
                 f"Moved {moved_count} unused files to:\n{unused_path}",
+                QMessageBox.StandardButton.Ok,
+            )
+
+    def handle_clear_media_cache(self):
+        """Empty the GEMS media cache folder in the user's Documents folder."""
+        from PySide6.QtCore import QStandardPaths
+
+        # Get the Documents folder
+        documents_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+        cache_path = Path(documents_path) / "GEMS" / "Cache"
+
+        if not cache_path.exists():
+            QMessageBox.information(
+                self.MainWindow,
+                "Clear Media Cache",
+                f"Cache folder does not exist:\n{cache_path}",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Count files in cache
+        cache_files = list(cache_path.iterdir())
+        if not cache_files:
+            QMessageBox.information(
+                self.MainWindow,
+                "Clear Media Cache",
+                "Cache folder is already empty.",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
+
+        # Get confirmation
+        reply = QMessageBox.question(
+            self.MainWindow,
+            "Clear Media Cache",
+            f"This will delete {len(cache_files)} item(s) from the cache folder:\n{cache_path}\n\nDo you want to proceed?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        # Delete cache contents
+        deleted_count = 0
+        errors = []
+        for item in cache_files:
+            try:
+                if item.is_file():
+                    item.unlink()
+                elif item.is_dir():
+                    shutil.rmtree(item)
+                deleted_count += 1
+            except Exception as e:
+                errors.append(f"{item.name}: {e}")
+
+        # Report results
+        if errors:
+            error_text = "\n".join(errors[:10])
+            if len(errors) > 10:
+                error_text += f"\n... and {len(errors) - 10} more errors"
+            QMessageBox.warning(
+                self.MainWindow,
+                "Clear Media Cache - Partial Success",
+                f"Deleted {deleted_count} item(s).\n\nErrors occurred:\n{error_text}",
+                QMessageBox.StandardButton.Ok,
+            )
+        else:
+            QMessageBox.information(
+                self.MainWindow,
+                "Clear Media Cache Complete",
+                f"Deleted {deleted_count} item(s) from the cache folder.",
                 QMessageBox.StandardButton.Ok,
             )
 
@@ -1626,6 +1698,8 @@ class GemsViews:
         self.ui.viewDown_toolButton.setEnabled(True)
         self.ui.fgCopy_toolButton.setEnabled(True)
         self.ui.bgCopy_toolButton.setEnabled(True)
+        self.ui.actionNetwork_Graph.setEnabled(True)
+        self.ui.actionClean_Media_Folder.setEnabled(True)
 
     def disableButtons(self):
         self.ui.actionAdd_toolButton.setEnabled(False)
@@ -1644,6 +1718,8 @@ class GemsViews:
         self.ui.viewDown_toolButton.setEnabled(False)
         self.ui.fgCopy_toolButton.setEnabled(False)
         self.ui.bgCopy_toolButton.setEnabled(False)
+        self.ui.actionNetwork_Graph.setEnabled(False)
+        self.ui.actionClean_Media_Folder.setEnabled(False)
 
     def askOKCancel(self, text: str, info_text: str) -> bool:
         ret = QMessageBox.question(
