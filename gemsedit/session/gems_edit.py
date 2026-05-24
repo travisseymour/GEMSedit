@@ -177,10 +177,15 @@ class GemsViews:
         self.ui.dbfilename_Label.installEventFilter(self.dbfilename_click_filter)
 
     def center(self):
-        qr = self.MainWindow.frameGeometry()
-        cp = QGuiApplication.primaryScreen().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.MainWindow.move(qr.topLeft())
+        # Try to restore saved geometry, otherwise center on screen
+        geometry = self.settings.value("main_window_geometry")
+        if geometry is not None:
+            self.MainWindow.restoreGeometry(geometry)
+        else:
+            qr = self.MainWindow.frameGeometry()
+            cp = QGuiApplication.primaryScreen().availableGeometry().center()
+            qr.moveCenter(cp)
+            self.MainWindow.move(qr.topLeft())
 
     def _check_for_update(self):
         """Check GitHub for a newer version in a background thread, add toolbar button if found."""
@@ -294,6 +299,7 @@ class GemsViews:
         self.settings.setValue("gems_runner_path", self.gems_runner_path)
         self.settings.setValue("recent_files", self.recent_files)
         self.settings.setValue("font_scale", gemsedit.font_scale)
+        self.settings.setValue("main_window_geometry", self.MainWindow.saveGeometry())
 
         # get out of here
         self.MainWindow.close()
