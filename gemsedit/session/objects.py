@@ -154,12 +154,17 @@ class Objects:
         self.center()
 
     def center(self):
-        qr = self.MainWindow.frameGeometry()
-        cp = QGuiApplication.primaryScreen().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.MainWindow.move(qr.topLeft())
+        geometry = gemsedit.SETTINGS.value("objects_window_geometry")
+        if geometry is not None:
+            self.MainWindow.restoreGeometry(geometry)
+        else:
+            qr = self.MainWindow.frameGeometry()
+            cp = QGuiApplication.primaryScreen().availableGeometry().center()
+            qr.moveCenter(cp)
+            self.MainWindow.move(qr.topLeft())
 
     def closeTheWindow(self):
+        gemsedit.SETTINGS.setValue("objects_window_geometry", self.MainWindow.saveGeometry())
         self.parent_win.show()
         self.MainWindow.close()
 
