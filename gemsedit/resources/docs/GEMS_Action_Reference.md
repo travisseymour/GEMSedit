@@ -348,6 +348,32 @@ VarHasString(Variable: varname, SubString: value, Logic: orand, CaseSensitive: b
 
 ---
 
+### VarLacksString
+
+```
+VarLacksString(Variable: varname, SubString: value, Logic: orand, CaseSensitive: bool)
+```
+
+**Description:** Returns true if the specified variable does not exist or its string value does not contain the given substring. This is the inverse of VarHasString. SubString may be a comma-separated list of substrings to check for multiple values at once.
+
+**Parameters:**
+
+- `Variable` (varname): Name of the variable to check
+- `SubString` (value): Substring to search for within the variable's value. Use commas to specify multiple substrings (e.g., `"apple, banana, cherry"`)
+- `Logic` (orand): Determines how multiple substrings are evaluated. `"or"` (default) returns true if the variable is missing **any** of the substrings. `"and"` returns true only if the variable is missing **all** of the substrings
+- `CaseSensitive` (bool): If `True` (default), the comparison is case-sensitive. If `False`, the comparison is case-insensitive
+
+**Restrictions:** view, object, global, pocket
+
+**Examples:**
+
+- `VarLacksString("Inventory", "sword")` — true if Inventory does not contain "sword" (case-sensitive)
+- `VarLacksString("Inventory", "sword, shield", "or")` — true if Inventory is missing "sword" or "shield" (or both)
+- `VarLacksString("Inventory", "sword, shield", "and")` — true only if Inventory is missing both "sword" and "shield"
+- `VarLacksString("Inventory", "Sword", "or", False)` — true if Inventory does not contain "sword" in any case
+
+---
+
 ### VarValueIs
 
 ```

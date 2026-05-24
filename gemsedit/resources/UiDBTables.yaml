@@ -306,6 +306,12 @@ condition_lst:
     Name: VarHasString
     Restrictions: viewobjectglobalpocket
     Template: '["varname","value","orand","booltrue"]'
+  '15':
+    Id: 15
+    Labels: '["Variable","SubString","Logic","CaseSensitive"]'
+    Name: VarLacksString
+    Restrictions: viewobjectglobalpocket
+    Template: '["varname","value","orand","booltrue"]'
 trigger_lst:
   '0':
     Id: 0
