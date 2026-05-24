@@ -17,8 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from importlib.resources import as_file, files
-from pathlib import Path
 import os
+from pathlib import Path
 import platform
 import shlex
 import shutil

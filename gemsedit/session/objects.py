@@ -35,7 +35,7 @@ from gemsedit.gui import action_list, object_select_widget as objselect
 from gemsedit.gui.action_list import get_linked_object_info, parse_linked_object_name
 import gemsedit.gui.objects_window as win
 from gemsedit.gui.tagged_model import TaggedSqlModel, build_tag_color_map
-from gemsedit.utils.polygon_utils import json_to_points, points_to_bounding_rect
+from gemsedit.utils.polygon_utils import json_to_points, points_to_bounding_rect, polygons_overlap
 
 
 class ClickEventFilter(QtCore.QObject):
@@ -1031,6 +1031,50 @@ class Objects:
             checked = 1
         else:
             checked = 0
+
+        # When enabling draggable, check for overlap with other objects
+        if checked and self.currentrow is not None:
+            current_id = self.model.record(self.currentrow).value("Id")
+            current_points_json = self.model.record(self.currentrow).value("Points")
+            current_polygon = json_to_points(current_points_json)
+
+            if current_polygon:
+                # Check for overlap with other objects in this view
+                has_overlap = False
+                query = QtSql.QSqlQuery()
+                query.prepare("SELECT Id, Points FROM objects WHERE Parent = :parent AND Id != :current_id")
+                query.bindValue(":parent", self.parentid)
+                query.bindValue(":current_id", current_id)
+                query.exec()
+
+                if query.isActive():
+                    while query.next():
+                        other_points_json = query.value(1)
+                        other_polygon = json_to_points(other_points_json)
+                        if other_polygon and polygons_overlap(current_polygon, other_polygon):
+                            has_overlap = True
+                            break
+
+                if has_overlap:
+                    # Show warning dialog
+                    reply = QMessageBox.warning(
+                        self.MainWindow,
+                        "Overlapping Object Warning",
+                        "This object partially or completely overlaps another object. "
+                        "This may lead to the object still appearing in its original location "
+                        "while it is being dragged, as well as after it has been placed in a pocket.\n\n"
+                        "Are you sure you want to continue making this object draggable?",
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        QMessageBox.StandardButton.No,
+                    )
+
+                    if reply == QMessageBox.StandardButton.No:
+                        # Revert the checkbox without triggering the signal again
+                        self.ui.draggable_checkBox.blockSignals(True)
+                        self.ui.draggable_checkBox.setChecked(False)
+                        self.ui.draggable_checkBox.blockSignals(False)
+                        return
+
         self.updateCheckbox("Draggable", checked)
 
     def updateVisible(self, state):

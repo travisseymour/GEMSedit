@@ -129,3 +129,96 @@ def polygon_centroid(points: Polygon) -> Point:
     cx = sum(p[0] for p in points) // len(points)
     cy = sum(p[1] for p in points) // len(points)
     return [cx, cy]
+
+
+def _point_in_polygon(point: Point, polygon: Polygon) -> bool:
+    """
+    Check if a point is inside a polygon using ray casting algorithm.
+
+    Args:
+        point: Point [x, y] to test
+        polygon: List of [x, y] coordinate pairs defining the polygon
+
+    Returns:
+        True if point is inside the polygon
+    """
+    if len(polygon) < 3:
+        return False
+
+    x, y = point[0], point[1]
+    n = len(polygon)
+    inside = False
+
+    j = n - 1
+    for i in range(n):
+        xi, yi = polygon[i][0], polygon[i][1]
+        xj, yj = polygon[j][0], polygon[j][1]
+
+        if ((yi > y) != (yj > y)) and (x < (xj - xi) * (y - yi) / (yj - yi) + xi):
+            inside = not inside
+        j = i
+
+    return inside
+
+
+def _segments_intersect(p1: Point, p2: Point, p3: Point, p4: Point) -> bool:
+    """
+    Check if line segment (p1, p2) intersects with line segment (p3, p4).
+
+    Uses the cross product method to determine intersection.
+    """
+
+    def ccw(a: Point, b: Point, c: Point) -> bool:
+        """Check if three points are in counter-clockwise order."""
+        return (c[1] - a[1]) * (b[0] - a[0]) > (b[1] - a[1]) * (c[0] - a[0])
+
+    return ccw(p1, p3, p4) != ccw(p2, p3, p4) and ccw(p1, p2, p3) != ccw(p1, p2, p4)
+
+
+def polygons_overlap(poly1: Polygon, poly2: Polygon) -> bool:
+    """
+    Check if two polygons overlap (intersect or one contains the other).
+
+    Args:
+        poly1: First polygon as list of [x, y] points
+        poly2: Second polygon as list of [x, y] points
+
+    Returns:
+        True if the polygons overlap
+    """
+    if len(poly1) < 3 or len(poly2) < 3:
+        return False
+
+    # First, quick bounding box check
+    bbox1 = points_to_bounding_rect(poly1)
+    bbox2 = points_to_bounding_rect(poly2)
+
+    # Bounding boxes: (left, top, width, height)
+    if (
+        bbox1[0] > bbox2[0] + bbox2[2]
+        or bbox2[0] > bbox1[0] + bbox1[2]
+        or bbox1[1] > bbox2[1] + bbox2[3]
+        or bbox2[1] > bbox1[1] + bbox1[3]
+    ):
+        return False  # Bounding boxes don't overlap
+
+    # Check if any edge of poly1 intersects any edge of poly2
+    n1, n2 = len(poly1), len(poly2)
+    for i in range(n1):
+        p1, p2 = poly1[i], poly1[(i + 1) % n1]
+        for j in range(n2):
+            p3, p4 = poly2[j], poly2[(j + 1) % n2]
+            if _segments_intersect(p1, p2, p3, p4):
+                return True
+
+    # Check if any vertex of poly1 is inside poly2
+    for point in poly1:
+        if _point_in_polygon(point, poly2):
+            return True
+
+    # Check if any vertex of poly2 is inside poly1
+    for point in poly2:
+        if _point_in_polygon(point, poly1):
+            return True
+
+    return False

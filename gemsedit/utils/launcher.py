@@ -340,7 +340,12 @@ def _macos_remove_from_dock() -> tuple[bool, str]:
 
         # Get the count of persistent apps
         count_result = subprocess.run(
-            ["/usr/libexec/PlistBuddy", "-c", "Print :persistent-apps", os.path.expanduser("~/Library/Preferences/com.apple.dock.plist")],
+            [
+                "/usr/libexec/PlistBuddy",
+                "-c",
+                "Print :persistent-apps",
+                os.path.expanduser("~/Library/Preferences/com.apple.dock.plist"),
+            ],
             capture_output=True,
             text=True,
         )
@@ -364,8 +369,12 @@ def _macos_remove_from_dock() -> tuple[bool, str]:
         # Remove in reverse order
         for idx in sorted(set(indices_to_remove), reverse=True):
             subprocess.run(
-                ["/usr/libexec/PlistBuddy", "-c", f"Delete :persistent-apps:{idx}",
-                 os.path.expanduser("~/Library/Preferences/com.apple.dock.plist")],
+                [
+                    "/usr/libexec/PlistBuddy",
+                    "-c",
+                    f"Delete :persistent-apps:{idx}",
+                    os.path.expanduser("~/Library/Preferences/com.apple.dock.plist"),
+                ],
                 capture_output=True,
             )
 
@@ -543,8 +552,7 @@ def add_to_dock():
     app_path = _macos_get_app_path()
     if not app_path.exists():
         typer.echo(
-            f"GEMSedit app not found at {app_path}.\n"
-            "Please run 'gemsedit launcher install' first.",
+            f"GEMSedit app not found at {app_path}.\nPlease run 'gemsedit launcher install' first.",
             err=True,
         )
         raise typer.Exit(1)

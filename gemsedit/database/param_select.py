@@ -108,7 +108,7 @@ class ParamListModel(QtCore.QAbstractTableModel):
 
 
 class ParamSelect:
-    def __init__(self, param_type, param_string, action_type, media_path):
+    def __init__(self, param_type, param_string, action_type, media_path, context_type=None, context_id=None):
         self.xx_model: CustomSqlModel | None = None
         self.xx_param_model: ParamListModel | None = None
         self.current_xx_id = None
@@ -116,6 +116,8 @@ class ParamSelect:
         self.param_string = param_string
         self.action_type = action_type
         self.media_path = media_path
+        self.context_type = context_type  # "view", "object", "global", or "pocket"
+        self.context_id = context_id  # The view or object ID this action belongs to
         self.param_data_dict = {}
         self.help_dict = {}
         self.view_list = []
@@ -331,9 +333,37 @@ class ParamSelect:
             if len(template_list) and len(label_list) and len(param_value_list):
                 # create param editing delegate with different editors depending on param type
                 delegate = genericrowdelegates.GenericRowDelegate()
+
+                # Find Left/Top parameter pairs for position selection
+                left_row = None
+                top_row = None
+                for i, x in enumerate(self.param_data_dict[name]):
+                    if x[1] == "Left":
+                        left_row = i
+                    elif x[1] == "Top":
+                        top_row = i
+
+                # Get current view for position selection (use first view as fallback)
+                current_view = self._get_current_view()
+
                 for i, x in enumerate(self.param_data_dict[name]):
                     type_item, param_item, value_item = x  # unpack components
-                    if type_item == "number":
+
+                    # Use PositionRowDelegate for Left/Top parameters
+                    if param_item in ("Left", "Top") and left_row is not None and top_row is not None:
+                        delegate.insertRowDelegate(
+                            i,
+                            genericrowdelegates.PositionRowDelegate(
+                                media_path=self.media_path,
+                                current_view=current_view,
+                                param_dict=self.param_data_dict,
+                                param_key=name,
+                                left_row=left_row,
+                                top_row=top_row,
+                                signal_update=self.signalUpdate,
+                            ),
+                        )
+                    elif type_item == "number":
                         delegate.insertRowDelegate(i, genericrowdelegates.IntegerRowDelegate(0, 10000))
                     elif type_item == "fontsize":
                         font_size_list = [
@@ -502,6 +532,45 @@ class ParamSelect:
             if d == dat:
                 return r
         return -1
+
+    def _get_current_view(self) -> int | None:
+        """Get the current view ID for point selection.
+
+        Uses the action's context to determine the appropriate view:
+        - For view context: returns the view ID directly
+        - For object context: queries the object's parent view
+        - For global/pocket: falls back to first view
+        """
+        if self.context_type and self.context_id:
+            try:
+                context_id = int(self.context_id)
+
+                if self.context_type == "view":
+                    # The context ID is the view ID
+                    return context_id
+
+                elif self.context_type == "object":
+                    # Query the object's parent view
+                    query = QtSql.QSqlQuery()
+                    query.prepare("SELECT Parent FROM objects WHERE Id = :obj_id")
+                    query.bindValue(":obj_id", context_id)
+                    query.exec()
+                    if query.isActive() and query.next():
+                        return query.value(0)
+
+            except (ValueError, TypeError):
+                pass
+
+        # Fallback: use first view in the list
+        if self.view_list:
+            first_view = self.view_list[0]
+            try:
+                view_id = int(first_view.split(":")[0])
+                return view_id
+            except (ValueError, IndexError):
+                pass
+
+        return None
 
     def load_lists(self):
         view_names = {}

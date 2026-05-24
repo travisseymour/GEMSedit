@@ -557,3 +557,95 @@ class VariableNameRowDelegate(QStyledItemDelegate):
         # Get the text from the combo (either selected or typed)
         value = editor.currentText().strip()
         model.setData(index, value)
+
+
+class PositionRowDelegate(QStyledItemDelegate):
+    """Delegate that opens a PointSelect dialog for selecting Left/Top position.
+
+    When a point is selected, both the Left and Top values are updated together.
+    """
+
+    def __init__(
+        self,
+        media_path: str,
+        current_view: int | None,
+        param_dict: dict,
+        param_key: str,
+        left_row: int,
+        top_row: int,
+        signal_update,
+        parent=None,
+    ):
+        super().__init__(parent)
+        self.media_path = media_path
+        self.current_view = current_view
+        self.param_dict = param_dict
+        self.param_key = param_key
+        self.left_row = left_row
+        self.top_row = top_row
+        self.signal_update = signal_update
+        self._selected_value = None
+
+    def createEditor(self, parent, option, index):
+        from gemsedit.gui.point_select_widget import PointSelect
+
+        # Get current Left and Top values
+        try:
+            left_val = int(self.param_dict[self.param_key][self.left_row][2])
+        except (ValueError, TypeError):
+            left_val = 0
+        try:
+            top_val = int(self.param_dict[self.param_key][self.top_row][2])
+        except (ValueError, TypeError):
+            top_val = 0
+
+        # Show the point selection dialog
+        dialog = PointSelect(
+            parent=parent,
+            current_view=self.current_view,
+            media_path=self.media_path,
+            initial_x=left_val,
+            initial_y=top_val,
+        )
+        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+        dialog.showMaximized()
+
+        if dialog.exec() == dialog.DialogCode.Accepted:
+            x, y = dialog.get_result()
+            if x >= 0 and y >= 0:
+                # Update both Left and Top values in the param_dict
+                self.param_dict[self.param_key][self.left_row][2] = x
+                self.param_dict[self.param_key][self.top_row][2] = y
+
+                # Determine which value this row should return
+                if index.row() == self.left_row:
+                    self._selected_value = x
+                else:
+                    self._selected_value = y
+
+                # Signal that values have changed
+                if self.signal_update:
+                    self.signal_update()
+            else:
+                # Keep existing value
+                self._selected_value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+        else:
+            # Cancelled - keep existing value
+            self._selected_value = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
+        return editor
+
+    def setEditorData(self, editor, index):
+        if self._selected_value is not None:
+            editor.setText(str(self._selected_value))
+        else:
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or "0"
+            editor.setText(str(val))
+
+    def setModelData(self, editor, model, index):
+        if self._selected_value is not None:
+            model.setData(index, self._selected_value)
+        self._selected_value = None  # Reset for next use
