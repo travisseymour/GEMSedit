@@ -1373,6 +1373,10 @@ class GemsViews:
             self.ui.actionCopy_toolButton.pressed.disconnect()
         except (TypeError, RuntimeError):
             pass
+        try:
+            self.ui.actionDuplicate_toolButton.pressed.disconnect()
+        except (TypeError, RuntimeError):
+            pass
         if self.selection_model is not None:
             try:
                 self.selection_model.selectionChanged.disconnect(self.handleSelectionChange)
@@ -1393,6 +1397,7 @@ class GemsViews:
             self.ui.actionAdd_toolButton.pressed.connect(self.action_list.handleActionAdd)
             self.ui.actionDel_toolButton.pressed.connect(self.action_list.handleActionDel)
             self.ui.actionCopy_toolButton.pressed.connect(self.action_list.handleActionCopy)
+            self.ui.actionDuplicate_toolButton.pressed.connect(self.action_list.handleActionDuplicate)
             self.ui.actionUp_toolButton.pressed.connect(self.action_list.handleActionMoveUp)
             self.ui.actionDown_toolButton.pressed.connect(self.action_list.handleActionMoveDown)
 
@@ -1602,6 +1607,7 @@ class GemsViews:
         self.ui.actionAdd_toolButton.setEnabled(True)
         self.ui.actionDel_toolButton.setEnabled(True)
         self.ui.actionCopy_toolButton.setEnabled(True)
+        self.ui.actionDuplicate_toolButton.setEnabled(True)
         self.ui.bgDel_toolButton.setEnabled(True)
         self.ui.bgOpen_toolButton.setEnabled(True)
         self.ui.fgDel_toolButton.setEnabled(True)
@@ -1619,6 +1625,7 @@ class GemsViews:
         self.ui.actionAdd_toolButton.setEnabled(False)
         self.ui.actionDel_toolButton.setEnabled(False)
         self.ui.actionCopy_toolButton.setEnabled(False)
+        self.ui.actionDuplicate_toolButton.setEnabled(False)
         self.ui.bgDel_toolButton.setEnabled(False)
         self.ui.bgOpen_toolButton.setEnabled(False)
         self.ui.fgDel_toolButton.setEnabled(False)

@@ -316,6 +316,16 @@ class Ui_ObjectsWindow(object):
 
         self.horizontalLayout_2.addWidget(self.actionCopy_toolButton)
 
+        self.actionDuplicate_toolButton = QToolButton(self.layoutWidget1)
+        self.actionDuplicate_toolButton.setObjectName("actionDuplicate_toolButton")
+        icon_dup = QIcon()
+        icon_dup.addFile(
+            ":/newPrefix/media/1409970891_circle-arrow-down-49.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
+        self.actionDuplicate_toolButton.setIcon(icon_dup)
+
+        self.horizontalLayout_2.addWidget(self.actionDuplicate_toolButton)
+
         self.actionUp_toolButton = QToolButton(self.layoutWidget1)
         self.actionUp_toolButton.setObjectName("actionUp_toolButton")
         self.actionUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
@@ -483,6 +493,12 @@ class Ui_ObjectsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.actionCopy_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionDuplicate_toolButton.setToolTip(
+            QCoreApplication.translate("ObjectsWindow", "Duplicate selected action", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.actionDuplicate_toolButton.setText(QCoreApplication.translate("ObjectsWindow", "...", None))
         # if QT_CONFIG(tooltip)
         self.actionUp_toolButton.setToolTip(
             QCoreApplication.translate("ObjectsWindow", "Move selected action up (earlier execution)", None)

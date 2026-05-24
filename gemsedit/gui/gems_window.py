@@ -357,17 +357,27 @@ class Ui_ViewsWindow(object):
 
         self.gridLayout_4.addWidget(self.actionCopy_toolButton, 0, 4, 1, 1)
 
+        self.actionDuplicate_toolButton = QToolButton(self.layoutWidget1)
+        self.actionDuplicate_toolButton.setObjectName("actionDuplicate_toolButton")
+        icon_dup = QIcon()
+        icon_dup.addFile(
+            ":/newPrefix/media/1409970891_circle-arrow-down-49.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+        )
+        self.actionDuplicate_toolButton.setIcon(icon_dup)
+
+        self.gridLayout_4.addWidget(self.actionDuplicate_toolButton, 0, 5, 1, 1)
+
         self.actionUp_toolButton = QToolButton(self.layoutWidget1)
         self.actionUp_toolButton.setObjectName("actionUp_toolButton")
         self.actionUp_toolButton.setArrowType(Qt.ArrowType.UpArrow)
 
-        self.gridLayout_4.addWidget(self.actionUp_toolButton, 0, 5, 1, 1)
+        self.gridLayout_4.addWidget(self.actionUp_toolButton, 0, 6, 1, 1)
 
         self.actionDown_toolButton = QToolButton(self.layoutWidget1)
         self.actionDown_toolButton.setObjectName("actionDown_toolButton")
         self.actionDown_toolButton.setArrowType(Qt.ArrowType.DownArrow)
 
-        self.gridLayout_4.addWidget(self.actionDown_toolButton, 0, 6, 1, 1)
+        self.gridLayout_4.addWidget(self.actionDown_toolButton, 0, 7, 1, 1)
 
         self.VAL_tableView = QTableView(self.layoutWidget1)
         self.VAL_tableView.setObjectName("VAL_tableView")
@@ -717,6 +727,12 @@ class Ui_ViewsWindow(object):
         )
         # endif // QT_CONFIG(tooltip)
         self.actionCopy_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
+        # if QT_CONFIG(tooltip)
+        self.actionDuplicate_toolButton.setToolTip(
+            QCoreApplication.translate("ViewsWindow", "Duplicate selected action", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.actionDuplicate_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         # if QT_CONFIG(tooltip)
         self.actionUp_toolButton.setToolTip(
             QCoreApplication.translate("ViewsWindow", "Move selected action up (earlier execution)", None)

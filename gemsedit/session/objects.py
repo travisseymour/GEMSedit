@@ -176,6 +176,7 @@ class Objects:
         self.ui.actionAdd_toolButton.pressed.connect(self.actionlist.handleActionAdd)
         self.ui.actionDel_toolButton.pressed.connect(self.actionlist.handleActionDel)
         self.ui.actionCopy_toolButton.pressed.connect(self.actionlist.handleActionCopy)
+        self.ui.actionDuplicate_toolButton.pressed.connect(self.actionlist.handleActionDuplicate)
         self.ui.actionUp_toolButton.pressed.connect(self.actionlist.handleActionMoveUp)
         self.ui.actionDown_toolButton.pressed.connect(self.actionlist.handleActionMoveDown)
         self.ui.takeable_checkBox.toggled.connect(self.updateTakeable)
@@ -453,6 +454,7 @@ class Objects:
         self.ui.actionAdd_toolButton.setEnabled(not should_disable)
         self.ui.actionDel_toolButton.setEnabled(not should_disable)
         self.ui.actionCopy_toolButton.setEnabled(not should_disable)
+        self.ui.actionDuplicate_toolButton.setEnabled(not should_disable)
 
     def _update_linked_status_display(self):
         """Update the UI to show linked status information."""
@@ -475,6 +477,7 @@ class Objects:
             self.ui.actionAdd_toolButton.setEnabled(False)
             self.ui.actionDel_toolButton.setEnabled(False)
             self.ui.actionCopy_toolButton.setEnabled(False)
+            self.ui.actionDuplicate_toolButton.setEnabled(False)
         else:
             self.ui.label_3.setText("Object Action List")
             self.ui.label_3.setToolTip("")

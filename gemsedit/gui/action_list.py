@@ -730,6 +730,63 @@ class ActionList:
         finally:
             self.add_del_busy = False
 
+    def handleActionDuplicate(self):
+        """Duplicate the currently selected action, inserting the copy after it."""
+        if self.add_del_busy or self.is_linked() or self.current_id is None:
+            return
+
+        self.add_del_busy = True
+        try:
+            # Get the current action's data
+            query = QtSql.QSqlQuery()
+            query.prepare(
+                "SELECT Condition, Trigger, Action, Enabled, RowOrder FROM actions WHERE Id = :id"
+            )
+            query.bindValue(":id", self.current_id)
+            query.exec()
+
+            if not query.isActive() or not query.next():
+                return
+
+            condition = query.value(0)
+            trigger = query.value(1)
+            action = query.value(2)
+            enabled = query.value(3)
+            current_row_order = query.value(4)
+
+            # Get new IDs
+            new_id = get_next_value("Id", "actions", default=0)
+            new_order = get_next_value("RowOrder", "actions", default=0)
+
+            # Insert the duplicate
+            insert_query = QtSql.QSqlQuery()
+            insert_query.prepare(
+                "INSERT INTO actions (Id, ContextType, ContextId, Condition, Trigger, Action, Enabled, RowOrder) "
+                "VALUES (:id, :contexttype, :contextid, :condition, :trigger, :action, :enabled, :roworder)"
+            )
+            insert_query.bindValue(":id", new_id)
+            insert_query.bindValue(":contexttype", self.action_type)
+            insert_query.bindValue(":contextid", self.parent_id)
+            insert_query.bindValue(":condition", condition)
+            insert_query.bindValue(":trigger", trigger)
+            insert_query.bindValue(":action", action)
+            insert_query.bindValue(":enabled", enabled)
+            insert_query.bindValue(":roworder", new_order)
+            insert_query.exec()
+
+            if insert_query.lastError().isValid():
+                log.error(f"Problem in handleActionDuplicate(): {insert_query.lastError().text()}")
+                return
+
+            mark_db_as_changed()
+            self.filterActions()
+
+            # Select the newly duplicated action
+            self._select_action_by_id(new_id)
+
+        finally:
+            self.add_del_busy = False
+
     def handleActionMoveDown(self):
         """Move the selected action down in the execution order."""
         if self.add_del_busy or self.is_linked() or self.current_id is None:
