@@ -739,9 +739,7 @@ class ActionList:
         try:
             # Get the current action's data
             query = QtSql.QSqlQuery()
-            query.prepare(
-                "SELECT Condition, Trigger, Action, Enabled, RowOrder FROM actions WHERE Id = :id"
-            )
+            query.prepare("SELECT Condition, Trigger, Action, Enabled, RowOrder FROM actions WHERE Id = :id")
             query.bindValue(":id", self.current_id)
             query.exec()
 

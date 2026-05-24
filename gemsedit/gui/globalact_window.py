@@ -44,6 +44,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
     QDialog,
+    QFrame,
     QGridLayout,
     QHBoxLayout,
     QHeaderView,
@@ -132,6 +133,7 @@ class Ui_GlobalActionsDialog(object):
         font4.setPointSize(14)
         font4.setItalic(False)
         self.label_2.setFont(font4)
+        self.label_2.setStyleSheet("background-color: rgb(102, 204, 255); color: black")
 
         self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
 
@@ -150,7 +152,7 @@ class Ui_GlobalActionsDialog(object):
         self.GAL_tableView.horizontalHeader().setStretchLastSection(True)
         self.GAL_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout.addWidget(self.GAL_tableView, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.GAL_tableView, 4, 0, 1, 1)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -174,13 +176,21 @@ class Ui_GlobalActionsDialog(object):
 
         self.horizontalLayout_4.addWidget(self.gaDel_toolButton)
 
-        self.gridLayout.addLayout(self.horizontalLayout_4, 4, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
+
+        self.line = QFrame(GlobalActionsDialog)
+        self.line.setObjectName("line")
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.gridLayout.addWidget(self.line, 5, 0, 1, 1)
 
         self.label_3 = QLabel(GlobalActionsDialog)
         self.label_3.setObjectName("label_3")
         self.label_3.setFont(font4)
+        self.label_3.setStyleSheet("background-color: rgb(102, 204, 255); color: black")
 
-        self.gridLayout.addWidget(self.label_3, 5, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_3, 6, 0, 1, 1)
 
         self.PAL_tableView = QTableView(GlobalActionsDialog)
         self.PAL_tableView.setObjectName("PAL_tableView")
@@ -194,7 +204,7 @@ class Ui_GlobalActionsDialog(object):
         self.PAL_tableView.horizontalHeader().setStretchLastSection(True)
         self.PAL_tableView.verticalHeader().setVisible(False)
 
-        self.gridLayout.addWidget(self.PAL_tableView, 6, 0, 1, 1)
+        self.gridLayout.addWidget(self.PAL_tableView, 8, 0, 1, 1)
 
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
