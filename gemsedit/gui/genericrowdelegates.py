@@ -461,17 +461,20 @@ class ViewRowDelegate(QStyledItemDelegate):
 class ObjectRowDelegate(QStyledItemDelegate):
     """Delegate that opens an ObjectChooserDialog for selecting objects with thumbnails."""
 
-    def __init__(self, media_path: str, parent=None):
+    def __init__(self, media_path: str, filter_view: int | None = None, parent=None):
         super().__init__(parent)
         self.media_path = media_path
+        self.filter_view = filter_view
         self._selected_object = None
 
     def createEditor(self, parent, option, index):
         # Get current value
         current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
 
-        # Show the object chooser dialog
-        result = ObjectChooserDialog.choose_object(self.media_path, current_val, parent)
+        # Show the object chooser dialog (optionally filtered by view)
+        result = ObjectChooserDialog.choose_object(
+            self.media_path, current_val, parent, filter_view=self.filter_view
+        )
 
         if result:
             self._selected_object = result

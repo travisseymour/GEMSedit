@@ -317,7 +317,8 @@ class ParamSelect:
                             # Use existing value from loaded action
                             value_item = existing_values[i]
                         elif type_item in ("number",):  # note: varnum and obj_num are now names
-                            value_item = 0
+                            # LineThickness defaults to 4, other numbers to 0
+                            value_item = 4 if param_item == "LineThickness" else 0
                         elif type_item in ("01float",):  # current primary use for volume so start at 1.0
                             value_item = 1.0
                         elif type_item in ("float",):
@@ -333,7 +334,7 @@ class ParamSelect:
                         elif type_item in ("color",):
                             value_item = "['Black',0,0,0,255]"
                         elif type_item in ("fgcolor",):
-                            value_item = "['Blue',0,0,255,255]"
+                            value_item = "['Yellow',255,255,0,255]"
                         elif type_item in ("bgcolor",):
                             value_item = "['White',255,255,255,255]"
                         else:
@@ -422,6 +423,11 @@ class ParamSelect:
                         delegate.insertRowDelegate(i, genericrowdelegates.ViewRowDelegate(self.media_path))
                     elif type_item == "objnum":
                         delegate.insertRowDelegate(i, genericrowdelegates.ObjectRowDelegate(self.media_path))
+                    elif type_item == "objnum_currentview":
+                        # Filter objects to current view only (for actions like HighlightObject)
+                        delegate.insertRowDelegate(
+                            i, genericrowdelegates.ObjectRowDelegate(self.media_path, filter_view=current_view)
+                        )
                     elif type_item == "key":
                         delegate.insertRowDelegate(i, genericrowdelegates.ComboRowDelegate(mykeys.keys))
                     elif type_item == "cursor":

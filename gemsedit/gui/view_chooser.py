@@ -324,13 +324,17 @@ class ObjectItemWidget(QWidget):
 class ObjectChooserDialog(QDialog):
     """Dialog for choosing an object with visual thumbnails."""
 
-    def __init__(self, media_path: str, current_value: str = "", parent=None):
+    def __init__(self, media_path: str, current_value: str = "", parent=None, filter_view: int | None = None):
         super().__init__(parent)
         self.media_path = media_path
         self.current_value = current_value
         self.selected_value = None
+        self.filter_view = filter_view
 
-        self.setWindowTitle("Choose Object")
+        title = "Choose Object"
+        if filter_view is not None:
+            title += " (Current View Only)"
+        self.setWindowTitle(title)
         self.setMinimumSize(700, 750)
         self.resize(750, 850)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowCloseButtonHint)
@@ -413,6 +417,10 @@ class ObjectChooserDialog(QDialog):
                 obj_name = query.value(2)
                 points_json = query.value(3) or "[]"
 
+                # Skip objects not in the filtered view (if filter is set)
+                if self.filter_view is not None and parent_view_id != self.filter_view:
+                    continue
+
                 view_name = view_names.get(parent_view_id, "Unknown")
                 fg_pic = view_fg_pics.get(parent_view_id, "")
 
@@ -456,13 +464,21 @@ class ObjectChooserDialog(QDialog):
             self.accept()
 
     @staticmethod
-    def choose_object(media_path: str, current_value: str = "", parent=None) -> str | None:
+    def choose_object(
+        media_path: str, current_value: str = "", parent=None, filter_view: int | None = None
+    ) -> str | None:
         """
         Static convenience method to show dialog and get result.
 
+        Args:
+            media_path: Path to media files
+            current_value: Currently selected object value
+            parent: Parent widget
+            filter_view: If set, only show objects from this view ID
+
         Returns the selected object in "obj_id:view_name:obj_name" format, or None if cancelled.
         """
-        dialog = ObjectChooserDialog(media_path, current_value, parent)
+        dialog = ObjectChooserDialog(media_path, current_value, parent, filter_view=filter_view)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             return dialog.selected_value
         return None

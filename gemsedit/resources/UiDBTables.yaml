@@ -220,13 +220,13 @@ action_lst:
     Labels: '["Object","Color","LineThickness"]'
     Name: HighlightObject
     Restrictions: viewobjectglobalpocket
-    Template: '["objnum","fgcolor","number"]'
+    Template: '["objnum_currentview","fgcolor","number"]'
   '37':
     Id: 37
     Labels: '["Object"]'
     Name: UnHighlightObject
     Restrictions: viewobjectglobalpocket
-    Template: '["objnum"]'
+    Template: '["objnum_currentview"]'
 condition_lst:
   '0':
     Id: 0
