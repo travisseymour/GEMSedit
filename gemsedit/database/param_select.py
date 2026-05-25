@@ -175,7 +175,24 @@ class ParamSelect:
 
         v = "[" + param_string.split("(")[1]  # strip off command
         v = v.replace(")", "]")
-        v = eval(v)  # convert params to list of params
+
+        try:
+            v = eval(v)  # convert params to list of params
+        except SyntaxError:
+            # Handle legacy actions with literal newlines in strings
+            # Replace literal newlines within quoted strings with escaped newlines
+            import re
+            # This pattern finds strings and escapes newlines within them
+            def escape_newlines_in_string(match):
+                content = match.group(1)
+                escaped = content.replace("\n", "\\n").replace("\r", "\\r")
+                return f'"{escaped}"'
+            v_fixed = re.sub(r'"([^"]*)"', escape_newlines_in_string, v, flags=re.DOTALL)
+            try:
+                v = eval(v_fixed)
+            except Exception:
+                # If still failing, return empty list
+                return []
 
         return v
 
@@ -226,7 +243,10 @@ class ParamSelect:
                 if xx.isdigit() or xx.replace(".", "").isdigit() or xx in ("True", "False"):
                     param_str += xx
                 else:
-                    param_str += '"' + xx + '"'
+                    # Escape special characters in string values to prevent YAML issues
+                    # Newlines must be escaped as \n, backslashes doubled
+                    escaped_xx = xx.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r")
+                    param_str += '"' + escaped_xx + '"'
                 if (i + 1) < len(param_list):
                     param_str += ","
         except:
