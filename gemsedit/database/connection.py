@@ -120,8 +120,8 @@ class GemsDB:
                 QMessageBox.information(
                     None,
                     "PortalTo Actions Updated",
-                    f"{count} old PortalTo action(s) (e.g., PortalTo(3)) have been automatically "
-                    f'converted to the new format with an empty transition VidFile (e.g., PortalTo(3,"")).\n\n'
+                    f"{count} PortalTo action(s) have been automatically updated to include "
+                    f'the Delay parameter (e.g., PortalTo(3,"",0.0)).\n\n'
                     f"Please save the environment file to store these changes.",
                     QMessageBox.StandardButton.Ok,
                 )

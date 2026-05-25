@@ -44,9 +44,13 @@ def _version_less_than(version_str: str, target: str) -> bool:
 
 def migrate_old_portalto(action_str: str) -> tuple[str, bool]:
     """
-    Migrate old PortalTo actions that only have a single integer parameter.
-    Old format: PortalTo(3)
-    New format: PortalTo(3, "")
+    Migrate old PortalTo actions to include all three parameters.
+    Old formats:
+      - PortalTo(3)           -> PortalTo(3,"",0.0)
+      - PortalTo(3,"")        -> PortalTo(3,"",0.0)
+      - PortalTo(3,"vid.mp4") -> PortalTo(3,"vid.mp4",0.0)
+    Current format (unchanged):
+      - PortalTo(3,"",0.0)
 
     Returns: (migrated_action_str, was_migrated)
     """
@@ -57,16 +61,35 @@ def migrate_old_portalto(action_str: str) -> tuple[str, bool]:
         return action_str, False
 
     try:
-        # Parse function-call format: PortalTo(3)
+        # Parse function-call format: PortalTo(...)
         paren_start = action_str.index("(")
         paren_end = action_str.rindex(")")
         args_str = action_str[paren_start + 1 : paren_end].strip()
 
-        # Check if it's just a single integer (old format)
-        # New format would have a comma for the second parameter
-        if "," not in args_str and args_str.isdigit():
-            # Old format - convert to new format with empty string
-            return f'PortalTo({args_str},"")', True
+        # Parse parameters carefully to handle quoted strings with commas
+        params = []
+        current_param = ""
+        in_quotes = False
+        for char in args_str:
+            if char == '"' and (not current_param or current_param[-1] != "\\"):
+                in_quotes = not in_quotes
+                current_param += char
+            elif char == "," and not in_quotes:
+                params.append(current_param.strip())
+                current_param = ""
+            else:
+                current_param += char
+        if current_param.strip():
+            params.append(current_param.strip())
+
+        # Migrate based on parameter count
+        if len(params) == 1 and params[0].isdigit():
+            # Old format: PortalTo(3) -> PortalTo(3,"",0.0)
+            return f'PortalTo({params[0]},"",0.0)', True
+        elif len(params) == 2:
+            # Two-param format: PortalTo(3,"") or PortalTo(3,"vid.mp4") -> add 0.0
+            return f"PortalTo({params[0]},{params[1]},0.0)", True
+        # Already has 3+ params, no migration needed
 
     except (ValueError, IndexError):
         pass

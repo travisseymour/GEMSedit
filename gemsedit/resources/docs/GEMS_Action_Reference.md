@@ -666,15 +666,16 @@ PlayVideoWithin(VidFile: vidfile, Start: number, WithinObject: objnum, Volume: 0
 ### PortalTo
 
 ```
-PortalTo(View: viewnum, VidFile: vidfile = "")
+PortalTo(View: viewnum, VidFile: vidfile = "", Delay: float = 0.0)
 ```
 
-**Description:** Navigates to the specified view. If a video file is provided, plays it as a fullscreen transition before changing views. Right-clicking the video skips to the destination view immediately.
+**Description:** Navigates to the specified view. If a video file is provided, plays it as a fullscreen transition before changing views. Right-clicking the video skips to the destination view immediately. If Delay is greater than zero, the portal waits the specified number of seconds before executing; during this delay, the mouse is hidden and no actions are triggered.
 
 **Parameters:**
 
 - `View` (viewnum): ID of the destination view
 - `VidFile` (vidfile): Optional video file for transition effect
+- `Delay` (float): Optional delay in seconds before portal executes (default: 0.0). During the delay, the mouse is hidden and actions are disabled.
 
 **Restrictions:** view, object, global, pocket
 

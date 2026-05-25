@@ -7,10 +7,10 @@ action_lst:
     Template: '[]'
   '1':
     Id: 1
-    Labels: '["View","VidFile"]'
+    Labels: '["View","VidFile","Delay"]'
     Name: PortalTo
     Restrictions: viewobjectglobalpocket
-    Template: '["viewnum","vidfile"]'
+    Template: '["viewnum","vidfile","float"]'
   '10':
     Id: 10
     Labels: '["URL"]'
