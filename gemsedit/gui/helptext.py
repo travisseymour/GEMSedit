@@ -88,6 +88,8 @@ action_desc = {
     "StopBackgroundMusic": "<b>StopBackgroundMusic</b>() : This action stops the currently playing background music.",
     "StopVideo": "<b>StopVideo</b>(VideoFile) : This action stops playing the video specified by <b><i>VideoFile</i></b>, assuming it is currently playing.",
     "StopAllVideos": "<b>StopAllVideos</b>() : This action stops all currently playing videos.",
+    "HighlightObject": "<b>HighlightObject</b>(Object,Color,LineThickness) : This action draws a highlight around the specified <b><i>Object</i></b> in the current view using the specified <b><i>Color</i></b> (default: yellow) and <b><i>LineThickness</i></b> (default: 4). The highlight does not persist across view changes. Only objects in the current view can be highlighted.",
+    "UnHighlightObject": "<b>UnHighlightObject</b>(Object) : This action removes any highlight from the specified <b><i>Object</i></b> in the current view. If no highlight exists, this action has no effect.",
 }
 
 # (Id INT PRIMARY KEY UNIQUE, Startview INT, Pocketcount INT,

@@ -215,6 +215,18 @@ action_lst:
     Name: VarAppend
     Restrictions: viewobjectglobalpocket
     Template: '["varname","value"]'
+  '36':
+    Id: 36
+    Labels: '["Object","Color","LineThickness"]'
+    Name: HighlightObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum","fgcolor","number"]'
+  '37':
+    Id: 37
+    Labels: '["Object"]'
+    Name: UnHighlightObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["objnum"]'
 condition_lst:
   '0':
     Id: 0

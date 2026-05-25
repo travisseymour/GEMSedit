@@ -568,6 +568,24 @@ HidePockets()
 
 ---
 
+### HighlightObject
+
+```
+HighlightObject(Object: objnum, Color: fgcolor = "yellow", LineThickness: number = 4)
+```
+
+**Description:** Draws a visual highlight around the specified object's bounding shape in the current view. The highlight is drawn with solid lines using the specified color and thickness. This highlight does not persist across view changes - if the user leaves and returns to the view, the highlight will be gone. Only objects in the current view can be highlighted; specifying an object from another view will fail gracefully with a log message.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object to highlight (must be in current view)
+- `Color` (fgcolor): Color for the highlight border (default: yellow)
+- `LineThickness` (number): Pen thickness in pixels (default: 4)
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ### InputDialog
 
 ```
@@ -956,6 +974,22 @@ TextDialog(Message: value)
 **Parameters:**
 
 - `Message` (value): Text to display
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### UnHighlightObject
+
+```
+UnHighlightObject(Object: objnum)
+```
+
+**Description:** Removes any highlight previously applied to the specified object via HighlightObject. If no highlight exists on the object, this action has no effect. Only objects in the current view can be referenced; specifying an object from another view will fail gracefully with a log message.
+
+**Parameters:**
+
+- `Object` (objnum): ID of the object to remove highlight from (must be in current view)
 
 **Restrictions:** view, object, global, pocket
 
