@@ -227,6 +227,24 @@ action_lst:
     Name: UnHighlightObject
     Restrictions: viewobjectglobalpocket
     Template: '["objnum_currentview"]'
+  '38':
+    Id: 38
+    Labels: '["NameSubstring","Color"]'
+    Name: ToggleObjectShade
+    Restrictions: viewobjectglobalpocket
+    Template: '["value","color"]'
+  '39':
+    Id: 39
+    Labels: '["NameSubstring","Color"]'
+    Name: ShadeObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["value","color"]'
+  '40':
+    Id: 40
+    Labels: '["NameSubstring"]'
+    Name: UnshadeObject
+    Restrictions: viewobjectglobalpocket
+    Template: '["value"]'
 condition_lst:
   '0':
     Id: 0
@@ -324,6 +342,18 @@ condition_lst:
     Name: VarLacksString
     Restrictions: viewobjectglobalpocket
     Template: '["varname","value","orand","booltrue"]'
+  '16':
+    Id: 16
+    Labels: '[]'
+    Name: IsShaded
+    Restrictions: objectpocket
+    Template: '[]'
+  '17':
+    Id: 17
+    Labels: '[]'
+    Name: IsNotShaded
+    Restrictions: objectpocket
+    Template: '[]'
 trigger_lst:
   '0':
     Id: 0

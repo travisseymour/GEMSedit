@@ -182,11 +182,13 @@ class ParamSelect:
             # Handle legacy actions with literal newlines in strings
             # Replace literal newlines within quoted strings with escaped newlines
             import re
+
             # This pattern finds strings and escapes newlines within them
             def escape_newlines_in_string(match):
                 content = match.group(1)
                 escaped = content.replace("\n", "\\n").replace("\r", "\\r")
                 return f'"{escaped}"'
+
             v_fixed = re.sub(r'"([^"]*)"', escape_newlines_in_string, v, flags=re.DOTALL)
             try:
                 v = eval(v_fixed)

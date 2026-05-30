@@ -409,6 +409,9 @@ class Objects:
             takeable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Takeable")
             draggable = QtCore.QItemSelection(selected).indexes()[0].model().record(row).value("Draggable")
 
+            # Update the header label with view and object info
+            self.ui.parent_Label.setText(f"{self.parentname} ({self.parentid}): {obj_name} ({obj_id})")
+
             # disable checkbox handerls prior to updating checkboxes or you'll get circular mess
             self.ui.takeable_checkBox.toggled.disconnect()
             self.ui.draggable_checkBox.toggled.disconnect()
@@ -1293,14 +1296,15 @@ class Objects:
             self._update_linked_status_display()
             # handle pic fields
             self.loadPicFields()
+            # Show view and initially selected object info
+            self.ui.parent_Label.setText(f"{self.parentname} ({self.parentid}): {obj_name} ({obj_id})")
         # This clause just added to fix problem loading objects win when there are no objects
         else:
             self.actionlist = action_list.ActionList(None, self.ui.OAL_tableView, "object", media_path=self.mediapath)
             self.actionlist.parent_id = None
+            # Show view info only (no objects to display)
+            self.ui.parent_Label.setText(f"{self.parentname} ({self.parentid})")
 
         # setup selection model handler (mouse or keyboard)...have to do *after* table is filled: http://goo.gl/KPaajQ
         self.selectionmodel = self.ui.object_tableView.selectionModel()
         self.selectionmodel.selectionChanged.connect(self.handleSelectionChange)
-
-        # throw up the parent view name just so we know
-        self.ui.parent_Label.setText(self.parentname)

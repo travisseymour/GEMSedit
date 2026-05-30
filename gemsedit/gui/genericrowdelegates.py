@@ -472,9 +472,7 @@ class ObjectRowDelegate(QStyledItemDelegate):
         current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
 
         # Show the object chooser dialog (optionally filtered by view)
-        result = ObjectChooserDialog.choose_object(
-            self.media_path, current_val, parent, filter_view=self.filter_view
-        )
+        result = ObjectChooserDialog.choose_object(self.media_path, current_val, parent, filter_view=self.filter_view)
 
         if result:
             self._selected_object = result

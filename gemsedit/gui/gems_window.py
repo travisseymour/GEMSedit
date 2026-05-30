@@ -712,7 +712,7 @@ class Ui_ViewsWindow(object):
         # endif // QT_CONFIG(tooltip)
         self.viewDown_toolButton.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         self.labelAppName.setText(QCoreApplication.translate("ViewsWindow", "GEMS Editor", None))
-        self.label.setText(QCoreApplication.translate("ViewsWindow", "Current GEMS Environment: ", None))
+        self.label.setText(QCoreApplication.translate("ViewsWindow", "", None))
         self.dbfilename_Label.setText(QCoreApplication.translate("ViewsWindow", "...", None))
         # if QT_CONFIG(tooltip)
         self.objectsButton.setToolTip(QCoreApplication.translate("ViewsWindow", "Manage objects for this view", None))

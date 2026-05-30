@@ -950,10 +950,15 @@ class GemsViews:
             selection = QtCore.QItemSelection(selected).indexes()[0]
             row = selection.row()
             _id = self.model.record(row).value("Id")
+            _name = self.model.record(row).value("Name")
 
             # reflect change in ui
             self.current_row = row
             self.action_list.parent_id = _id
+
+            # Update the header label with filename and view info
+            if self.db_filename:
+                self.ui.dbfilename_Label.setText(f"{os.path.basename(self.db_filename)}: {_name} ({_id})")
 
             self.action_list.filterActions()
             self.loadPicFields(False)
@@ -1603,7 +1608,13 @@ class GemsViews:
             self.add_recent_file(filename)
             self.initializeDatabases()
             self.initializeViews()
-            self.ui.dbfilename_Label.setText(os.path.basename(filename))
+            # Set header with filename and initially selected view info
+            if self.model and self.model.rowCount() > 0:
+                view_id = self.model.record(0).value("Id")
+                view_name = self.model.record(0).value("Name")
+                self.ui.dbfilename_Label.setText(f"{os.path.basename(filename)}: {view_name} ({view_id})")
+            else:
+                self.ui.dbfilename_Label.setText(os.path.basename(filename))
             self._update_validation_label_style(self.connection.has_validation_issues())
             self.enableButtons()
         else:
