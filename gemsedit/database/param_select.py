@@ -334,7 +334,7 @@ class ParamSelect:
                         elif type_item in ("orand",):
                             value_item = "or"
                         elif type_item in ("color",):
-                            value_item = "['Black',0,0,0,255]"
+                            value_item = "['Red',255,0,0,128]"
                         elif type_item in ("fgcolor",):
                             value_item = "['Yellow',255,255,0,255]"
                         elif type_item in ("bgcolor",):
@@ -437,10 +437,11 @@ class ParamSelect:
                             i,
                             genericrowdelegates.ComboRowDelegate(mycursors.cursors),
                         )
-                    elif "color" in type_item:
+                    elif type_item in ("color", "fgcolor", "bgcolor"):
+                        # Color picker with alpha slider
                         delegate.insertRowDelegate(
                             i,
-                            genericrowdelegates.ComboRowColoredDelegate(self.color_list),
+                            genericrowdelegates.ColorWithAlphaRowDelegate(self.color_list),
                         )
                     elif type_item == "orand":
                         logic_ops = ["or", "and"]

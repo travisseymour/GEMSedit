@@ -650,3 +650,204 @@ class PositionRowDelegate(QStyledItemDelegate):
         if self._selected_value is not None:
             model.setData(index, self._selected_value)
         self._selected_value = None  # Reset for next use
+
+
+class ColorAlphaDialog(QStyledItemDelegate):
+    """Dialog for selecting a color with alpha value."""
+
+    def __init__(self, color_list: list[str], current_value: str, parent=None):
+        from PySide6.QtWidgets import (
+            QDialog,
+            QDialogButtonBox,
+            QHBoxLayout,
+            QLabel,
+            QSlider,
+            QVBoxLayout,
+        )
+
+        self.dialog = QDialog(parent)
+        self.dialog.setWindowTitle("Select Color")
+        self.dialog.setMinimumWidth(400)
+
+        self.color_list = color_list
+        self._result = None
+
+        # Parse current value to get initial color and alpha
+        self._parse_current_value(current_value)
+
+        layout = QVBoxLayout(self.dialog)
+
+        # Top row: color swatch and dropdown
+        top_layout = QHBoxLayout()
+
+        # Color swatch (preview)
+        self.swatch = QLabel()
+        self.swatch.setFixedSize(60, 60)
+        self.swatch.setStyleSheet("border: 1px solid black;")
+        top_layout.addWidget(self.swatch)
+
+        # Color dropdown
+        color_layout = QVBoxLayout()
+        color_label = QLabel("Color:")
+        self.color_combo = QComboBox()
+        for item in self.color_list:
+            icon = QIcon()
+            pixmap = QPixmap(24, 24)
+            n, r, g, b, a = eval(item)
+            pixmap.fill(QColor(r, g, b))
+            icon.addPixmap(pixmap)
+            # Display just the color name in the dropdown
+            self.color_combo.addItem(icon, n, item)
+
+        # Set initial selection
+        for i in range(self.color_combo.count()):
+            if self.color_combo.itemText(i) == self._current_name:
+                self.color_combo.setCurrentIndex(i)
+                break
+
+        self.color_combo.currentIndexChanged.connect(self._update_preview)
+        color_layout.addWidget(color_label)
+        color_layout.addWidget(self.color_combo)
+        top_layout.addLayout(color_layout)
+
+        layout.addLayout(top_layout)
+
+        # Alpha slider row
+        alpha_layout = QHBoxLayout()
+        alpha_label = QLabel("Alpha:")
+        alpha_label.setFixedWidth(50)
+        self.alpha_slider = QSlider(Qt.Orientation.Horizontal)
+        self.alpha_slider.setRange(0, 255)
+        self.alpha_slider.setValue(self._current_alpha)
+        self.alpha_slider.valueChanged.connect(self._update_preview)
+
+        self.alpha_value_label = QLabel(str(self._current_alpha))
+        self.alpha_value_label.setFixedWidth(30)
+
+        alpha_layout.addWidget(alpha_label)
+        alpha_layout.addWidget(self.alpha_slider)
+        alpha_layout.addWidget(self.alpha_value_label)
+
+        layout.addLayout(alpha_layout)
+
+        # Output preview
+        output_layout = QHBoxLayout()
+        output_label = QLabel("Output:")
+        self.output_preview = QLabel()
+        output_layout.addWidget(output_label)
+        output_layout.addWidget(self.output_preview)
+        output_layout.addStretch()
+        layout.addLayout(output_layout)
+
+        # Dialog buttons
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.accepted.connect(self._accept)
+        buttons.rejected.connect(self.dialog.reject)
+        layout.addWidget(buttons)
+
+        self._update_preview()
+
+    def _parse_current_value(self, value: str):
+        """Parse a color string like ['Dark Slate Gray',47,79,79,128]"""
+        self._current_name = "Black"
+        self._current_r = 0
+        self._current_g = 0
+        self._current_b = 0
+        self._current_alpha = 128  # Default alpha for shading
+
+        try:
+            parsed = eval(value)
+            if isinstance(parsed, list) and len(parsed) >= 5:
+                self._current_name = str(parsed[0])
+                self._current_r = int(parsed[1])
+                self._current_g = int(parsed[2])
+                self._current_b = int(parsed[3])
+                self._current_alpha = int(parsed[4])
+        except Exception:
+            pass
+
+    def _update_preview(self):
+        """Update the color swatch and output string based on current selections."""
+        # Get selected color data
+        idx = self.color_combo.currentIndex()
+        color_data = self.color_combo.itemData(idx)
+        if color_data:
+            n, r, g, b, _ = eval(color_data)
+        else:
+            n, r, g, b = self._current_name, self._current_r, self._current_g, self._current_b
+
+        alpha = self.alpha_slider.value()
+        self.alpha_value_label.setText(str(alpha))
+
+        # Update swatch with alpha
+        color = QColor(r, g, b, alpha)
+        # Create a checkerboard background to show transparency
+        pixmap = QPixmap(60, 60)
+        pixmap.fill(Qt.GlobalColor.white)
+        from PySide6.QtGui import QPainter
+
+        painter = QPainter(pixmap)
+        # Draw checkerboard pattern
+        for row in range(6):
+            for col in range(6):
+                if (row + col) % 2 == 0:
+                    painter.fillRect(col * 10, row * 10, 10, 10, QColor(200, 200, 200))
+        # Draw the color with alpha on top
+        painter.fillRect(0, 0, 60, 60, color)
+        painter.end()
+        self.swatch.setPixmap(pixmap)
+
+        # Update output preview
+        output = f"['{n}',{r},{g},{b},{alpha}]"
+        self.output_preview.setText(output)
+        self._result = output
+
+    def _accept(self):
+        self._update_preview()  # Ensure result is current
+        self.dialog.accept()
+
+    def exec(self):
+        return self.dialog.exec()
+
+    def get_result(self) -> str | None:
+        return self._result
+
+
+class ColorWithAlphaRowDelegate(QStyledItemDelegate):
+    """Delegate that opens a color selection dialog with alpha slider."""
+
+    def __init__(self, color_list: list[str], parent=None):
+        super().__init__(parent)
+        self.color_list = color_list
+        self._selected_color = None
+
+    def createEditor(self, parent, option, index):
+        from PySide6.QtWidgets import QDialog
+
+        # Get current value
+        current_val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or "['Black',0,0,0,128]"
+
+        # Show the color selection dialog
+        dialog = ColorAlphaDialog(self.color_list, current_val, parent)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self._selected_color = dialog.get_result()
+        else:
+            self._selected_color = current_val  # Keep existing value if cancelled
+
+        # Return a simple line edit that will immediately be populated and closed
+        editor = QLineEdit(parent)
+        editor.setReadOnly(True)
+        return editor
+
+    def setEditorData(self, editor, index):
+        if self._selected_color is not None:
+            editor.setText(self._selected_color)
+        else:
+            val = index.model().data(index, Qt.ItemDataRole.DisplayRole) or ""
+            editor.setText(val)
+
+    def setModelData(self, editor, model, index):
+        if self._selected_color is not None:
+            model.setData(index, self._selected_color)
+        self._selected_color = None  # Reset for next use

@@ -424,6 +424,34 @@ ViewTimePassed(Seconds: number)
 
 ---
 
+### IsShaded
+
+```
+IsShaded()
+```
+
+**Description:** Returns true if the current object (the one whose actions are being processed) is currently shaded via the ShadeObject or ToggleObjectShade action. This condition takes no parameters and automatically refers to the object in context.
+
+**Parameters:** None
+
+**Restrictions:** object, pocket
+
+---
+
+### IsNotShaded
+
+```
+IsNotShaded()
+```
+
+**Description:** Returns true if the current object (the one whose actions are being processed) is not currently shaded. This condition takes no parameters and automatically refers to the object in context.
+
+**Parameters:** None
+
+**Restrictions:** object, pocket
+
+---
+
 ## Actions
 
 Actions are commands that modify the environment state or trigger effects.
@@ -995,6 +1023,60 @@ UnHighlightObject(Object: objnum)
 
 ---
 
+### ToggleObjectShade
+
+```
+ToggleObjectShade(NameSubstring: value, Color: color)
+```
+
+**Description:** Toggles shading on all objects across all views whose name contains the specified substring. If a matching object is already shaded, the shade is removed. If not shaded, a filled shade is drawn over the object's bounding shape using the specified color with alpha for transparency. Shading persists across view changes. Use the IsShaded/IsNotShaded conditions to check whether the current object is shaded.
+
+**Parameters:**
+
+- `NameSubstring` (value): Substring to match against object names. All objects whose name contains this substring will be affected.
+- `Color` (color): Color for the shade fill, including alpha for transparency (e.g., `['Red',255,0,0,128]`)
+
+**Restrictions:** view, object, global, pocket
+
+**Example:**
+
+- `ToggleObjectShade("Lamp", "['Yellow',255,255,0,100]")` — Toggles shading on all objects with "Lamp" in their name
+
+---
+
+### ShadeObject
+
+```
+ShadeObject(NameSubstring: value, Color: color)
+```
+
+**Description:** Draws a filled shade over all objects across all views whose name contains the specified substring. The shade uses the specified color with alpha for transparency and persists across view changes until removed with UnshadeObject. If an object is already shaded, this action updates the shade color.
+
+**Parameters:**
+
+- `NameSubstring` (value): Substring to match against object names. All objects whose name contains this substring will be shaded.
+- `Color` (color): Color for the shade fill, including alpha for transparency (e.g., `['Red',255,0,0,128]`)
+
+**Restrictions:** view, object, global, pocket
+
+---
+
+### UnshadeObject
+
+```
+UnshadeObject(NameSubstring: value)
+```
+
+**Description:** Removes any shade from all objects across all views whose name contains the specified substring. If no matching objects are shaded, this action has no effect.
+
+**Parameters:**
+
+- `NameSubstring` (value): Substring to match against object names. All matching objects will have their shading removed.
+
+**Restrictions:** view, object, global, pocket
+
+---
+
 ### VarAppend
 
 ```
@@ -1050,6 +1132,7 @@ VarIncrease(Variable: varname)
 | ---------- | ------------------------------------ |
 | `bool`     | Boolean (True/False)                 |
 | `bgcolor`  | Background color                     |
+| `color`    | Color with alpha (e.g., `['Red',255,0,0,128]`) |
 | `cursor`   | Cursor style                         |
 | `exefile`  | Executable file path                 |
 | `fgcolor`  | Foreground color                     |
