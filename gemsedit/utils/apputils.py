@@ -142,19 +142,28 @@ def start_external_app(app_name: str, params: list[str] | None = None, wait: boo
 
     # start_new_session=True detaches the child process from the parent's process group,
     # preventing crashes in the child from affecting the parent
-    # text=True ensures we always get strings from stdout/stderr instead of bytes
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        start_new_session=True,
-        env=_get_expanded_env(),  # Use expanded PATH on macOS
-    )
     if wait:
+        # When waiting, capture stdout/stderr so we can read output
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+            env=_get_expanded_env(),  # Use expanded PATH on macOS
+        )
         process.wait()
         output = [aline.rstrip("\n") for aline in process.stdout]
     else:
+        # When not waiting, discard output to prevent pipe buffer from filling
+        # and blocking the child process (especially on Windows)
+        subprocess.Popen(
+            command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+            env=_get_expanded_env(),  # Use expanded PATH on macOS
+        )
         output = []
     return output
 
