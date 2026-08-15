@@ -290,14 +290,13 @@ id can be used to distinguish data from multiple users. If this is left
 at its default, it will always use “User1” as the user id. You can
 toggle whether to actually save the data and whether to overwrite or
 rename an existing data file for a particular user. Media playback can
-be disabled when quiet operation is desired. Debug mode use helpful
-during environment design because it shows the current status of any
-defined environment variables. E.g.:
+be disabled when quiet operation is desired. You can also select Debug Mode. This will add a yellow outline to any object with which the user can interact. If the object is large enough, the object name will be visible. In addition, a debug information window can be launched with Ctrl+Shift+I that will show the current status of the environment, the current view, and any currently defined variables. E.g.:
 
 ![image14](./media/image14.png)
 ![image15](./media/image15.png)
-This information floats in the upper left hand corner when Debug Mode is
-enabled.
+![image15b](./media/image15b.png)
+
+Note that this window is only available when GEMSrun has been launched with Debug Mode enabled.
 
 Finally, press the Launch GEMS Runner button to start. To stop, press
 ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
