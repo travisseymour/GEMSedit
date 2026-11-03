@@ -25,7 +25,7 @@ import appdirs
 from PySide6.QtCore import QCoreApplication, QSettings, Qt
 from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtWidgets import QApplication, QSplashScreen
-import typer
+import cyclopts
 
 import gemsedit
 from gemsedit import log
@@ -35,31 +35,12 @@ from gemsedit.utils.launcher import launcher_app
 
 os.environ["OUTDATED_IGNORE"] = "1"
 
-cli = typer.Typer(add_completion=False)
-cli.add_typer(launcher_app, name="launcher")
+cli = cyclopts.App(version=__version__, version_flags=["--version", "-v"])
+cli.command(launcher_app, name="launcher")
 
 
-def version_callback(value: bool):
-    if value:
-        typer.echo(f"GEMSedit version {__version__}")
-        raise typer.Exit()
-
-
-@cli.callback(invoke_without_command=True)
-def main(
-    ctx: typer.Context,
-    version: bool | None = typer.Option(  # noqa: F841
-        None,
-        "--version",
-        "-v",
-        help="Show the application version and exit.",
-        callback=version_callback,
-        is_eager=True,
-    ),
-):
-    # If a subcommand was invoked (e.g., "launcher"), don't run the GUI
-    if ctx.invoked_subcommand is not None:
-        return
+@cli.default
+def main():
     # Setup App
     # ---------
 

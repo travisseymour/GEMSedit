@@ -21,7 +21,6 @@ import re
 import webbrowser
 
 from munch import Munch
-from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QMainWindow
 
 # from gemsedit.pyvis.network import Network
@@ -105,16 +104,6 @@ def make_network(db: Munch, media_path: Path, directed: bool = True, layout: boo
         net.add_edge(src, dst, weight=weight, color=color, title=title)
 
     return net
-
-
-def create_network_window(url: str | Path) -> QWebEngineView:
-    view = QWebEngineView()
-    # view.load(QUrl(str(url)))
-
-    html = Path(url).read_text()
-    view.setHtml(html)
-
-    return view
 
 
 def show_gems_network_graph(parent: QMainWindow, conn: GemsDB, media_path: Path | str):

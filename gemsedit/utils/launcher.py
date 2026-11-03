@@ -23,7 +23,7 @@ import shutil
 import subprocess
 import sys
 
-import typer
+import cyclopts
 
 from gemsedit.session.version import __version__
 from gemsedit.utils.apputils import get_resource
@@ -31,7 +31,7 @@ from gemsedit.utils.apputils import get_resource
 APP_NAME = "GEMSedit"
 APP_ID = "com.travisseymour.gemsedit"
 
-launcher_app = typer.Typer(help="Install or uninstall desktop launcher for GEMSedit.")
+launcher_app = cyclopts.App(help="Install or uninstall desktop launcher for GEMSedit.")
 
 
 def get_executable_path() -> str:
@@ -508,12 +508,12 @@ def _windows_uninstall() -> tuple[bool, str]:
 # =============================================================================
 
 
-@launcher_app.command()
+@launcher_app.command
 def install():
     """Install a desktop launcher for GEMSedit."""
     system = platform.system()
 
-    typer.echo(f"Installing {APP_NAME} launcher for {system}...")
+    print(f"Installing {APP_NAME} launcher for {system}...")
 
     if system == "Linux":
         success, message = _linux_install()
@@ -525,52 +525,52 @@ def install():
             if dock_success:
                 message += f"\n  {dock_message}"
             else:
-                typer.echo(f"Warning: {dock_message}", err=True)
+                print(f"Warning: {dock_message}", file=sys.stderr)
     elif system == "Windows":
         success, message = _windows_install()
     else:
-        typer.echo(f"Unsupported platform: {system}", err=True)
-        raise typer.Exit(1)
+        print(f"Unsupported platform: {system}", file=sys.stderr)
+        raise SystemExit(1)
 
     if success:
-        typer.echo(message)
-        typer.echo(f"\n{APP_NAME} launcher installed successfully!")
+        print(message)
+        print(f"\n{APP_NAME} launcher installed successfully!")
     else:
-        typer.echo(message, err=True)
-        raise typer.Exit(1)
+        print(message, file=sys.stderr)
+        raise SystemExit(1)
 
 
-@launcher_app.command("add-to-dock")
+@launcher_app.command(name="add-to-dock")
 def add_to_dock():
     """Add GEMSedit to the macOS Dock (macOS only)."""
     system = platform.system()
 
     if system != "Darwin":
-        typer.echo("This command is only available on macOS.", err=True)
-        raise typer.Exit(1)
+        print("This command is only available on macOS.", file=sys.stderr)
+        raise SystemExit(1)
 
     app_path = _macos_get_app_path()
     if not app_path.exists():
-        typer.echo(
+        print(
             f"GEMSedit app not found at {app_path}.\nPlease run 'gemsedit launcher install' first.",
-            err=True,
+            file=sys.stderr,
         )
-        raise typer.Exit(1)
+        raise SystemExit(1)
 
     success, message = _macos_add_to_dock(app_path)
     if success:
-        typer.echo(message)
+        print(message)
     else:
-        typer.echo(message, err=True)
-        raise typer.Exit(1)
+        print(message, file=sys.stderr)
+        raise SystemExit(1)
 
 
-@launcher_app.command()
+@launcher_app.command
 def uninstall():
     """Remove the desktop launcher for GEMSedit."""
     system = platform.system()
 
-    typer.echo(f"Uninstalling {APP_NAME} launcher for {system}...")
+    print(f"Uninstalling {APP_NAME} launcher for {system}...")
 
     if system == "Linux":
         success, message = _linux_uninstall()
@@ -579,12 +579,12 @@ def uninstall():
     elif system == "Windows":
         success, message = _windows_uninstall()
     else:
-        typer.echo(f"Unsupported platform: {system}", err=True)
-        raise typer.Exit(1)
+        print(f"Unsupported platform: {system}", file=sys.stderr)
+        raise SystemExit(1)
 
     if success:
-        typer.echo(message)
-        typer.echo(f"\n{APP_NAME} launcher uninstalled successfully!")
+        print(message)
+        print(f"\n{APP_NAME} launcher uninstalled successfully!")
     else:
-        typer.echo(message, err=True)
-        raise typer.Exit(1)
+        print(message, file=sys.stderr)
+        raise SystemExit(1)
