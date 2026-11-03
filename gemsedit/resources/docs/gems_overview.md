@@ -2,7 +2,7 @@
 
 ## Graphical Environment Management System Overview
 
-<font color="blue">Travis L. Seymour, PhD 2019</font>
+<font color="blue">Travis L. Seymour, PhD 2021-2026</font>
 
 ### Goal
 
@@ -22,7 +22,8 @@ environment, photograph, draw, or otherwise create or obtain an image
 that corresponds to all the views you want to exist within the
 environment and stitch them together using GEMSedit. Another
 important thing one does with GEMSedit is to define **_objects,_**
-which are rectangular sub-regions of view images. Although typically,
+which are sub-regions of view images that can be either rectangular or
+irregular polygon shapes. Although typically,
 objects specify meaningful objects that are depicted in the view images
 (e.g., a book, a cup, or a door), objects may also define areas or
 sub-areas of a view image not necessarily tied to specific physical
@@ -110,8 +111,8 @@ on object-level actions and interactions. You can see a list of all the
 conditions, actions, and interactions in the appendix.
 
 **What you can do with objects in GEMS**. Remember that an object in
-GEMS is just a rectangular region that the designer had designated as
-such. There is no obligation to define everything in a view that is
+GEMS is just a region (rectangular or polygon-shaped) that the designer
+has designated as such. There is no obligation to define everything in a view that is
 visible as an object, but doing so allows some trigger (clicking,
 hovering, dragging, etc.) relative to that object to have an effect (play
 a song, portal to another view, speak some text, make some object
@@ -206,16 +207,20 @@ In the test environment depicted above, an interaction is defined in
 view 5. If the dvd cover (which is not takeable in this case – we forgot
 to take a picture without the dvd) is dragged onto the monitor, a little
 video plays. Note that although the dvd is not takeable it is still
-**_draggable_**. The downside of this arrangement is that the dvd will
-not look as if it is being dragged, but the interaction will still work.
+**_draggable_**. In GEMSedit, objects have three properties: **Visible**
+(whether the object appears), **Takeable** (whether it can be picked up
+and pocketed), and **Draggable** (whether it can be dragged for
+interactions). An object can be draggable without being takeable – the
+downside of this arrangement is that the object will not look as if it
+is being dragged, but the interaction will still work.
 
 ### Using GEMSedit
 
-**Loading an existing GEMS Environment.** Gems environments consist of a
-folder that contains an environment database file (e.g., kidsroom.db) and
+**Loading an existing GEMS Environment.** GEMS environments consist of a
+folder that contains an environment file (e.g., kidsroom.toml) and
 a folder of media (pictures and audio files), named [ENVNAME]\_media,
 e.g., kidsroom_media. To open an environment, press the OPEN ICON,
-navigate to an environment folder, and choose the database file.
+navigate to an environment folder, and choose the environment (.toml) file.
 
 ![image9](./media/image9.png)
 ![image10](./media/image10.png)
@@ -223,37 +228,46 @@ Global Environment Settings. There are several global settings.
 
 ![image9](./media/image9.png)
 ![image11](./media/image11.png)
-**ID**: Hmm…I don’t know what this is?!
-
 **Start View**: This defines the first view that will be loaded when the
-environment starts. You change this to any existing view in the
+environment starts. You can change this to any existing view in the
 environment.
 
-**Pocket Count**: The number of pockets to feature in the environment
+**Pocket Count**: The number of pockets to feature in the environment.
 
 **View Transition**: This allows you to specify how GEMS transitions
-from one view to the other. For now, this does nothing – views
-transition via jump. Later, I hope to add a Fade transition and possibly
-others.
+from one view to the other. Options include:
 
-**Preload Resources**: This is a currently non-implemented feature to
-load all project media into memory for fast environment navigation. At
-the moment this is not practical and has been disabled no matter what is
-specified here.
+- **None**: Instant jump between views
+- **Dissolve**: Crossfade/dissolve transition
+- **Wipe-Left**: New view wipes in from the left edge
+- **Wipe-Right**: New view wipes in from the right edge
+
+**Transition Duration**: Duration in milliseconds for view transitions
+(100-2000ms). Default is 400ms. A value of 0 means no transition will
+be performed regardless of the View Transition setting.
+
+**Preload Resources**: When enabled, GEMS will pre-generate Text-to-Speech
+audio outputs before starting the environment, reducing delays during
+runtime when SayText actions are triggered.
 
 **Global Overlay**: If a picture is specified here, it will be overlayed
 onto the upper left corner of the environment for **_<u>every</u>_**
 view. This cannot be changed while the environment is running and may
-have limited use cases. For a flexible overlay, you’ll notice that when
-designing view, you can specify a view-level overlap that can be
-different from one view to the next. We’ve used this for a dynamically
+have limited use cases. For a flexible overlay, you'll notice that when
+designing a view, you can specify a view-level overlay that can be
+different from one view to the next. We've used this for a dynamically
 updating map of where one is in an environment. E.g.:
 
 ![image12](./media/image12.png)
-**Version:** This field will go away soon. Ignore it.
 
-**Stage Color**: Hopefully you won’t have to deal with this. The size of
-the environment is dictated by the **StartView’s foreground picture**.
+**GEMSedit Version**: This field shows which version of GEMSedit last
+saved the environment. It updates automatically and is not user-editable.
+
+**Media Volume**: Sets the overall volume level for any media playback
+within GEMSrun (0.0 to 1.0).
+
+**Stage Color**: Hopefully you won't have to deal with this. The size of
+the environment is dictated by the **StartView's foreground picture**.
 Any subsequent view that uses foreground/background smaller than this
 will result in a colored background showing the extent of the area not
 used. This setting specifies the color of that region. Make all of your
@@ -261,19 +275,19 @@ view images the same size to avoid this situation!
 
 **Display Type**: Can be either Windowed or FullScreen. Windowed mode is
 nice for designing because one will also need to manage media files.
-However, for a more immersive experience, switch to FullScreen. Note:
-The most recent version of GEMS needs significant testing in FullScreen
-mode – it has mostly been set to Windowed for development and testing.
+However, for a more immersive experience, switch to FullScreen.
 
 **Object Hover**: This dictates what happens when someone hovers over a
-region defined as an object. The options are ChangeCursor (the cursor
-switches from white to yellow alerting the user that this object is
-defined), FrameObject (draws a yellow rectangle around the boundaries of
-the object), and ShowName (puts the objects name in yellow at the bottom
-left of its bounding box). The Object Hover option also allows
-combinations such as Frame+Cursor, Name+Cursor, and Cursor+Frame+Name.
+region defined as an object. The options are:
+
+- **None**: No visual feedback when hovering
+- **ChangeCursor**: Cursor changes to a yellow hand
+- **FrameObject**: Yellow rectangle around object boundaries
+- **ShowName**: Object name displayed near the object
+- **Frame+Cursor**, **Name+Cursor**, **Frame+Name**, **Cursor+Frame+Name**: Combinations of the above
+
 Most of these permutations were created for designing environments, but
-ChangeCursor may be a useful user facing ui choice.
+ChangeCursor is a good user-facing choice.
 
 ---
 
@@ -283,7 +297,7 @@ To run a loaded environment, just click on the run icon:
 
 ![image9](./media/image9.png)
 ![image13](./media/image13.png)
-The **Environment Database File** is not editable and will be set to
+The **Environment File** field is not editable and will be set to
 whatever environment is currently loaded into the editor. GEMS is
 designed to save data about everything that happens during a run, a user
 id can be used to distinguish data from multiple users. If this is left
@@ -356,7 +370,8 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    deleting views – this cannot be undone. Also make sure you have
    selected the view you really want to delete. Adding a new view
    requires only a new view name. It is possible to have multiple views
-   with the same name – we do not recommend this.
+   with the same name – we do not recommend this. The **up/down arrow
+   buttons** allow you to reorder views in the list.
 
 2. The folder icon lets you specify a foreground picture from those in
    your media folder. The arrow icon copies the value from the current
@@ -370,24 +385,28 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    few use cases, this might be desirable, but not usually.**
 
 4. Select or delete an overlay picture. This picture will be displayed
-   relative to the upper right corner of the view. This overlay could
+   relative to the upper left corner of the view. This overlay could
    be as large as the foreground and background pictures, but for many
    use cases, it will be somewhat smaller. E.g., a map, or special
    message.
 
 5. All the windows on this row show a depiction of which image is
    currently selected. If you click on this window, you will be able to
-   view a full size version. Hit the ENTER key to return.
+   view a full size version. Click anywhere on the image to close it.
 
 6. Click the green plus to create a new empty action. All cells will
-   initially turn red to indicated that now enough information has been
-   supplied for it to actually work. This will change when you’re
-   entered at least a trigger, action (the condition is optional). The
+   initially turn red to indicate that not enough information has been
+   supplied for it to actually work. This will change when you've
+   entered at least a trigger and action (the condition is optional). The
    red X will permanently delete the currently selected action. Please
    be careful that you have selected the appropriate view action and
    that you really want to delete it. This cannot be undone. It may be
    wiser to disable an action than to delete it if you think you may
-   want to use re-enable it later.
+   want to re-enable it later. Additional action management buttons:
+
+   - **Copy**: Copy actions from another view or object
+   - **Duplicate**: Create a copy of the selected action
+   - **Up/Down arrows**: Reorder actions in the list (affects execution priority)
 
 7. Clicking on either the Condition, Trigger, Action, or Enabled cells
    allows you to specify their contents for that action. This occurs
@@ -409,19 +428,21 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    define new objects, or remove previous object definitions. Be
    careful, deletions cannot be undone.
 
-2. Objects are simply sub-regions of your existing foreground image. So
-   clicking the lasso tool here allows you to define your object as a
-   rectangular. The two image regions below #2 and to the right of it
-   (Object Location View) show you the selected region in context and
-   in a magnified fashion. Pressing the red X button will allow you to
-   clear out the object picture selection.
+2. Objects are simply sub-regions of your existing foreground image.
+   Clicking the lasso tool allows you to define your object by clicking
+   multiple points to create a **polygon shape**. You can create simple
+   rectangles (4 points) or complex irregular shapes. The two image
+   regions below #2 and to the right of it (Object Location View) show
+   you the selected region in context and in a magnified fashion.
+   Pressing the red X button will allow you to clear out the object
+   selection.
 
-3. This checkbox determines whether this object will be marked as
-   visible, and thus whether it will show up when the environment is
-   run. Actions and interactions can result in this being toggled.
+3. **Visible**: This checkbox determines whether this object will be
+   marked as visible, and thus whether it will show up when the
+   environment is run. Actions and interactions can toggle this.
 
-4. “Takeable” refers to whether or not this object is meant to be
-   removed from its default location and potentially dragged to the
+4. **Takeable**: This refers to whether or not this object is meant to
+   be removed from its default location and potentially dragged to the
    pockets for transport across views. If you define an object as
    takeable, you really should make sure that it is not visible in the
    background image. This will lead to the most natural effect when
@@ -429,20 +450,102 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
    to this may be a stack of paper where you want the user to appear to
    have taken a sheet of paper while leaving the stack in place.
 
-5. Just like at the view level, these buttons allow you to add or
-   remove actions.
+5. **Draggable**: This determines whether the object can be dragged for
+   interactions (e.g., dragging one object onto another). An object can
+   be draggable without being takeable – in this case, the object won't
+   visually move when dragged, but interactions will still trigger.
 
-6. Just like at the view level (and using the same dialogs shown
+6. Just like at the view level, these buttons allow you to add, remove,
+   copy, duplicate, or reorder actions.
+
+7. Just like at the view level (and using the same dialogs shown
    above), this list allows you to manipulate the conditions, triggers,
    and consequences of each defined action.
 
+**Linked Objects**: You can link an object's actions to another object
+by naming it with the pattern `ObjectName_[ViewID]_[ObjectID]`. For
+example, naming an object `Doorknob_3_7` will cause it to use the
+actions defined for object ID 7 in view ID 3. This is useful when
+multiple objects should behave identically.
+
+---
+
+### Global Environment Actions
+
+In addition to view-level and object-level actions, you can define
+**Global Environment Actions** that run regardless of which view is
+currently active. Access these via **Settings → Edit Global Environment
+Actions**.
+
+Global actions are useful for:
+
+- Keyboard shortcuts that work throughout the environment
+- Time-based events (e.g., ending the environment after 30 minutes)
+- Actions that should trigger regardless of the current view
+
+---
+
+### Tools and Utilities
+
+GEMSedit provides several utility tools under the **Other** menu:
+
+**Network Graph**: Displays an interactive visual graph showing how
+views are connected through portal actions. This helps you understand
+and debug the navigation structure of your environment.
+
+**Clean Media Folder**: Scans your media folder and identifies files
+that are not referenced by any view, object, or action. Useful for
+removing unused assets and reducing environment size.
+
+**Clear Media Cache**: Clears any cached media files. Use this if you've
+updated media files externally and want to ensure GEMSedit loads fresh
+copies.
+
+**Validation Report**: Click on the environment filename label (at the
+top of the main window) to run validation and view a detailed report.
+The label turns orange if there are validation issues (missing images,
+broken references, etc.).
+
+---
+
+### View and Object Tags
+
+You can assign color-coded **tags** to views and objects for better
+organization. Right-click on a view or object in the list to access
+the tag menu. Tags are purely organizational and do not affect runtime
+behavior, but they help you keep track of different categories of
+views or objects in complex environments.
+
+---
+
+### Keyboard Shortcuts
+
+**GEMSedit:**
+
+- `Ctrl+=` : Increase font size
+- `Ctrl+-` : Decrease font size
+- `Ctrl+0` : Reset font size to default
+
+**GEMSrun (during environment execution):**
+
+- `Ctrl+Shift+I` : Toggle debug information window (shows current view,
+  variables, and environment status) - only available when Debug Mode
+  is enabled
+- `Ctrl+Shift+X` : Force quit the environment
+- `Escape` : Exit the environment (in fullscreen mode)
+
+---
+
 ### Other Thoughts
 
-1. You don’t have to save anything…all changes are saved to you
-   environment database immediately.
+1. **Remember to save your work!** Changes are tracked but not
+   automatically saved to disk. Click the **Save** button in the toolbar
+   (or use the File menu) to save your environment. When you have unsaved
+   changes, the Save button will be enabled. If you close an environment
+   with unsaved changes, GEMSedit will prompt you to save.
 
 2. If you want to move around or share your environment, everything
-   will be in your project folder. Essentially your xxxxxx.db file and
+   will be in your project folder. Essentially your xxxxxx.toml file and
    the xxxxxx_media folder.
 
 3. You may need to learn about basic photo editing to manage images
@@ -453,6 +556,111 @@ ESCAPE (e.g., in FullScreen Mode) or click the red close-window icon
 
 ## Appendix - GEMS API Reference
 
-This section describes all conditions, triggers, and actions available in GEMS (Graphical Environment Management System).
+This section lists all conditions, triggers, and actions available in GEMS. For detailed parameter descriptions, see the description panel in GEMSedit when selecting each item, or refer to GEMS_Action_Reference.pdf in the GEMSedit Help Menu.
 
-> See GEMS_Action_Reference.pdf, available in the GEMSedit Help Menu
+### Conditions
+
+Conditions are optional tests that must be true for an action to execute:
+
+| Condition            | Description                                          |
+| -------------------- | ---------------------------------------------------- |
+| VarValueIs           | Check if a variable equals a specific value          |
+| VarValueIsNot        | Check if a variable does not equal a value           |
+| VarExists            | Check if a variable exists                           |
+| VarHasString         | Check if a variable contains a substring             |
+| VarLacksString       | Check if a variable does not contain a substring     |
+| VarCountEq           | Check if variable count equals a number              |
+| VarCountGtEq         | Check if variable count is >= a number               |
+| VarCountLtEq         | Check if variable count is <= a number               |
+| ViewTimePassed       | Check if time has passed since entering current view |
+| TotalTimePassed      | Check if time has passed since environment started   |
+| KeyBufferContains    | Check if keyboard buffer contains specific text      |
+| ObjectInPocketByID   | Check if an object (by ID) is in a pocket            |
+| ObjectInPocketByName | Check if an object (by name) is in a pocket          |
+| ObjectIsHiddenByID   | Check if an object (by ID) is hidden                 |
+| ObjectIsHiddenByName | Check if an object (by name) is hidden               |
+| IsShaded             | Check if current object is shaded                    |
+| IsNotShaded          | Check if current object is not shaded                |
+
+### Triggers
+
+Triggers define when an action should fire:
+
+| Trigger         | Description                                      |
+| --------------- | ------------------------------------------------ |
+| MouseClick      | Fires on left-click                              |
+| KeyPress        | Fires when a specific key is pressed             |
+| DroppedOn       | Fires when another object is dropped on this one |
+| ViewTimePassed  | Fires after time passes in current view          |
+| TotalTimePassed | Fires after time passes since environment start  |
+| NavLeft         | Fires on click near left screen edge             |
+| NavRight        | Fires on click near right screen edge            |
+| NavTop          | Fires on click near top screen edge              |
+| NavBottom       | Fires on click near bottom screen edge           |
+
+### Actions
+
+Actions define what happens when triggered:
+
+**Navigation:**
+
+- PortalTo - Navigate to another view (with optional video transition and delay)
+- ChangeViewImages - Change foreground/background images of a view
+- Quit - Exit the environment
+
+**Media - Audio:**
+
+- PlaySound - Play an audio file
+- StopSound - Stop a specific audio file
+- StopAllSounds - Stop all playing audio
+- PlayBackgroundMusic - Play looping background music
+- StopBackgroundMusic - Stop background music
+- SayText - Text-to-speech
+
+**Media - Video:**
+
+- PlayVideo - Play video at a position
+- PlayVideoWithin - Play video within an object's bounds
+- StopVideo - Stop a specific video
+- StopAllVideos - Stop all videos
+
+**Display:**
+
+- ShowImage - Display an image overlay
+- ShowImageWithin - Display an image within an object's bounds
+- TextBox - Display a text message
+- TextDialog - Display a dialog with a message
+- InputDialog - Display a dialog that captures user input
+- ShowURL - Open a URL in an embedded browser
+
+**Objects:**
+
+- HideObject - Make an object invisible
+- ShowObject - Make an object visible
+- AllowTake - Make an object takeable
+- DisallowTake - Make an object not takeable
+- HighlightObject - Draw a highlight around an object
+- UnHighlightObject - Remove highlight from an object
+- ShadeObject - Fill an object with a semi-transparent color
+- UnshadeObject - Remove shading from an object
+- ToggleObjectShade - Toggle shading on/off
+
+**Variables:**
+
+- SetVariable - Set a variable to a value
+- DelVariable - Delete a variable
+- VarIncrease - Increment a numeric variable
+- VarDecrease - Decrement a numeric variable
+- VarAppend - Append text to a variable
+
+**UI:**
+
+- HideMouse - Hide the mouse cursor
+- ShowMouse - Show the mouse cursor
+- HidePockets - Hide all pockets
+- ShowPockets - Show all pockets
+- ClearKeyBuffer - Clear the keyboard input buffer
+
+**System:**
+
+- RunProgram - Execute an external program

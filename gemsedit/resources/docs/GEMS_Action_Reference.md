@@ -29,7 +29,7 @@ Triggers define events that initiate script execution.
 DroppedOn(Object: objnum)
 ```
 
-**Description:** Fires when a specific object is dropped onto this object or pocket.
+**Description:** Fires when a specific obeject is dropped onto this object or pocket.
 
 **Parameters:**
 
